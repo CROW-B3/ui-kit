@@ -1,11 +1,18 @@
 # CROW-B3 UI Kit
 
+CROW-B3 UI Kit is a set of UI components for CROW-B3 projects.
 A React component library built with shadcn/ui and Tailwind CSS v4.
 
 ## Installation
 
 ```bash
 pnpm add @crow-b3/ui-kit
+```
+
+## Local Development
+
+```
+"@crow-b3/ui-kit": "file:../ui-kit"
 ```
 
 ## Setup
