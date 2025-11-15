@@ -9,7 +9,7 @@ A React component library built with shadcn/ui and Tailwind CSS v4.
 
 ## Local Development
 
-```
+```json
 "@crow-b3/ui-kit": "file:../ui-kit"
 ```
 
