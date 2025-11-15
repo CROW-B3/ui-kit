@@ -11,7 +11,7 @@ pnpm add @crow-b3/ui-kit
 
 ## Local Development
 
-```
+```json
 "@crow-b3/ui-kit": "file:../ui-kit"
 ```
 
