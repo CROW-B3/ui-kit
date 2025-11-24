@@ -27,7 +27,7 @@
     "@antfu/eslint-config": "^6.2.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@tailwindcss/postcss": "^4.1.17",
-    "@types/react": "^19.2.5",
+    "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.22",
     "commitlint": "^20.1.0",
