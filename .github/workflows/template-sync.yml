@@ -21,4 +21,5 @@ jobs:
       - name: actions-template-sync
         uses: AndreasAugustin/actions-template-sync@v2
         with:
+          source_gh_token: ${{ secrets.GH_TOKEN }}
           source_repo_path: CROW-B3/npm-sdk-template
