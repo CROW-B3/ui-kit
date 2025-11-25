@@ -27,4 +27,5 @@ jobs:
           git_user_name: Methika Fernando
           git_user_email: methikafernando2006@gmail.com
           source_gh_token: ${{ secrets.GH_TOKEN }}
+          target_gh_token: ${{ secrets.GH_TOKEN }}
           source_repo_path: CROW-B3/npm-sdk-template
