@@ -1,96 +1,33 @@
-# CROW-B3 UI Kit
+# npm-sdk-template
 
-CROW-B3 UI Kit is a set of UI components for CROW-B3 projects.
-A React component library built with shadcn/ui and Tailwind CSS v4.
+A ready-to-go TypeScript/JavaScript SDK package starter, with linting, testing, build & publish workflows included.
 
 ## Installation
 
 ```bash
-pnpm add @crow-b3/ui-kit
-```
-
-## Local Development
-
-```json
-"@crow-b3/ui-kit": "file:../ui-kit"
-```
-
-## Setup
-
-### 1. Install Peer Dependencies
-
-```bash
-pnpm add react react-dom
-pnpm add -D tailwindcss @tailwindcss/postcss postcss
-```
-
-### 2. Configure PostCSS
-
-Create or update `postcss.config.mjs`:
-
-```js
-export default {
-  plugins: {
-    '@tailwindcss/postcss': {},
-  },
-};
-```
-
-### 3. Import Styles
-
-Import the global styles in your app:
-
-```tsx
-import '@crow-b3/ui-kit/dist/styles/globals.css';
+bun install @crow-b3/npm-sdk-template
 ```
 
 ## Usage
 
-### Button Component
-
-```tsx
-import { Button } from '@crow-b3/ui-kit';
-
-function App() {
-  return (
-    <div>
-      <Button>Click me</Button>
-      <Button variant="outline">Outline</Button>
-      <Button variant="destructive">Delete</Button>
-      <Button size="lg">Large</Button>
-    </div>
-  );
-}
-```
-
-### Available Components
-
-- **Button**: Fully customizable button component with multiple variants and sizes
-
-### Utilities
-
-- **cn**: Utility function for merging Tailwind classes
-
-```tsx
-import { cn } from '@crow-b3/ui-kit';
-
-const className = cn('px-4 py-2', 'bg-blue-500', { 'text-white': true });
+```typescript
+import {} from '@crow-b3/npm-sdk-template';
 ```
 
 ## Development
 
 ```bash
 # Install dependencies
-pnpm install
+bun install
 
-# Build the library
-pnpm run build
+# Build
+bun build
 
 # Lint
-pnpm run lint
+bun lint
 
-# Format
-pnpm run format
+# Format code
+bun format
 ```
 
 ## License
