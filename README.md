@@ -6,13 +6,13 @@ A React component library built with shadcn/ui and Tailwind CSS v4.
 ## Installation
 
 ```bash
-pnpm add @crow-b3/ui-kit
+pnpm add @b3-crow/ui-kit
 ```
 
 ## Local Development
 
 ```json
-"@crow-b3/ui-kit": "file:../ui-kit"
+"@b3-crow/ui-kit": "file:../ui-kit"
 ```
 
 ## Setup
@@ -41,7 +41,7 @@ export default {
 Import the global styles in your app:
 
 ```tsx
-import '@crow-b3/ui-kit/dist/styles/globals.css';
+import '@b3-crow/ui-kit/dist/styles/globals.css';
 ```
 
 ## Usage
@@ -49,7 +49,7 @@ import '@crow-b3/ui-kit/dist/styles/globals.css';
 ### Button Component
 
 ```tsx
-import { Button } from '@crow-b3/ui-kit';
+import { Button } from '@b3-crow/ui-kit';
 
 function App() {
   return (
@@ -72,7 +72,7 @@ function App() {
 - **cn**: Utility function for merging Tailwind classes
 
 ```tsx
-import { cn } from '@crow-b3/ui-kit';
+import { cn } from '@b3-crow/ui-kit';
 
 const className = cn('px-4 py-2', 'bg-blue-500', { 'text-white': true });
 ```
