@@ -1,11 +1,12 @@
 {
   "name": "@b3-crow/ui-kit",
-  "version": "0.0.6",
+  "version": "0.0.16",
   "description": "CROW-B3 UI Kit",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
+    "build:watch": "tsc --watch",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
     "format": "pnpm exec prettier src/ --write",
