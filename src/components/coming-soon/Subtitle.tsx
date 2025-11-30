@@ -10,7 +10,7 @@ export function Subtitle() {
       transition={{ duration: 1, delay: 0.6, ease: 'easeOut' }}
       style={{
         position: 'fixed',
-        bottom: '1vh',
+        bottom: '2vh',
         left: '50%',
         transform: 'translateX(-50%)',
         fontSize: 'clamp(0.75rem, 1vw, 0.95rem)',
