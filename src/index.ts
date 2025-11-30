@@ -1,2 +1,2 @@
-// UI Kit - Clean slate
-// Add your exports here
+// UI Kit - Coming Soon Components
+export * from './components/coming-soon';
