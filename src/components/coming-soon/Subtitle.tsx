@@ -9,7 +9,11 @@ export function Subtitle() {
       animate={{ opacity: 1 }}
       transition={{ duration: 1, delay: 0.6, ease: 'easeOut' }}
       style={{
-        fontSize: 'clamp(0.875rem, 1.2vw, 1.125rem)',
+        position: 'fixed',
+        bottom: '1vh',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        fontSize: 'clamp(0.75rem, 1vw, 0.95rem)',
         lineHeight: 1.6,
         color: 'rgba(255, 255, 255, 0.9)',
         textAlign: 'center',
@@ -19,7 +23,7 @@ export function Subtitle() {
         letterSpacing: '0.01em',
         fontFamily:
           '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif',
-        marginTop: '2rem',
+        zIndex: 10,
       }}
     >
       We are thrilled to unveil CROW, our most advanced model yet,
