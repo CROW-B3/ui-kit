@@ -1,5 +1,2 @@
-// Export components
-export * from './components/ui';
-
-// Export utilities
-export * from './lib';
+// UI Kit - Clean slate
+// Add your exports here

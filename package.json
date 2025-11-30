@@ -2,7 +2,16 @@
   "name": "@b3-crow/ui-kit",
   "version": "0.0.17",
   "description": "CROW-B3 UI Kit",
-  "main": "dist/index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "type": "module",
   "scripts": {
     "build": "tsc",
