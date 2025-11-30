@@ -14,7 +14,7 @@ export function HeroText() {
         lineHeight: 0.9,
         letterSpacing: '0.01em',
         background:
-          'linear-gradient(135deg, #2d1550 0%, #4a2571 30%, #6b4598 60%, #8b7fb8 100%)',
+          'linear-gradient(90deg, #2d1550 0%, #4a2571 30%,#4a2571 30%, #553e72ff 60%, #c7a4f8ff 100%)',
         WebkitBackgroundClip: 'text',
         backgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
@@ -24,7 +24,7 @@ export function HeroText() {
         padding: 0,
         fontFamily:
           '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif',
-        filter: 'drop-shadow(0 0 80px rgba(139, 127, 184, 0.3))',
+        filter: 'drop-shadow(0 0 80px rgba(87, 84, 96, 0.3))',
       }}
     >
       CROW
