@@ -14,7 +14,7 @@ export function HeroText() {
         lineHeight: 0.9,
         letterSpacing: '0.01em',
         background:
-          'linear-gradient(90deg, #2d1550 0%, #4a2571 30%,#4a2571 30%, #553e72ff 60%, #c7a4f8ff 100%)',
+          'linear-gradient(70deg, #1B0637 0%, #210E3C 10%, #24113F 20%, #2E1A4B 35%, #3A2559 45%, #563F77 65%, #604882 80%, #765F97 100%)',
         WebkitBackgroundClip: 'text',
         backgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
