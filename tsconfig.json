@@ -13,9 +13,10 @@
     "declarationMap": true,
     "sourceMap": true,
     "jsx": "react-jsx",
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/lib/*": ["lib/*"],
+      "@/components/*": ["components/*"]
     }
   },
   "include": ["src/**/*"],
