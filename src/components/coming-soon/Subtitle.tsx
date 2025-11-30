@@ -15,7 +15,7 @@ export function Subtitle() {
         transform: 'translateX(-50%)',
         fontSize: 'clamp(0.75rem, 1vw, 0.95rem)',
         lineHeight: 1.6,
-        color: 'rgba(255, 255, 255, 0.9)',
+        color: 'rgba(255, 255, 255, 0.52)',
         textAlign: 'center',
         maxWidth: '50rem',
         padding: '0 2rem',
