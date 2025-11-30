@@ -9,10 +9,10 @@ export function HeroText() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 1, delay: 0.3, ease: 'easeOut' }}
       style={{
-        fontSize: 'clamp(8rem, 20vw, 20rem)',
-        fontWeight: 900,
+        fontSize: 'clamp(9rem, 22vw, 22rem)',
+        fontWeight: 650,
         lineHeight: 0.9,
-        letterSpacing: '-0.02em',
+        letterSpacing: '0.01em',
         background:
           'linear-gradient(135deg, #2d1550 0%, #4a2571 30%, #6b4598 60%, #8b7fb8 100%)',
         WebkitBackgroundClip: 'text',
