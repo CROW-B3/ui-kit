@@ -20,6 +20,7 @@ export function HeroText() {
         WebkitTextFillColor: 'transparent',
         textAlign: 'center',
         margin: 0,
+        marginTop: '-5vh',
         padding: 0,
         fontFamily:
           '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica", "Arial", sans-serif',
