@@ -52,7 +52,7 @@ export function AnimatedBackground() {
           top: '60%',
           left: '100%',
           transform: 'translate(-50%, -50%)',
-          width: '400px',
+          width: '500px',
           height: '400px',
           borderRadius: '50%',
           background: 'radial-gradient(circle, #ffffffaa 0%, transparent 60%)',
