@@ -1,7 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
-
 export function AnimatedBackground() {
   return (
     <div
@@ -28,10 +26,7 @@ export function AnimatedBackground() {
       />
 
       {/* Purple circle with 50% opacity */}
-      <motion.div
-        animate={{
-          opacity: [0.5, 0.5],
-        }}
+      <div
         style={{
           position: 'absolute',
           top: '60%',
@@ -47,7 +42,7 @@ export function AnimatedBackground() {
       />
 
       {/* White circle */}
-      <motion.div
+      <div
         style={{
           position: 'absolute',
           top: '60%',
