@@ -37,11 +37,12 @@ export function AnimatedBackground() {
           top: '60%',
           left: '100%',
           transform: 'translate(-50%, -50%)',
-          width: '1500px',
-          height: '800px',
+          width: '1700px',
+          height: '900px',
           borderRadius: '50%',
           background: 'radial-gradient(circle, #854ED2 0%, transparent 70%)',
           opacity: 0.5,
+          filter: 'blur(40px)',
         }}
       />
 
@@ -55,7 +56,9 @@ export function AnimatedBackground() {
           width: '500px',
           height: '400px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, #ffffffaa 0%, transparent 60%)',
+          background:
+            'radial-gradient(circle, #ffffffbd 0%, #e0c8ffbe 40%, transparent 65%)',
+          filter: 'blur(80px)',
         }}
       />
     </div>
