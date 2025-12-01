@@ -26,7 +26,7 @@ export function Subtitle() {
         zIndex: 10,
       }}
     >
-      We are thrilled to unveil CROW, our most advanced model yet,
+      We are thrilled to unveil CROW, our most advanced product yet,
       <br />
       blending superior reasoning with extensive pretraining knowledge.
     </motion.p>
