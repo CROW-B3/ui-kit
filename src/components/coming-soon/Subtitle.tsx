@@ -1,8 +1,21 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import type { ReactNode } from 'react';
 
-export function Subtitle() {
+interface SubtitleProps {
+  children?: ReactNode;
+}
+
+export function Subtitle({
+  children = (
+    <>
+      We are thrilled to unveil CROW, our most advanced product yet,
+      <br />
+      blending superior reasoning with extensive pretraining knowledge.
+    </>
+  ),
+}: SubtitleProps) {
   return (
     <motion.p
       initial={{ opacity: 0 }}
@@ -26,9 +39,7 @@ export function Subtitle() {
         zIndex: 10,
       }}
     >
-      We are thrilled to unveil CROW, our most advanced product yet,
-      <br />
-      blending superior reasoning with extensive pretraining knowledge.
+      {children}
     </motion.p>
   );
 }
