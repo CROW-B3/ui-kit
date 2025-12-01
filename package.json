@@ -1,15 +1,14 @@
 {
-  "name": "@b3-crow/ui-kit",
-  "version": "0.0.17",
-  "description": "CROW-B3 UI Kit",
+  "name": "@b3-crow/npm-sdk-template",
+  "version": "0.0.2",
+  "description": "A ready-to-go TypeScript/JavaScript SDK package starter, with linting, testing, build & publish workflows included.",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "build:watch": "tsc --watch",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
-    "format": "pnpm exec prettier src/ --write",
+    "format": "bun run prettier src/ --write",
     "prepare": "husky install",
     "lint-staged": "lint-staged"
   },
@@ -22,20 +21,17 @@
   },
   "author": "CROW By B3",
   "license": "MIT",
-  "packageManager": "pnpm@10.20.0",
+  "packageManager": "bun@1.1.0",
   "devDependencies": {
     "@antfu/eslint-config": "^6.2.0",
     "@commitlint/config-conventional": "^20.0.0",
-    "@tailwindcss/postcss": "^4.1.17",
-    "@types/react": "^19.2.5",
-    "@types/react-dom": "^19.2.3",
-    "autoprefixer": "^10.4.22",
+    "@eslint-react/eslint-plugin": "^2.3.7",
     "commitlint": "^20.1.0",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.6",
-    "postcss": "^8.5.6",
+    "lint-staged": "^16.2.7",
     "prettier": "^3.6.2",
-    "tailwindcss": "^4.1.17",
     "typescript": "^5.9.3"
   },
   "lint-staged": {
@@ -46,15 +42,5 @@
     "*.{json,md,css,scss,html,yml,yaml}": [
       "prettier --write"
     ]
-  },
-  "peerDependencies": {
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
-  },
-  "dependencies": {
-    "@radix-ui/react-slot": "^1.2.4",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "tailwind-merge": "^3.4.0"
   }
 }
