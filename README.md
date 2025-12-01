@@ -5,9 +5,7 @@ A React component library built with Framer Motion for smooth animations.
 
 ## Preview
 
-<!-- TODO: Add screenshot here -->
-
-![Coming Soon Page](./docs/screenshot.png)
+![Coming Soon Page](./docs/screenshot.svg)
 
 ## Installation
 
