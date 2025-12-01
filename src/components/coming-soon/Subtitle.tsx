@@ -23,11 +23,11 @@ export function Subtitle({
       transition={{ duration: 1, delay: 0.6, ease: 'easeOut' }}
       style={{
         position: 'fixed',
-        bottom: '2vh',
+        bottom: '1.5vh',
         left: '50%',
         transform: 'translateX(-50%)',
         fontSize: 'clamp(0.75rem, 1vw, 0.95rem)',
-        lineHeight: 1.6,
+        lineHeight: 1.4,
         color: 'rgba(255, 255, 255, 0.52)',
         textAlign: 'center',
         maxWidth: '50rem',
