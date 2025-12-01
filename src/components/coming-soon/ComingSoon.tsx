@@ -3,18 +3,21 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
+const FULL_TEXT = 'COMING SOON';
+
 export function ComingSoon() {
   const [displayedText, setDisplayedText] = useState('');
-  const fullText = 'COMING SOON';
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showCursor, setShowCursor] = useState(true);
 
   useEffect(() => {
-    if (currentIndex < fullText.length) {
+    if (currentIndex < FULL_TEXT.length) {
+      // Delay typing until after fade-in completes (1.5s delay + 1s duration = 2.5s)
+      const delay = currentIndex === 0 ? 2500 : 150;
       const timeout = setTimeout(() => {
-        setDisplayedText(prev => prev + fullText[currentIndex]);
+        setDisplayedText(prev => prev + FULL_TEXT[currentIndex]);
         setCurrentIndex(prev => prev + 1);
-      }, 150);
+      }, delay);
       return () => clearTimeout(timeout);
     }
   }, [currentIndex]);
@@ -55,7 +58,6 @@ export function ComingSoon() {
           opacity: showCursor ? 1 : 0,
           color: '#8b7fb8',
           marginLeft: '2px',
-          animation: 'blink 1s step-end infinite',
         }}
       >
         _
