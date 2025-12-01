@@ -1,2 +1,2 @@
-// UI Kit - Coming Soon Components
+// Coming Soon Components
 export * from './components/coming-soon';
