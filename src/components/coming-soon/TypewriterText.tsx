@@ -3,11 +3,11 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-interface ComingSoonProps {
+interface TypewriterTextProps {
   text?: string;
 }
 
-export function ComingSoon({ text = 'COMING SOON' }: ComingSoonProps) {
+export function TypewriterText({ text = 'COMING SOON' }: TypewriterTextProps) {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showCursor, setShowCursor] = useState(true);
