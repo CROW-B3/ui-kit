@@ -2,7 +2,12 @@
 
 import { motion } from 'framer-motion';
 
-export function Logo() {
+interface LogoProps {
+  src?: string;
+  alt?: string;
+}
+
+export function Logo({ src = '/favicon.webp', alt = 'CROW Logo' }: LogoProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}
@@ -11,8 +16,8 @@ export function Logo() {
       className="fixed left-8 top-8 z-50"
     >
       <img
-        src="/favicon.webp"
-        alt="CROW Logo"
+        src={src}
+        alt={alt}
         width={80}
         height={80}
         className="h-16 w-16 object-contain sm:h-20 sm:w-20"

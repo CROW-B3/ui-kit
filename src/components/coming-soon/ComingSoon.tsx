@@ -3,24 +3,26 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-const FULL_TEXT = 'COMING SOON';
+interface ComingSoonProps {
+  text?: string;
+}
 
-export function ComingSoon() {
+export function ComingSoon({ text = 'COMING SOON' }: ComingSoonProps) {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showCursor, setShowCursor] = useState(true);
 
   useEffect(() => {
-    if (currentIndex < FULL_TEXT.length) {
+    if (currentIndex < text.length) {
       // Delay typing until after fade-in completes (1.5s delay + 1s duration = 2.5s)
       const delay = currentIndex === 0 ? 2500 : 150;
       const timeout = setTimeout(() => {
-        setDisplayedText(prev => prev + FULL_TEXT[currentIndex]);
+        setDisplayedText(prev => prev + text[currentIndex]);
         setCurrentIndex(prev => prev + 1);
       }, delay);
       return () => clearTimeout(timeout);
     }
-  }, [currentIndex]);
+  }, [currentIndex, text]);
 
   useEffect(() => {
     const cursorInterval = setInterval(() => {
