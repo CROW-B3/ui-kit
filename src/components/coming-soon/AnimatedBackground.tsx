@@ -1,6 +1,20 @@
 'use client';
 
-export function AnimatedBackground() {
+interface AnimatedBackgroundProps {
+  backgroundColor?: string;
+  primaryGlowColor?: string;
+  secondaryGlowColor?: string;
+  tertiaryGlowColor?: string;
+  primaryGlowOpacity?: number;
+}
+
+export function AnimatedBackground({
+  backgroundColor = '#000000',
+  primaryGlowColor = '#854ED2',
+  secondaryGlowColor = '#ffffffbd',
+  tertiaryGlowColor = '#e0c8ffbe',
+  primaryGlowOpacity = 0.5,
+}: AnimatedBackgroundProps) {
   return (
     <div
       style={{
@@ -20,7 +34,7 @@ export function AnimatedBackground() {
           left: 0,
           right: 0,
           bottom: 0,
-          background: '#000000',
+          background: backgroundColor,
         }}
       />
 
@@ -33,8 +47,8 @@ export function AnimatedBackground() {
           width: '1700px',
           height: '900px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, #854ED2 0%, transparent 70%)',
-          opacity: 0.5,
+          background: `radial-gradient(circle, ${primaryGlowColor} 0%, transparent 70%)`,
+          opacity: primaryGlowOpacity,
           filter: 'blur(40px)',
         }}
       />
@@ -48,8 +62,7 @@ export function AnimatedBackground() {
           width: '500px',
           height: '400px',
           borderRadius: '50%',
-          background:
-            'radial-gradient(circle, #ffffffbd 0%, #e0c8ffbe 40%, transparent 65%)',
+          background: `radial-gradient(circle, ${secondaryGlowColor} 0%, ${tertiaryGlowColor} 40%, transparent 65%)`,
           filter: 'blur(80px)',
         }}
       />
