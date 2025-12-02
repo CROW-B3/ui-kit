@@ -13,7 +13,6 @@ export function AnimatedBackground() {
         overflow: 'hidden',
       }}
     >
-      {/* Base black background */}
       <div
         style={{
           position: 'absolute',
@@ -25,7 +24,6 @@ export function AnimatedBackground() {
         }}
       />
 
-      {/* Purple circle with 50% opacity */}
       <div
         style={{
           position: 'absolute',
@@ -41,7 +39,6 @@ export function AnimatedBackground() {
         }}
       />
 
-      {/* White circle */}
       <div
         style={{
           position: 'absolute',
