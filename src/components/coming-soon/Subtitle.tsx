@@ -37,7 +37,7 @@ export function Subtitle({
         zIndex: 10,
       }}
     >
-      {children || (
+      {children ?? (
         <>
           {primaryText}
           <br />
