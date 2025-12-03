@@ -46,7 +46,7 @@ function App() {
   return (
     <div>
       <AnimatedBackground />
-      <Logo />
+      <Logo src="/your-logo.png" alt="Your Logo" />
       <HeroText />
       <ComingSoon />
       <Subtitle />
@@ -59,7 +59,7 @@ function App() {
 
 - **AnimatedBackground**: Animated gradient background with blurred circles
 - **HeroText**: Large gradient text with fade-in animation
-- **Logo**: Animated logo component with breathing effect
+- **Logo**: Animated logo component with breathing effect (requires `src` and `alt` props)
 - **ComingSoon**: Typewriter effect text with blinking cursor
 - **Subtitle**: Subtitle text with fade-in animation
 
