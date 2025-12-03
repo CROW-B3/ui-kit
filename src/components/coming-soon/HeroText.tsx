@@ -2,7 +2,15 @@
 
 import { motion } from 'framer-motion';
 
-export function HeroText() {
+interface HeroTextProps {
+  text: string;
+  gradient?: string;
+}
+
+export function HeroText({
+  text,
+  gradient = 'linear-gradient(70deg, #1B0637 0%, #210E3C 10%, #24113F 20%, #2E1A4B 35%, #3A2559 45%, #563F77 65%, #604882 80%, #765F97 100%)',
+}: HeroTextProps) {
   return (
     <motion.h1
       initial={{ opacity: 0, y: 40 }}
@@ -13,8 +21,7 @@ export function HeroText() {
         fontWeight: 650,
         lineHeight: 0.9,
         letterSpacing: '0.01em',
-        background:
-          'linear-gradient(70deg, #1B0637 0%, #210E3C 10%, #24113F 20%, #2E1A4B 35%, #3A2559 45%, #563F77 65%, #604882 80%, #765F97 100%)',
+        background: gradient,
         WebkitBackgroundClip: 'text',
         backgroundClip: 'text',
         WebkitTextFillColor: 'transparent',
@@ -27,7 +34,7 @@ export function HeroText() {
         filter: 'drop-shadow(0 0 80px rgba(87, 84, 96, 0.3))',
       }}
     >
-      CROW
+      {text}
     </motion.h1>
   );
 }

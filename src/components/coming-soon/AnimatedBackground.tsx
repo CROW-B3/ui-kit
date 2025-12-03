@@ -41,7 +41,7 @@ export function AnimatedBackground({
       <div
         style={{
           position: 'absolute',
-          top: '60%',
+          top: '50%',
           left: '100%',
           transform: 'translate(-50%, -50%)',
           width: '1700px',
@@ -56,7 +56,7 @@ export function AnimatedBackground({
       <div
         style={{
           position: 'absolute',
-          top: '60%',
+          top: '50%',
           left: '100%',
           transform: 'translate(-50%, -50%)',
           width: '500px',

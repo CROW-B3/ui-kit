@@ -38,7 +38,7 @@ import {
   AnimatedBackground,
   HeroText,
   Logo,
-  ComingSoon,
+  TypewriterText,
   Subtitle,
 } from '@b3-crow/ui-kit';
 
@@ -47,9 +47,13 @@ function App() {
     <div>
       <AnimatedBackground />
       <Logo src="/your-logo.png" alt="Your Logo" />
-      <HeroText />
-      <ComingSoon />
-      <Subtitle />
+      <HeroText text="Your Brand" />
+      <TypewriterText text="COMING SOON" />
+      <Subtitle>
+        Your subtitle text here
+        <br />
+        Can be multi-line with custom formatting
+      </Subtitle>
     </div>
   );
 }
@@ -58,10 +62,10 @@ function App() {
 ### Available Components
 
 - **AnimatedBackground**: Animated gradient background with blurred circles
-- **HeroText**: Large gradient text with fade-in animation
+- **HeroText**: Large gradient text with fade-in animation (requires `text` prop, optional `gradient` prop)
 - **Logo**: Animated logo component with breathing effect (requires `src` and `alt` props)
-- **ComingSoon**: Typewriter effect text with blinking cursor
-- **Subtitle**: Subtitle text with fade-in animation
+- **TypewriterText**: Typewriter effect text with blinking cursor (requires `text` prop)
+- **Subtitle**: Subtitle text with fade-in animation (requires `children` for custom JSX content)
 
 ## Development
 

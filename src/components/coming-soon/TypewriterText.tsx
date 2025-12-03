@@ -4,17 +4,16 @@ import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
 interface TypewriterTextProps {
-  text?: string;
+  text: string;
 }
 
-export function TypewriterText({ text = 'COMING SOON' }: TypewriterTextProps) {
+export function TypewriterText({ text }: TypewriterTextProps) {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showCursor, setShowCursor] = useState(true);
 
   useEffect(() => {
     if (currentIndex < text.length) {
-      // Delay typing until after fade-in completes (1.5s delay + 1s duration = 2.5s)
       const delay = currentIndex === 0 ? 2500 : 150;
       const timeout = setTimeout(() => {
         setDisplayedText(prev => prev + text[currentIndex]);
