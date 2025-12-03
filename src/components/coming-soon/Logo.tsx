@@ -3,11 +3,11 @@
 import { motion } from 'framer-motion';
 
 interface LogoProps {
-  src?: string;
-  alt?: string;
+  src: string;
+  alt: string;
 }
 
-export function Logo({ src = '/favicon.webp', alt = 'CROW Logo' }: LogoProps) {
+export function Logo({ src, alt }: LogoProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: -20 }}
