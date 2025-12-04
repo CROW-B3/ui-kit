@@ -10,7 +10,7 @@ A React component library built with Framer Motion for smooth animations.
 ## Installation
 
 ```bash
-pnpm add @b3-crow/ui-kit
+bun add @b3-crow/ui-kit
 ```
 
 ## Local Development
@@ -24,7 +24,7 @@ pnpm add @b3-crow/ui-kit
 ### 1. Install Peer Dependencies
 
 ```bash
-pnpm add react react-dom framer-motion
+bun add react react-dom framer-motion
 ```
 
 ## Usage
@@ -71,16 +71,16 @@ function App() {
 
 ```bash
 # Install dependencies
-pnpm install
+bun install
 
 # Build the library
-pnpm run build
+bun run build
 
 # Lint
-pnpm run lint
+bun run lint
 
 # Format
-pnpm run format
+bun run format
 ```
 
 ## License
