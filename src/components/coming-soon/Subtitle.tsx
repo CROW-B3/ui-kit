@@ -4,16 +4,10 @@ import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
 
 interface SubtitleProps {
-  primaryText?: string;
-  secondaryText?: string;
-  children?: ReactNode;
+  children: ReactNode;
 }
 
-export function Subtitle({
-  primaryText = 'We are thrilled to unveil CROW, our most advanced model yet,',
-  secondaryText = 'blending superior reasoning with extensive pretraining knowledge.',
-  children,
-}: SubtitleProps) {
+export function Subtitle({ children }: SubtitleProps) {
   return (
     <motion.p
       initial={{ opacity: 0 }}
@@ -37,13 +31,7 @@ export function Subtitle({
         zIndex: 10,
       }}
     >
-      {children ?? (
-        <>
-          {primaryText}
-          <br />
-          {secondaryText}
-        </>
-      )}
+      {children}
     </motion.p>
   );
 }

@@ -1,26 +1,41 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface TypewriterTextProps {
-  text?: string;
+  text: string;
 }
 
-export function TypewriterText({ text = 'COMING SOON' }: TypewriterTextProps) {
+export function TypewriterText({ text }: TypewriterTextProps) {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showCursor, setShowCursor] = useState(true);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Reset typewriter when text prop changes
+  useEffect(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    setDisplayedText('');
+    setCurrentIndex(0);
+  }, [text]);
 
   useEffect(() => {
     if (currentIndex < text.length) {
-      // Delay typing until after fade-in completes (1.5s delay + 1s duration = 2.5s)
       const delay = currentIndex === 0 ? 2500 : 150;
-      const timeout = setTimeout(() => {
+      timeoutRef.current = setTimeout(() => {
         setDisplayedText(prev => prev + text[currentIndex]);
         setCurrentIndex(prev => prev + 1);
       }, delay);
-      return () => clearTimeout(timeout);
+      return () => {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+      };
     }
   }, [currentIndex, text]);
 
@@ -33,6 +48,10 @@ export function TypewriterText({ text = 'COMING SOON' }: TypewriterTextProps) {
 
   return (
     <motion.div
+      role="status"
+      aria-live="polite"
+      aria-atomic="true"
+      aria-label="Status message"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1, delay: 1.5 }}
@@ -56,6 +75,7 @@ export function TypewriterText({ text = 'COMING SOON' }: TypewriterTextProps) {
         {displayedText}
       </span>
       <span
+        aria-hidden="true"
         style={{
           opacity: showCursor ? 1 : 0,
           color: '#8b7fb8',
