@@ -5,7 +5,7 @@ A React component library built with Framer Motion for smooth animations.
 
 ## Preview
 
-![Coming Soon Page](./docs/screenshot.svg)
+![Coming Soon Page](https://raw.githubusercontent.com/CROW-B3/ui-kit/main/docs/screenshot.svg)
 
 ## Installation
 

@@ -6,10 +6,12 @@ src/
 
 # Config files
 tsconfig.json
-.eslintrc*
+eslint.config.*
 .prettierrc*
-tailwind.config.*
 postcss.config.*
+commitlint.config.*
+lint-staged
+bun.lock
 
 # Git
 .git/
