@@ -1,7 +1,11 @@
 # CROW-B3 UI Kit
 
 CROW-B3 UI Kit is a set of UI components for CROW-B3 projects.
-A React component library built with shadcn/ui and Tailwind CSS v4.
+A React component library built with Framer Motion for smooth animations.
+
+## Preview
+
+![Coming Soon Page](./docs/screenshot.svg)
 
 ## Installation
 
@@ -20,44 +24,36 @@ pnpm add @b3-crow/ui-kit
 ### 1. Install Peer Dependencies
 
 ```bash
-pnpm add react react-dom
-pnpm add -D tailwindcss @tailwindcss/postcss postcss
-```
-
-### 2. Configure PostCSS
-
-Create or update `postcss.config.mjs`:
-
-```js
-export default {
-  plugins: {
-    '@tailwindcss/postcss': {},
-  },
-};
-```
-
-### 3. Import Styles
-
-Import the global styles in your app:
-
-```tsx
-import '@b3-crow/ui-kit/dist/styles/globals.css';
+pnpm add react react-dom framer-motion
 ```
 
 ## Usage
 
-### Button Component
+### Coming Soon Components
+
+The UI kit includes a complete Coming Soon page with animated components:
 
 ```tsx
-import { Button } from '@b3-crow/ui-kit';
+import {
+  AnimatedBackground,
+  HeroText,
+  Logo,
+  TypewriterText,
+  Subtitle,
+} from '@b3-crow/ui-kit';
 
 function App() {
   return (
     <div>
-      <Button>Click me</Button>
-      <Button variant="outline">Outline</Button>
-      <Button variant="destructive">Delete</Button>
-      <Button size="lg">Large</Button>
+      <AnimatedBackground />
+      <Logo src="/your-logo.png" alt="Your Logo" />
+      <HeroText text="Your Brand" />
+      <TypewriterText text="COMING SOON" />
+      <Subtitle>
+        Your subtitle text here
+        <br />
+        Can be multi-line with custom formatting
+      </Subtitle>
     </div>
   );
 }
@@ -65,17 +61,11 @@ function App() {
 
 ### Available Components
 
-- **Button**: Fully customizable button component with multiple variants and sizes
-
-### Utilities
-
-- **cn**: Utility function for merging Tailwind classes
-
-```tsx
-import { cn } from '@b3-crow/ui-kit';
-
-const className = cn('px-4 py-2', 'bg-blue-500', { 'text-white': true });
-```
+- **AnimatedBackground**: Animated gradient background with blurred circles
+- **HeroText**: Large gradient text with fade-in animation (requires `text` prop, optional `gradient` prop)
+- **Logo**: Animated logo component with breathing effect (requires `src` and `alt` props)
+- **TypewriterText**: Typewriter effect text with blinking cursor (requires `text` prop)
+- **Subtitle**: Subtitle text with fade-in animation (requires `children` for custom JSX content)
 
 ## Development
 
