@@ -1,5 +1,2 @@
-// Export components
-export * from './components/ui';
-
-// Export utilities
-export * from './lib';
+// Coming Soon Components
+export * from './components/coming-soon';
