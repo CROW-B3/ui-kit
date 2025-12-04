@@ -59,6 +59,8 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+      - name: Pull latest version changes
+        run: git pull origin ${{ github.ref_name }}
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
