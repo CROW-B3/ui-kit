@@ -1,6 +1,6 @@
 {
   "name": "@b3-crow/ui-kit",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "CROW-B3 UI Kit",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
