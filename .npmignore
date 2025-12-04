@@ -1,0 +1,41 @@
+# Include dist in npm package (override .gitignore)
+# Only ignore development files
+
+# Source files (users only need compiled dist)
+src/
+
+# Config files
+tsconfig.json
+.eslintrc*
+.prettierrc*
+tailwind.config.*
+postcss.config.*
+
+# Git
+.git/
+.gitignore
+
+# CI/CD
+.github/
+
+# Husky
+.husky/
+
+# IDE
+.vscode/
+.idea/
+
+# Dependencies
+node_modules/
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Misc
+.DS_Store
+*.tsbuildinfo
