@@ -30,7 +30,7 @@
   },
   "author": "CROW By B3",
   "license": "MIT",
-  "packageManager": "bun@1.1.0",
+  "packageManager": "bun@^1.2.0",
   "devDependencies": {
     "@antfu/eslint-config": "^6.2.0",
     "@commitlint/config-conventional": "^20.0.0",
