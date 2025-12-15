@@ -1,6 +1,6 @@
 'use client';
 
-interface AnimatedBackgroundProps {
+export interface AnimatedBackgroundProps {
   backgroundColor?: string;
   primaryGlowColor?: string;
   secondaryGlowColor?: string;
