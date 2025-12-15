@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 
-interface LogoProps {
+export interface LogoProps {
   src: string;
   alt: string;
 }

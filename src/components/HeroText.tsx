@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 
-interface HeroTextProps {
+export interface HeroTextProps {
   text: string;
   gradient?: string;
 }
