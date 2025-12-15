@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import type { ReactNode } from 'react';
 
-interface SubtitleProps {
+export interface SubtitleProps {
   children: ReactNode;
 }
 

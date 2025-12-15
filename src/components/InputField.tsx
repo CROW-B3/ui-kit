@@ -2,8 +2,60 @@
 
 import { LuArrowUpRight } from 'react-icons/lu';
 import { useState } from 'react';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '../lib/utils';
 
-export interface InputFieldProps {
+const inputVariants = cva(
+  'w-full rounded-full text-white placeholder:text-white/50 focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
+  {
+    variants: {
+      variant: {
+        transparent:
+          'bg-transparent border border-white/20 focus:border-white/40',
+        filled: 'bg-white/5 border border-white/10 focus:border-white/30',
+      },
+      size: {
+        sm: 'px-4 py-2 text-xs',
+        md: 'px-6 py-4 text-sm',
+        lg: 'px-8 py-5 text-base',
+      },
+      buttonPosition: {
+        left: 'pl-14',
+        right: 'pr-14',
+        none: '',
+      },
+    },
+    defaultVariants: {
+      variant: 'transparent',
+      size: 'md',
+      buttonPosition: 'none',
+    },
+  }
+);
+
+const buttonVariants = cva(
+  'absolute top-1/2 -translate-y-1/2 bg-purple-600 hover:bg-purple-700 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
+  {
+    variants: {
+      size: {
+        sm: 'p-1.5',
+        md: 'p-2.5',
+        lg: 'p-3',
+      },
+      position: {
+        left: 'left-2',
+        right: 'right-2',
+      },
+    },
+    defaultVariants: {
+      size: 'md',
+      position: 'right',
+    },
+  }
+);
+
+export interface InputFieldProps
+  extends Omit<VariantProps<typeof inputVariants>, 'buttonPosition'> {
   placeholder?: string;
   onSubmit?: (value: string) => void;
   onChange?: (value: string) => void;
@@ -12,8 +64,6 @@ export interface InputFieldProps {
   showButton?: boolean;
   buttonIcon?: React.ReactNode;
   buttonPosition?: 'left' | 'right';
-  variant?: 'transparent' | 'filled';
-  size?: 'sm' | 'md' | 'lg';
   className?: string;
   inputClassName?: string;
   buttonClassName?: string;
@@ -63,39 +113,9 @@ export function InputField({
     }
   };
 
-  // Size variants
-  const sizeClasses = {
-    sm: 'px-4 py-2 text-xs',
-    md: 'px-6 py-4 text-sm',
-    lg: 'px-8 py-5 text-base',
-  };
-
-  const buttonSizeClasses = {
-    sm: 'p-1.5',
-    md: 'p-2.5',
-    lg: 'p-3',
-  };
-
-  const buttonPositionClasses = {
-    left: 'left-2',
-    right: 'right-2',
-  };
-
-  const paddingClasses = showButton
-    ? buttonPosition === 'right'
-      ? 'pr-14'
-      : 'pl-14'
-    : '';
-
-  // Variant styles
-  const variantClasses =
-    variant === 'transparent'
-      ? 'bg-transparent border border-white/20 focus:border-white/40'
-      : 'bg-white/5 border border-white/10 focus:border-white/30';
-
   return (
     <div
-      className={`relative w-full max-w-md ${containerClassName} ${className}`}
+      className={cn('relative w-full max-w-md', containerClassName, className)}
     >
       <input
         type={type}
@@ -104,13 +124,23 @@ export function InputField({
         onChange={handleChange}
         onKeyPress={handleKeyPress}
         disabled={disabled}
-        className={`w-full ${sizeClasses[size]} ${paddingClasses} ${variantClasses} rounded-full text-white placeholder:text-white/50 focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${inputClassName}`}
+        className={cn(
+          inputVariants({
+            variant,
+            size,
+            buttonPosition: showButton ? buttonPosition : 'none',
+          }),
+          inputClassName
+        )}
       />
       {showButton && (
         <button
           onClick={handleSubmit}
           disabled={disabled}
-          className={`absolute ${buttonPositionClasses[buttonPosition]} top-1/2 -translate-y-1/2 ${buttonSizeClasses[size]} bg-purple-600 hover:bg-purple-700 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${buttonClassName}`}
+          className={cn(
+            buttonVariants({ size, position: buttonPosition }),
+            buttonClassName
+          )}
         >
           {buttonIcon}
         </button>

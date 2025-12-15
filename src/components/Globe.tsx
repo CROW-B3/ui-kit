@@ -7,13 +7,13 @@ import { HiOutlineShare } from 'react-icons/hi';
 import { BsGlobe2 } from 'react-icons/bs';
 import { BiCctv } from 'react-icons/bi';
 
-interface GlobePoint {
+export interface GlobePoint {
   label: string;
   icon: React.ReactNode;
   position: { x: number; y: number };
 }
 
-interface GlobeProps {
+export interface GlobeProps {
   points?: GlobePoint[];
   size?: number;
 }

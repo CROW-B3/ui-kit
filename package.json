@@ -9,11 +9,13 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    }
+    },
+    "./styles.css": "./dist/styles.css"
   },
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && bun run build:css",
+    "build:css": "bunx @tailwindcss/cli -i src/styles.css -o dist/styles.css --minify",
     "build:watch": "tsc --watch",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
