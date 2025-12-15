@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 
-interface TypewriterTextProps {
+export interface TypewriterTextProps {
   text: string;
 }
 
