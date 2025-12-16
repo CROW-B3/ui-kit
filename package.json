@@ -15,7 +15,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc && bun run build:css",
-    "build:css": "bunx @tailwindcss/cli -i src/styles.css -o dist/styles.css --minify",
+    "build:css": "tailwindcss -i src/styles.css -o dist/styles.css --minify",
     "build:watch": "tsc --watch",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
@@ -36,6 +36,7 @@
   "devDependencies": {
     "@antfu/eslint-config": "^6.2.0",
     "@commitlint/config-conventional": "^20.0.0",
+    "@tailwindcss/cli": "4.1.17",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
