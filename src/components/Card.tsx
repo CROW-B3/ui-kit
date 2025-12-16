@@ -5,12 +5,14 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../lib/utils';
 
 const cardVariants = cva(
-  'relative p-8 flex flex-col h-full bg-black/40 backdrop-blur-sm group border-r border-white/10',
+  'relative p-8 flex flex-col h-full bg-black/40 backdrop-blur-sm group border-white/10',
   {
     variants: {
       border: {
-        first: 'border-l',
-        none: 'border-r-0',
+        first: 'border-l border-r',
+        middle: 'border-r',
+        last: 'border-r',
+        none: '',
       },
     },
     defaultVariants: {
@@ -79,7 +81,7 @@ export function Card({
   iconClassName = '',
   contentAlign = 'left',
 }: CardProps) {
-  const borderVariant = isFirst ? 'first' : undefined;
+  const borderVariant = isFirst ? 'first' : isLast ? 'last' : 'middle';
 
   return (
     <motion.div
