@@ -102,12 +102,12 @@ export function InputField({
   };
 
   const handleSubmit = () => {
-    if (onSubmit && value) {
+    if (onSubmit && value.trim()) {
       onSubmit(value);
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !disabled) {
       handleSubmit();
     }
@@ -122,7 +122,7 @@ export function InputField({
         placeholder={placeholder}
         value={value}
         onChange={handleChange}
-        onKeyPress={handleKeyPress}
+        onKeyDown={handleKeyDown}
         disabled={disabled}
         className={cn(
           inputVariants({

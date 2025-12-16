@@ -88,7 +88,7 @@ export function Globe({ points, size = 500 }: GlobeProps) {
       {/* Data points with labels - positioned inside the globe */}
       {displayPoints.map((point, index) => (
         <motion.div
-          key={index}
+          key={point.label}
           className="absolute -translate-x-1/2 -translate-y-1/2"
           style={{
             left: `${point.position.x}%`,
