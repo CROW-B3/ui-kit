@@ -21,10 +21,19 @@ A modern React component library built with Framer Motion for smooth animations 
 bun add @b3-crow/ui-kit
 ```
 
-### Install Peer Dependencies
+### Install Dependencies
+
+This library requires React 19.2.0 or later. Ensure your application has React installed:
 
 ```bash
-bun add react react-dom framer-motion react-icons cobe
+# If you haven't installed React yet
+bun add react@^19.2.0 react-dom@^19.2.0
+```
+
+Then install the UI kit's dependencies:
+
+```bash
+bun add framer-motion react-icons cobe
 ```
 
 ### Basic Usage
