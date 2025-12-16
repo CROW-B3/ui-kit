@@ -15,7 +15,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc && bun run build:css",
-    "build:css": "bunx @tailwindcss/cli -i src/styles.css -o dist/styles.css --minify",
+    "build:css": "bunx @tailwindcss/cli src/styles.css -o dist/styles.css --minify",
     "build:watch": "tsc --watch",
     "lint": "eslint src/",
     "lint:fix": "eslint src/ --fix",
