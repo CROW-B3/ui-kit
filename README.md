@@ -1,71 +1,118 @@
 # CROW-B3 UI Kit
 
-CROW-B3 UI Kit is a set of UI components for CROW-B3 projects.
-A React component library built with Framer Motion for smooth animations.
-
-## Preview
+A modern React component library built with Framer Motion for smooth animations and designed for dark-themed web applications.
 
 ![Coming Soon Page](https://raw.githubusercontent.com/CROW-B3/ui-kit/main/docs/screenshot.svg)
 
-## Installation
+## Features
+
+- 🎨 Beautiful animated components for hero sections and landing pages
+- 🌙 Designed for dark themes with elegant gradients
+- ⚡ Built with performance in mind using Framer Motion
+- 📦 TypeScript support with full type definitions
+- 🎯 Tailwind CSS v4 compatible
+- 🔧 Easy to customize and extend
+
+## Quick Start
+
+### Installation
 
 ```bash
 bun add @b3-crow/ui-kit
 ```
 
-## Local Development
+### Install Dependencies
 
-```json
-"@b3-crow/ui-kit": "file:../ui-kit"
-```
-
-## Setup
-
-### 1. Install Peer Dependencies
+This library requires React 19.2.0 or later. Ensure your application has React installed:
 
 ```bash
-bun add react react-dom framer-motion
+# If you haven't installed React yet
+bun add react@^19.2.0 react-dom@^19.2.0
 ```
 
-## Usage
+Then install the UI kit's dependencies:
 
-### Coming Soon Components
+```bash
+bun add framer-motion react-icons cobe
+```
 
-The UI kit includes a complete Coming Soon page with animated components:
+### Basic Usage
 
 ```tsx
 import {
   AnimatedBackground,
   HeroText,
-  Logo,
   TypewriterText,
   Subtitle,
 } from '@b3-crow/ui-kit';
 
 function App() {
   return (
-    <div>
+    <section
+      style={{
+        position: 'relative',
+        minHeight: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}
+    >
       <AnimatedBackground />
-      <Logo src="/your-logo.png" alt="Your Logo" />
       <HeroText text="Your Brand" />
       <TypewriterText text="COMING SOON" />
-      <Subtitle>
-        Your subtitle text here
-        <br />
-        Can be multi-line with custom formatting
-      </Subtitle>
-    </div>
+      <Subtitle>Building something amazing</Subtitle>
+    </section>
   );
 }
 ```
 
-### Available Components
+## Components
 
-- **AnimatedBackground**: Animated gradient background with blurred circles
-- **HeroText**: Large gradient text with fade-in animation (requires `text` prop, optional `gradient` prop)
-- **Logo**: Animated logo component with breathing effect (requires `src` and `alt` props)
-- **TypewriterText**: Typewriter effect text with blinking cursor (requires `text` prop)
-- **Subtitle**: Subtitle text with fade-in animation (requires `children` for custom JSX content)
+### Hero Components
+
+- **AnimatedBackground** - Animated gradient background
+- **HeroText** - Large gradient text with fade-in
+- **Logo** - Animated logo with breathing effect
+- **TypewriterText** - Typewriter effect with cursor
+- **Subtitle** - Subtitle text with fade-in
+
+### UI Components
+
+- **Button** - Customizable button with variants
+- **Card** - Feature and documentation cards
+- **Globe** - Interactive 3D globe
+- **GradientBackground** - Radial gradient effects
+- **SectionLabel** - Animated section labels
+- **InputField** - Input with submit button
+
+## Documentation
+
+- **[Setup Guide](./docs/setup.md)** - Installation and configuration
+- **[Component Reference](./docs/components.md)** - Complete API documentation
+- **[Usage Examples](./docs/examples.md)** - Code examples and patterns
+- **[Development Guide](./docs/development.md)** - Contributing and building
+
+## Local Development
+
+Link the package for local development:
+
+```json
+{
+  "dependencies": {
+    "@b3-crow/ui-kit": "file:../ui-kit"
+  }
+}
+```
+
+For Next.js projects:
+
+```ts
+// next.config.ts
+export default {
+  transpilePackages: ['@b3-crow/ui-kit'],
+};
+```
 
 ## Development
 
@@ -76,10 +123,11 @@ bun install
 # Build the library
 bun run build
 
-# Lint
-bun run lint
+# Watch mode
+bun run build:watch
 
-# Format
+# Lint and format
+bun run lint
 bun run format
 ```
 
