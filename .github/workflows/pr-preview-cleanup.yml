@@ -1,0 +1,57 @@
+name: Cleanup PR Preview
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  cleanup-preview:
+    runs-on: blacksmith-2vcpu-ubuntu-2404-arm
+    steps:
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Get preview version
+        id: version
+        run: |
+          # Get the base version from npm registry (latest version)
+          latest=$(npm view @b3-crow/ui-kit version)
+          echo "Latest version: $latest"
+
+          # Remove any pre-release suffix to get base version
+          base_version=$(echo "$latest" | sed 's/-.*$//')
+
+          # Construct preview version
+          preview_version="${base_version}-pr${{ github.event.pull_request.number }}"
+          echo "Preview version to delete: $preview_version"
+          echo "version=$preview_version" >> $GITHUB_OUTPUT
+
+      - name: Unpublish preview version
+        run: |
+          echo "Attempting to unpublish @b3-crow/ui-kit@${{ steps.version.outputs.version }}"
+
+          # Try to unpublish, but don't fail if version doesn't exist
+          npm unpublish @b3-crow/ui-kit@${{ steps.version.outputs.version }} || echo "Version already removed or never published"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Cleanup pr-preview tag if needed
+        run: |
+          # Check if there are any other preview versions
+          preview_count=$(npm view @b3-crow/ui-kit versions --json | jq '[.[] | select(contains("-pr"))] | length' || echo "0")
+
+          echo "Remaining preview versions: $preview_count"
+
+          # If no preview versions left, we could remove the tag, but npm handles this automatically
+          # when the last version with a tag is removed
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
