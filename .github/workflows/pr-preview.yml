@@ -1,0 +1,117 @@
+name: Publish PR Preview
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  packages: write
+  pull-requests: write
+
+jobs:
+  publish-preview:
+    runs-on: blacksmith-2vcpu-ubuntu-2404-arm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Create preview version
+        id: preview_version
+        run: |
+          current=$(jq -r '.version' package.json)
+          echo "Current version: $current"
+
+          # Extract base version (remove any pre-release suffix)
+          base_version=$(echo "$current" | sed 's/-.*$//')
+
+          # Create preview version with PR number
+          preview_version="${base_version}-pr${{ github.event.pull_request.number }}"
+          echo "Preview version: $preview_version"
+
+          # Update package.json with preview version
+          jq --arg v "$preview_version" '.version = $v' package.json > package.json.tmp
+          mv package.json.tmp package.json
+
+          echo "version=$preview_version" >> $GITHUB_OUTPUT
+
+      - name: Build
+        run: bun run build
+
+      - name: Publish to npm with preview tag
+        run: bunx npm publish --tag pr-preview --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const version = '${{ steps.preview_version.outputs.version }}';
+            const comment = `## 📦 Preview Package Published
+
+            A preview version of this package has been published to npm!
+
+            **Version:** \`${version}\`
+            **Tag:** \`pr-preview\`
+
+            ### Installation
+            \`\`\`bash
+            npm install @b3-crow/ui-kit@${version}
+            # or
+            bun add @b3-crow/ui-kit@${version}
+            # or
+            yarn add @b3-crow/ui-kit@${version}
+            \`\`\`
+
+            ### Using the preview tag
+            \`\`\`bash
+            npm install @b3-crow/ui-kit@pr-preview
+            \`\`\`
+
+            > **Note:** This preview version won't affect the \`latest\` tag and will be automatically removed from npm when this PR is closed/merged.`;
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('Preview Package Published')
+            );
+
+            // Update or create comment
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }
