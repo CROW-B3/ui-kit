@@ -45,11 +45,18 @@ jobs:
           echo "Current version: $current"
 
           base_version=$(echo "$current" | sed 's/[-+].*$//')
+          pr_number="${{ github.event.pull_request.number }}"
 
-          preview_version="${base_version}-pr${{ github.event.pull_request.number }}"
+          if versions=$(npm view @b3-crow/ui-kit versions --json 2>/dev/null); then
+            count=$(echo "$versions" | jq --arg pr "-pr$pr_number." '[if . == null then [] else (if type == "array" then . else [.] end) end | .[] | select(contains($pr))] | length' 2>/dev/null || echo "0")
+          else
+            count=0
+          fi
+
+          build_number=$((count + 1))
+          preview_version="${base_version}-pr${pr_number}.${build_number}"
           echo "Preview version: $preview_version"
 
-          # Update package.json with preview version
           jq --arg v "$preview_version" '.version = $v' package.json > package.json.tmp
           mv package.json.tmp package.json
 
@@ -59,7 +66,19 @@ jobs:
         run: bun run build
 
       - name: Publish to npm with preview tag
-        run: bunx npm publish --tag pr-preview --no-git-checks
+        run: |
+          if bunx npm publish --tag pr-preview --no-git-checks 2>&1; then
+            echo "Successfully published ${{ steps.preview_version.outputs.version }}"
+          else
+            exit_code=$?
+            if npm view @b3-crow/ui-kit@${{ steps.preview_version.outputs.version }} version &>/dev/null; then
+              echo "Version ${{ steps.preview_version.outputs.version }} already exists - skipping publish"
+              exit 0
+            else
+              echo "Publish failed with exit code $exit_code"
+              exit $exit_code
+            fi
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -75,7 +94,7 @@ jobs:
             **Version:** \`${version}\`
             **Tag:** \`pr-preview\`
 
-            ### Installation
+            ### Install this specific commit
             \`\`\`bash
             npm install @b3-crow/ui-kit@${version}
             # or
@@ -84,12 +103,16 @@ jobs:
             yarn add @b3-crow/ui-kit@${version}
             \`\`\`
 
-            ### Using the preview tag
+            ### Install latest commit from this PR
             \`\`\`bash
             npm install @b3-crow/ui-kit@pr-preview
+            # or
+            bun add @b3-crow/ui-kit@pr-preview
+            # or
+            yarn add @b3-crow/ui-kit@pr-preview
             \`\`\`
 
-            > **Note:** This preview version won't affect the \`latest\` tag. When this PR is closed/merged, the preview will be automatically unpublished (if less than 72 hours old) or deprecated (if older) to mark it as no longer needed.`;
+            > **Note:** Each commit gets a unique preview version. The \`pr-preview\` tag always points to the latest preview. All preview versions for this PR will be automatically cleaned up when the PR is closed.`;
 
             // Find existing comment
             const { data: comments } = await github.rest.issues.listComments({

@@ -20,68 +20,64 @@ jobs:
     # Only run for PRs from the same repository, not forks
     if: github.event.pull_request.head.repo.full_name == github.repository
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
 
-      - name: Get preview version
-        id: version
+      - name: Find preview versions to clean up
+        id: versions
         run: |
-          if [ ! -f "package.json" ]; then
-            echo "package.json not found - skipping cleanup"
-            echo "version=" >> $GITHUB_OUTPUT
-            exit 0
-          fi
+          pr_number="${{ github.event.pull_request.number }}"
+          echo "Finding all preview versions for PR #$pr_number"
 
-          current=$(jq -r '.version' package.json 2>/dev/null)
+          if versions=$(npm view @b3-crow/ui-kit versions --json 2>/dev/null); then
+            preview_versions=$(echo "$versions" | jq -r --arg pr "-pr$pr_number." 'if . == null then [] else (if type == "array" then . else [.] end) end | .[] | select(contains($pr))' 2>/dev/null || echo "")
 
-          if [ -z "$current" ] || [ "$current" = "null" ]; then
-            echo "No version found in package.json - skipping cleanup"
-            echo "version=" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          echo "Current version in package.json: $current"
-
-          base_version=$(echo "$current" | sed 's/[-+].*$//')
-
-          if [ -z "$base_version" ]; then
-            echo "Could not extract base version - skipping cleanup"
-            echo "version=" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          preview_version="${base_version}-pr${{ github.event.pull_request.number }}"
-          echo "Preview version to delete: $preview_version"
-          echo "version=$preview_version" >> $GITHUB_OUTPUT
-
-      - name: Unpublish or deprecate preview version
-        run: |
-          preview_version="${{ steps.version.outputs.version }}"
-
-          if [ -z "$preview_version" ]; then
-            echo "No preview version to clean up - skipping"
-            exit 0
-          fi
-
-          version="@b3-crow/ui-kit@$preview_version"
-          echo "Attempting to unpublish $version"
-
-          if npm unpublish "$version" 2>/dev/null; then
-            echo "Successfully unpublished $version"
-          else
-            echo "Unpublish failed - attempting to deprecate instead"
-            if npm deprecate "$version" "This PR preview version is no longer needed and should not be used." 2>/dev/null; then
-              echo "Successfully deprecated $version"
+            if [ -z "$preview_versions" ]; then
+              echo "No preview versions found for PR #$pr_number"
+              echo "versions=" >> $GITHUB_OUTPUT
             else
-              echo "Version may not exist or was already removed"
+              echo "Found preview versions:"
+              echo "$preview_versions"
+              echo "versions<<EOF" >> $GITHUB_OUTPUT
+              echo "$preview_versions" >> $GITHUB_OUTPUT
+              echo "EOF" >> $GITHUB_OUTPUT
             fi
+          else
+            echo "Could not fetch package versions from npm"
+            echo "versions=" >> $GITHUB_OUTPUT
           fi
+
+      - name: Unpublish or deprecate preview versions
+        run: |
+          preview_versions="${{ steps.versions.outputs.versions }}"
+
+          if [ -z "$preview_versions" ]; then
+            echo "No preview versions to clean up"
+            exit 0
+          fi
+
+          echo "$preview_versions" | while IFS= read -r preview_version; do
+            if [ -z "$preview_version" ]; then
+              continue
+            fi
+
+            version="@b3-crow/ui-kit@$preview_version"
+            echo "Attempting to unpublish $version"
+
+            if npm unpublish "$version" 2>/dev/null; then
+              echo "Successfully unpublished $version"
+            else
+              echo "Unpublish failed - attempting to deprecate instead"
+              if npm deprecate "$version" "This PR preview version is no longer needed and should not be used." 2>/dev/null; then
+                echo "Successfully deprecated $version"
+              else
+                echo "Version may not exist or was already removed"
+              fi
+            fi
+          done
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
