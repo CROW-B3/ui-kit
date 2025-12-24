@@ -6,6 +6,10 @@ on:
       - main
     types: [opened, synchronize, reopened]
 
+concurrency:
+  group: pr-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   packages: write
@@ -14,6 +18,8 @@ permissions:
 jobs:
   publish-preview:
     runs-on: blacksmith-2vcpu-ubuntu-2404-arm
+    # Only run for PRs from the same repository, not forks
+    if: github.event.pull_request.head.repo.full_name == github.repository
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -38,10 +44,8 @@ jobs:
           current=$(jq -r '.version' package.json)
           echo "Current version: $current"
 
-          # Extract base version (remove any pre-release suffix)
-          base_version=$(echo "$current" | sed 's/-.*$//')
+          base_version=$(echo "$current" | sed 's/[-+].*$//')
 
-          # Create preview version with PR number
           preview_version="${base_version}-pr${{ github.event.pull_request.number }}"
           echo "Preview version: $preview_version"
 
@@ -85,7 +89,7 @@ jobs:
             npm install @b3-crow/ui-kit@pr-preview
             \`\`\`
 
-            > **Note:** This preview version won't affect the \`latest\` tag and will be automatically removed from npm when this PR is closed/merged.`;
+            > **Note:** This preview version won't affect the \`latest\` tag. When this PR is closed/merged, the preview will be automatically unpublished (if less than 72 hours old) or deprecated (if older) to mark it as no longer needed.`;
 
             // Find existing comment
             const { data: comments } = await github.rest.issues.listComments({
@@ -94,10 +98,12 @@ jobs:
               issue_number: context.issue.number,
             });
 
-            const botComment = comments.find(comment =>
-              comment.user.type === 'Bot' &&
-              comment.body.includes('Preview Package Published')
-            );
+            const botComment = comments.find(comment => {
+              const isBot = comment.user.type === 'Bot' ||
+                            comment.user.login === 'github-actions[bot]' ||
+                            comment.user.login.toLowerCase().includes('bot');
+              return isBot && comment.body.includes('Preview Package Published');
+            });
 
             // Update or create comment
             if (botComment) {
