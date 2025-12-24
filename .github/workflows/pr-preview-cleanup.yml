@@ -6,6 +6,10 @@ on:
       - main
     types: [closed]
 
+concurrency:
+  group: pr-preview-cleanup-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   packages: write
@@ -13,7 +17,12 @@ permissions:
 jobs:
   cleanup-preview:
     runs-on: blacksmith-2vcpu-ubuntu-2404-arm
+    # Only run for PRs from the same repository, not forks
+    if: github.event.pull_request.head.repo.full_name == github.repository
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -23,35 +32,72 @@ jobs:
       - name: Get preview version
         id: version
         run: |
-          # Get the base version from npm registry (latest version)
-          latest=$(npm view @b3-crow/ui-kit version)
-          echo "Latest version: $latest"
+          if [ ! -f "package.json" ]; then
+            echo "package.json not found - skipping cleanup"
+            echo "version=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
 
-          # Remove any pre-release suffix to get base version
-          base_version=$(echo "$latest" | sed 's/-.*$//')
+          current=$(jq -r '.version' package.json 2>/dev/null)
 
-          # Construct preview version
+          if [ -z "$current" ] || [ "$current" = "null" ]; then
+            echo "No version found in package.json - skipping cleanup"
+            echo "version=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "Current version in package.json: $current"
+
+          base_version=$(echo "$current" | sed 's/[-+].*$//')
+
+          if [ -z "$base_version" ]; then
+            echo "Could not extract base version - skipping cleanup"
+            echo "version=" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
           preview_version="${base_version}-pr${{ github.event.pull_request.number }}"
           echo "Preview version to delete: $preview_version"
           echo "version=$preview_version" >> $GITHUB_OUTPUT
 
-      - name: Unpublish preview version
+      - name: Unpublish or deprecate preview version
         run: |
-          echo "Attempting to unpublish @b3-crow/ui-kit@${{ steps.version.outputs.version }}"
+          preview_version="${{ steps.version.outputs.version }}"
 
-          # Try to unpublish, but don't fail if version doesn't exist
-          npm unpublish @b3-crow/ui-kit@${{ steps.version.outputs.version }} || echo "Version already removed or never published"
+          if [ -z "$preview_version" ]; then
+            echo "No preview version to clean up - skipping"
+            exit 0
+          fi
+
+          version="@b3-crow/ui-kit@$preview_version"
+          echo "Attempting to unpublish $version"
+
+          if npm unpublish "$version" 2>/dev/null; then
+            echo "Successfully unpublished $version"
+          else
+            echo "Unpublish failed - attempting to deprecate instead"
+            if npm deprecate "$version" "This PR preview version is no longer needed and should not be used." 2>/dev/null; then
+              echo "Successfully deprecated $version"
+            else
+              echo "Version may not exist or was already removed"
+            fi
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Cleanup pr-preview tag if needed
         run: |
-          # Check if there are any other preview versions
-          preview_count=$(npm view @b3-crow/ui-kit versions --json | jq '[.[] | select(contains("-pr"))] | length' || echo "0")
+          if versions=$(npm view @b3-crow/ui-kit versions --json 2>/dev/null); then
+            preview_count=$(echo "$versions" | jq 'if . == null then [] else (if type == "array" then . else [.] end) end | [.[] | select(contains("-pr"))] | length' 2>/dev/null || echo "0")
+
+            if ! [[ "$preview_count" =~ ^[0-9]+$ ]]; then
+              preview_count="0"
+            fi
+          else
+            echo "Could not fetch package versions from npm"
+            preview_count="0"
+          fi
 
           echo "Remaining preview versions: $preview_count"
-
-          # If no preview versions left, we could remove the tag, but npm handles this automatically
-          # when the last version with a tag is removed
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
