@@ -38,16 +38,24 @@ jobs:
       - name: Install dependencies
         run: bun install
 
+      - name: Get package name
+        id: package
+        run: |
+          package_name=$(jq -r '.name' package.json)
+          echo "name=$package_name" >> $GITHUB_OUTPUT
+          echo "Package name: $package_name"
+
       - name: Create preview version
         id: preview_version
         run: |
+          package_name="${{ steps.package.outputs.name }}"
           current=$(jq -r '.version' package.json)
           echo "Current version: $current"
 
           base_version=$(echo "$current" | sed 's/[-+].*$//')
           pr_number="${{ github.event.pull_request.number }}"
 
-          if versions=$(npm view @b3-crow/ui-kit versions --json 2>/dev/null); then
+          if versions=$(npm view "$package_name" versions --json 2>/dev/null); then
             count=$(echo "$versions" | jq --arg pr "-pr$pr_number." '[if . == null then [] else (if type == "array" then . else [.] end) end | .[] | select(contains($pr))] | length' 2>/dev/null || echo "0")
           else
             count=0
@@ -67,11 +75,12 @@ jobs:
 
       - name: Publish to npm with preview tag
         run: |
+          package_name="${{ steps.package.outputs.name }}"
           if bunx npm publish --tag pr-preview --no-git-checks 2>&1; then
             echo "Successfully published ${{ steps.preview_version.outputs.version }}"
           else
             exit_code=$?
-            if npm view @b3-crow/ui-kit@${{ steps.preview_version.outputs.version }} version &>/dev/null; then
+            if npm view "${package_name}@${{ steps.preview_version.outputs.version }}" version &>/dev/null; then
               echo "Version ${{ steps.preview_version.outputs.version }} already exists - skipping publish"
               exit 0
             else
@@ -86,6 +95,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const packageName = '${{ steps.package.outputs.name }}';
             const version = '${{ steps.preview_version.outputs.version }}';
             const comment = `## 📦 Preview Package Published
 
@@ -96,20 +106,20 @@ jobs:
 
             ### Install this specific commit
             \`\`\`bash
-            npm install @b3-crow/ui-kit@${version}
+            npm install ${packageName}@${version}
             # or
-            bun add @b3-crow/ui-kit@${version}
+            bun add ${packageName}@${version}
             # or
-            yarn add @b3-crow/ui-kit@${version}
+            yarn add ${packageName}@${version}
             \`\`\`
 
             ### Install latest commit from this PR
             \`\`\`bash
-            npm install @b3-crow/ui-kit@pr-preview
+            npm install ${packageName}@pr-preview
             # or
-            bun add @b3-crow/ui-kit@pr-preview
+            bun add ${packageName}@pr-preview
             # or
-            yarn add @b3-crow/ui-kit@pr-preview
+            yarn add ${packageName}@pr-preview
             \`\`\`
 
             > **Note:** Each commit gets a unique preview version. The \`pr-preview\` tag always points to the latest preview. All preview versions for this PR will be automatically cleaned up when the PR is closed.`;

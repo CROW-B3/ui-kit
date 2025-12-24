@@ -20,19 +20,30 @@ jobs:
     # Only run for PRs from the same repository, not forks
     if: github.event.pull_request.head.repo.full_name == github.repository
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20.x'
           registry-url: 'https://registry.npmjs.org'
 
+      - name: Get package name
+        id: package
+        run: |
+          package_name=$(jq -r '.name' package.json)
+          echo "name=$package_name" >> $GITHUB_OUTPUT
+          echo "Package name: $package_name"
+
       - name: Find preview versions to clean up
         id: versions
         run: |
+          package_name="${{ steps.package.outputs.name }}"
           pr_number="${{ github.event.pull_request.number }}"
           echo "Finding all preview versions for PR #$pr_number"
 
-          if versions=$(npm view @b3-crow/ui-kit versions --json 2>/dev/null); then
+          if versions=$(npm view "$package_name" versions --json 2>/dev/null); then
             preview_versions=$(echo "$versions" | jq -r --arg pr "-pr$pr_number." 'if . == null then [] else (if type == "array" then . else [.] end) end | .[] | select(contains($pr))' 2>/dev/null || echo "")
 
             if [ -z "$preview_versions" ]; then
@@ -52,6 +63,7 @@ jobs:
 
       - name: Unpublish or deprecate preview versions
         run: |
+          package_name="${{ steps.package.outputs.name }}"
           preview_versions="${{ steps.versions.outputs.versions }}"
 
           if [ -z "$preview_versions" ]; then
@@ -64,7 +76,7 @@ jobs:
               continue
             fi
 
-            version="@b3-crow/ui-kit@$preview_version"
+            version="${package_name}@$preview_version"
             echo "Attempting to unpublish $version"
 
             if npm unpublish "$version" 2>/dev/null; then
@@ -83,7 +95,8 @@ jobs:
 
       - name: Cleanup pr-preview tag if needed
         run: |
-          if versions=$(npm view @b3-crow/ui-kit versions --json 2>/dev/null); then
+          package_name="${{ steps.package.outputs.name }}"
+          if versions=$(npm view "$package_name" versions --json 2>/dev/null); then
             preview_count=$(echo "$versions" | jq 'if . == null then [] else (if type == "array" then . else [.] end) end | [.[] | select(contains("-pr"))] | length' 2>/dev/null || echo "0")
 
             if ! [[ "$preview_count" =~ ^[0-9]+$ ]]; then
