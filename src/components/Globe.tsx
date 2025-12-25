@@ -157,6 +157,82 @@ const generateIcosphere = (
   return { vertices, edges };
 };
 
+// Rotate a 3D point around Y axis
+const rotateY = (v: Vertex, angle: number): Vertex => {
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+  return {
+    x: v.x * cos - v.z * sin,
+    y: v.y,
+    z: v.x * sin + v.z * cos,
+  };
+};
+
+// Rotate a 3D point around X axis
+const rotateX = (v: Vertex, angle: number): Vertex => {
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+  return {
+    x: v.x,
+    y: v.y * cos - v.z * sin,
+    z: v.y * sin + v.z * cos,
+  };
+};
+
+// Project 3D to 2D (orthographic projection to maintain perfect circle)
+const project = (
+  v: Vertex,
+  radius: number,
+  size: number
+): { x: number; y: number } => {
+  return {
+    x: size / 2 + v.x * radius,
+    y: size / 2 - v.y * radius,
+  };
+};
+
+// Convert lat/long to 3D and calculate screen position
+const calculatePointPosition = (
+  lat: number,
+  long: number,
+  rotation: number,
+  size: number
+): PointPosition => {
+  const latRad = (lat * Math.PI) / 180;
+  const longRad = (long * Math.PI) / 180;
+
+  let vertex: Vertex = {
+    x: Math.cos(latRad) * Math.sin(longRad),
+    y: Math.sin(latRad),
+    z: Math.cos(latRad) * Math.cos(longRad),
+  };
+
+  vertex = rotateY(vertex, rotation);
+  vertex = rotateX(vertex, 0.3);
+
+  const projected = project(vertex, size * 0.4, size);
+  const baseScale = vertex.z > 0 ? 1 + vertex.z * 0.3 : 0.7 + vertex.z * 0.3;
+
+  // Smooth fade transition instead of instant disappearance
+  let opacity = 1;
+  if (vertex.z > 0.3) {
+    opacity = 1; // Fully visible in front
+  } else if (vertex.z > -0.3) {
+    // Gradual fade in the transition zone
+    opacity = (vertex.z + 0.3) / 0.6;
+  } else {
+    opacity = 0; // Fully hidden behind
+  }
+
+  return {
+    x: projected.x,
+    y: projected.y,
+    z: vertex.z,
+    scale: Math.max(0.5, baseScale),
+    opacity,
+  };
+};
+
 const defaultPoints: GlobePoint[] = [
   {
     label: 'Internet',
@@ -181,76 +257,6 @@ export function Globe({ points, size = 600 }: GlobeProps) {
   const animationRef = useRef<number | undefined>(undefined);
 
   const displayPoints = points || defaultPoints;
-
-  // Rotate a 3D point
-  const rotateY = (v: Vertex, angle: number): Vertex => {
-    const cos = Math.cos(angle);
-    const sin = Math.sin(angle);
-    return {
-      x: v.x * cos - v.z * sin,
-      y: v.y,
-      z: v.x * sin + v.z * cos,
-    };
-  };
-
-  const rotateX = (v: Vertex, angle: number): Vertex => {
-    const cos = Math.cos(angle);
-    const sin = Math.sin(angle);
-    return {
-      x: v.x,
-      y: v.y * cos - v.z * sin,
-      z: v.y * sin + v.z * cos,
-    };
-  };
-
-  // Project 3D to 2D (orthographic projection to maintain perfect circle)
-  const project = (v: Vertex, radius: number): { x: number; y: number } => {
-    return {
-      x: size / 2 + v.x * radius,
-      y: size / 2 - v.y * radius,
-    };
-  };
-
-  // Convert lat/long to 3D and calculate screen position
-  const calculatePointPosition = (
-    lat: number,
-    long: number,
-    rotation: number
-  ): PointPosition => {
-    const latRad = (lat * Math.PI) / 180;
-    const longRad = (long * Math.PI) / 180;
-
-    let vertex: Vertex = {
-      x: Math.cos(latRad) * Math.sin(longRad),
-      y: Math.sin(latRad),
-      z: Math.cos(latRad) * Math.cos(longRad),
-    };
-
-    vertex = rotateY(vertex, rotation);
-    vertex = rotateX(vertex, 0.3);
-
-    const projected = project(vertex, size * 0.4);
-    const baseScale = vertex.z > 0 ? 1 + vertex.z * 0.3 : 0.7 + vertex.z * 0.3;
-
-    // Smooth fade transition instead of instant disappearance
-    let opacity = 1;
-    if (vertex.z > 0.3) {
-      opacity = 1; // Fully visible in front
-    } else if (vertex.z > -0.3) {
-      // Gradual fade in the transition zone
-      opacity = (vertex.z + 0.3) / 0.6;
-    } else {
-      opacity = 0; // Fully hidden behind
-    }
-
-    return {
-      x: projected.x,
-      y: projected.y,
-      z: vertex.z,
-      scale: Math.max(0.5, baseScale),
-      opacity,
-    };
-  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -281,8 +287,8 @@ export function Globe({ points, size = 600 }: GlobeProps) {
         const v2 = rotated[edge.b];
 
         if (v1.z > -0.5 || v2.z > -0.5) {
-          const p1 = project(v1, radius);
-          const p2 = project(v2, radius);
+          const p1 = project(v1, radius, size);
+          const p2 = project(v2, radius, size);
 
           ctx.beginPath();
           ctx.moveTo(p1.x, p1.y);
@@ -295,7 +301,7 @@ export function Globe({ points, size = 600 }: GlobeProps) {
       ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
       rotated.forEach(v => {
         if (v.z > -0.5) {
-          const p = project(v, radius);
+          const p = project(v, radius, size);
           ctx.beginPath();
           ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
           ctx.fill();
@@ -307,7 +313,8 @@ export function Globe({ points, size = 600 }: GlobeProps) {
         calculatePointPosition(
           point.location[0],
           point.location[1],
-          rotationRef.current
+          rotationRef.current,
+          size
         )
       );
 
