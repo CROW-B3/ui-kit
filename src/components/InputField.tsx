@@ -2,6 +2,7 @@
 
 import { LuArrowUpRight } from 'react-icons/lu';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../lib/utils';
 
@@ -114,8 +115,12 @@ export function InputField({
   };
 
   return (
-    <div
+    <motion.div
       className={cn('relative w-full max-w-md', containerClassName, className)}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.6 }}
     >
       <input
         type={type}
@@ -145,6 +150,6 @@ export function InputField({
           {buttonIcon}
         </button>
       )}
-    </div>
+    </motion.div>
   );
 }
