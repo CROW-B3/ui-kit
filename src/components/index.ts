@@ -14,3 +14,4 @@ export * from './Checkbox';
 export * from './Divider';
 export * from './Navbar';
 export * from './PageHeader';
+export * from './Footer';
