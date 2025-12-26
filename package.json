@@ -38,6 +38,7 @@
     "@commitlint/config-conventional": "^20.0.0",
     "@tailwindcss/cli": "4.1.18",
     "@tailwindcss/postcss": "^4.1.17",
+    "@types/node": "^25.0.3",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.4.22",
@@ -60,7 +61,8 @@
   },
   "peerDependencies": {
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "next": "^16.1.1"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
