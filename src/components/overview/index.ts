@@ -1,3 +1,4 @@
+export * from './ChatHistorySection';
 export * from './DashboardBackground';
 export * from './GlassPanel';
 export * from './Header';
