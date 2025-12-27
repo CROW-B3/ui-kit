@@ -14,6 +14,8 @@ export interface SearchInputProps {
   disabled?: boolean;
   className?: string;
   helperText?: string;
+  /** Use transparent background variant */
+  variant?: 'default' | 'transparent';
 }
 
 export function SearchInput({
@@ -26,6 +28,7 @@ export function SearchInput({
   disabled = false,
   className,
   helperText,
+  variant = 'default',
 }: SearchInputProps) {
   const [internalValue, setInternalValue] = useState(defaultValue);
   const value = controlledValue ?? internalValue;
@@ -58,7 +61,7 @@ export function SearchInput({
           disabled && 'opacity-50 cursor-not-allowed'
         )}
         style={{
-          background: '#0E0A15',
+          background: variant === 'transparent' ? 'rgba(14, 10, 21, 0.6)' : '#0E0A15',
           boxShadow: '0px 4px 6px -4px rgba(0, 0, 0, 0.10)',
           border: '1px solid rgba(255, 255, 255, 0.10)',
         }}

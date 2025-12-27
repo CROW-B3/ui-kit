@@ -1,9 +1,10 @@
 'use client';
 
 import type { NavItem, SidebarProps } from './types';
-import { SidebarLogo } from './SidebarLogo';
+import { ChatHistorySection } from './ChatHistorySection';
 import { NavMenu } from './NavMenu';
 import { SettingsDropup } from './SettingsDropup';
+import { SidebarLogo } from './SidebarLogo';
 
 export type { NavItem, SidebarProps };
 
@@ -35,7 +36,18 @@ export function Sidebar({
   onNotificationsChange,
   initialTheme = 'dark',
   initialNotifications = true,
+  chatHistory,
+  activeChatId,
+  chatHistoryExpanded = true,
+  onChatClick,
+  onChatHistoryToggle,
+  onChatRename,
+  onChatDelete,
 }: SidebarProps) {
+  // Show chat history only on Ask CROW page (handle trailing slash)
+  const normalizedHref = activeHref?.replace(/\/$/, '') || '';
+  const showChatHistory = normalizedHref === '/ask-crow';
+
   return (
     <aside
       style={{
@@ -81,6 +93,18 @@ export function Sidebar({
         items={navItems}
         activeHref={activeHref}
         onNavigate={onNavigate}
+      />
+
+      {/* Chat History Section - only visible on Ask CROW page */}
+      <ChatHistorySection
+        items={chatHistory}
+        activeItemId={activeChatId}
+        isExpanded={chatHistoryExpanded}
+        isVisible={showChatHistory}
+        onItemClick={onChatClick}
+        onToggleExpanded={onChatHistoryToggle}
+        onRename={onChatRename}
+        onDelete={onChatDelete}
       />
 
       {showSettings && (
