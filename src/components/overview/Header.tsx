@@ -74,7 +74,7 @@ export function Header({
           flexDirection: 'column',
           color: 'white',
           fontSize: 14,
-          fontFamily: 'Sora',
+          fontFamily: 'Sora, sans-serif',
           fontWeight: 500,
           lineHeight: '20px',
           letterSpacing: 0.35,
@@ -151,7 +151,7 @@ export function Header({
               flexDirection: 'column',
               color: isOpen ? '#E9D5FF' : '#D1D5DB',
               fontSize: 12,
-              fontFamily: 'Sora',
+              fontFamily: 'Sora, sans-serif',
               fontWeight: 500,
               lineHeight: '16px',
               transition: 'color 0.15s ease',
@@ -220,13 +220,15 @@ export function Header({
           </div>
 
           {/* Options */}
-          <div style={{ padding: '6px' }}>
+          <div role="listbox" aria-label="Date range options" style={{ padding: '6px' }}>
             {dateRangeOptions.map((option) => {
               const isSelected = selectedRange === option.label;
               return (
                 <button
                   key={option.value}
                   type="button"
+                  role="option"
+                  aria-selected={isSelected}
                   onClick={() => handleSelect(option)}
                   style={{
                     width: '100%',
@@ -256,7 +258,7 @@ export function Header({
                       color: isSelected ? '#E9D5FF' : '#D1D5DB',
                       fontSize: 13,
                       fontWeight: isSelected ? 500 : 400,
-                      fontFamily: 'Sora',
+                      fontFamily: 'Sora, sans-serif',
                     }}
                   >
                     {option.label}
@@ -281,7 +283,7 @@ export function Header({
               style={{
                 color: '#4B5563',
                 fontSize: 10,
-                fontFamily: 'Sora',
+                fontFamily: 'Sora, sans-serif',
               }}
             >
               Data refreshes every 5 min
@@ -376,7 +378,7 @@ export function Header({
             style={{
               color: 'white',
               fontSize: 12,
-              fontFamily: 'Sora',
+              fontFamily: 'Sora, sans-serif',
               fontWeight: 600,
               lineHeight: '16px',
             }}

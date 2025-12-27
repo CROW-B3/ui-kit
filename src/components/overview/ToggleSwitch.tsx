@@ -3,9 +3,11 @@
 export interface ToggleSwitchProps {
   enabled: boolean;
   size?: 'sm' | 'default';
+  onChange?: () => void;
+  'aria-label'?: string;
 }
 
-export function ToggleSwitch({ enabled, size = 'default' }: ToggleSwitchProps) {
+export function ToggleSwitch({ enabled, size = 'default', onChange, 'aria-label': ariaLabel }: ToggleSwitchProps) {
   const isSmall = size === 'sm';
   const trackWidth = isSmall ? 36 : 44;
   const trackHeight = isSmall ? 20 : 24;
@@ -13,8 +15,15 @@ export function ToggleSwitch({ enabled, size = 'default' }: ToggleSwitchProps) {
   const translateX = isSmall ? 16 : 20;
 
   return (
-    <div
+    <span
+      role="switch"
+      aria-checked={enabled}
+      aria-label={ariaLabel}
+      onClick={onChange}
+      onKeyDown={onChange ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onChange(); } } : undefined}
+      tabIndex={onChange ? 0 : undefined}
       style={{
+        display: 'inline-block',
         width: trackWidth,
         height: trackHeight,
         borderRadius: trackHeight / 2,
@@ -22,6 +31,7 @@ export function ToggleSwitch({ enabled, size = 'default' }: ToggleSwitchProps) {
         padding: 2,
         transition: 'background 0.2s ease',
         position: 'relative',
+        cursor: onChange ? 'pointer' : 'default',
       }}
     >
       <div
@@ -34,6 +44,6 @@ export function ToggleSwitch({ enabled, size = 'default' }: ToggleSwitchProps) {
           transform: enabled ? `translateX(${translateX}px)` : 'translateX(0)',
         }}
       />
-    </div>
+    </span>
   );
 }

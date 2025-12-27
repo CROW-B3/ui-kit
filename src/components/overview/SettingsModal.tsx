@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { X, Moon, Sun, Bell, BellOff, Globe, User, LogOut } from 'lucide-react';
 import type { SettingsModalProps } from './types';
 
@@ -20,6 +20,7 @@ export function SettingsModal({
   const [theme, setTheme] = useState(initialTheme);
   const [notifications, setNotifications] = useState(initialNotifications);
   const [isClosing, setIsClosing] = useState(false);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -27,9 +28,36 @@ export function SettingsModal({
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    setTheme(initialTheme);
+  }, [initialTheme]);
+
+  useEffect(() => {
+    setNotifications(initialNotifications);
+  }, [initialNotifications]);
+
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        handleClose();
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
   const handleClose = () => {
     setIsClosing(true);
-    setTimeout(() => {
+    closeTimeoutRef.current = setTimeout(() => {
       onClose();
     }, 200);
   };
@@ -52,6 +80,8 @@ export function SettingsModal({
     <>
       {/* Backdrop */}
       <div
+        role="presentation"
+        aria-hidden="true"
         onClick={handleClose}
         style={{
           position: 'fixed',
@@ -66,6 +96,9 @@ export function SettingsModal({
 
       {/* Modal */}
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settings-modal-title"
         style={{
           position: 'fixed',
           top: '50%',
@@ -96,11 +129,12 @@ export function SettingsModal({
           }}
         >
           <h2
+            id="settings-modal-title"
             style={{
               color: 'white',
               fontSize: 18,
               fontWeight: 600,
-              fontFamily: 'Sora',
+              fontFamily: 'Sora, sans-serif',
               margin: 0,
             }}
           >
@@ -161,7 +195,7 @@ export function SettingsModal({
                   color: 'white',
                   fontSize: 14,
                   fontWeight: 500,
-                  fontFamily: 'Sora',
+                  fontFamily: 'Sora, sans-serif',
                 }}
               >
                 {userName}
@@ -170,7 +204,7 @@ export function SettingsModal({
                 style={{
                   color: '#6B7280',
                   fontSize: 12,
-                  fontFamily: 'Sora',
+                  fontFamily: 'Sora, sans-serif',
                   marginTop: 2,
                 }}
               >
@@ -215,7 +249,7 @@ export function SettingsModal({
                 style={{
                   color: '#D1D5DB',
                   fontSize: 14,
-                  fontFamily: 'Sora',
+                  fontFamily: 'Sora, sans-serif',
                 }}
               >
                 Theme
@@ -229,7 +263,7 @@ export function SettingsModal({
                 color: '#C4B5FD',
                 fontSize: 12,
                 fontWeight: 500,
-                fontFamily: 'Sora',
+                fontFamily: 'Sora, sans-serif',
               }}
             >
               {theme === 'dark' ? 'Dark' : 'Light'}
@@ -269,7 +303,7 @@ export function SettingsModal({
                 style={{
                   color: '#D1D5DB',
                   fontSize: 14,
-                  fontFamily: 'Sora',
+                  fontFamily: 'Sora, sans-serif',
                 }}
               >
                 Notifications
@@ -303,6 +337,8 @@ export function SettingsModal({
           {/* Language */}
           <button
             type="button"
+            disabled
+            aria-disabled="true"
             style={{
               width: '100%',
               padding: '14px 12px',
@@ -312,14 +348,9 @@ export function SettingsModal({
               background: 'transparent',
               border: 'none',
               borderRadius: 10,
-              cursor: 'pointer',
+              cursor: 'not-allowed',
+              opacity: 0.6,
               transition: 'background 0.15s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
@@ -328,7 +359,7 @@ export function SettingsModal({
                 style={{
                   color: '#D1D5DB',
                   fontSize: 14,
-                  fontFamily: 'Sora',
+                  fontFamily: 'Sora, sans-serif',
                 }}
               >
                 Language
@@ -338,7 +369,7 @@ export function SettingsModal({
               style={{
                 color: '#6B7280',
                 fontSize: 13,
-                fontFamily: 'Sora',
+                fontFamily: 'Sora, sans-serif',
               }}
             >
               English
@@ -385,7 +416,7 @@ export function SettingsModal({
                   color: '#EF4444',
                   fontSize: 14,
                   fontWeight: 500,
-                  fontFamily: 'Sora',
+                  fontFamily: 'Sora, sans-serif',
                 }}
               >
                 Sign out

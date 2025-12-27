@@ -44,6 +44,7 @@ export interface GlassPanelProps {
 
 export interface DashboardBackgroundProps {
   variant?: 'default' | 'minimal';
+  noiseTextureSrc?: string;
 }
 
 export interface SettingsModalProps {
