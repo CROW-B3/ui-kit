@@ -4,8 +4,11 @@ import type { DashboardBackgroundProps } from './types';
 
 export type { DashboardBackgroundProps };
 
+const DEFAULT_NOISE_TEXTURE = 'https://api.builder.io/api/v1/image/assets/TEMP/01cf5743ccbc8becbbc870a231ecce44d240df94?width=3840';
+
 export function DashboardBackground({
   variant = 'default',
+  noiseTextureSrc = DEFAULT_NOISE_TEXTURE,
 }: DashboardBackgroundProps) {
   if (variant === 'minimal') {
     return (
@@ -45,8 +48,9 @@ export function DashboardBackground({
 
       {/* Layer 3: Noise texture overlay - opacity 0.07, mixBlendMode overlay */}
       <img
-        src="https://api.builder.io/api/v1/image/assets/TEMP/01cf5743ccbc8becbbc870a231ecce44d240df94?width=3840"
+        src={noiseTextureSrc}
         alt=""
+        role="presentation"
         style={{
           width: '100%',
           height: '100%',
