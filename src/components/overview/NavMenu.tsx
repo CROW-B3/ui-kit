@@ -22,9 +22,17 @@ const iconComponents: Record<string, IconComponent> = {
 export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
 
-  const isActive = (href: string) => activeHref === href;
+  // Normalize paths for comparison (handle trailing slashes)
+  const normalizePath = (path: string) => path.replace(/\/$/, '') || '/';
+
+  const isActive = (href: string) => {
+    const normalizedActive = normalizePath(activeHref);
+    const normalizedHref = normalizePath(href);
+    return normalizedActive === normalizedHref;
+  };
+
   const isSubmenuActive = (subItems?: NavItem[]) =>
-    subItems?.some((item) => activeHref === item.href);
+    subItems?.some((item) => isActive(item.href));
   const isExpanded = (label: string) => expandedMenus.includes(label);
 
   const toggleMenu = (label: string) => {
