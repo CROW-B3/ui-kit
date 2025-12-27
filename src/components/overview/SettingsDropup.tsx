@@ -109,7 +109,7 @@ export function SettingsDropup({
                 color: 'white',
                 fontSize: 13,
                 fontWeight: 500,
-                fontFamily: 'Sora',
+                fontFamily: 'Sora, sans-serif',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -121,7 +121,7 @@ export function SettingsDropup({
               style={{
                 color: '#6B7280',
                 fontSize: 11,
-                fontFamily: 'Sora',
+                fontFamily: 'Sora, sans-serif',
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
@@ -161,7 +161,7 @@ export function SettingsDropup({
               ) : (
                 <Sun size={15} color="#FBBF24" strokeWidth={2} />
               )}
-              <span style={{ color: '#D1D5DB', fontSize: 13, fontFamily: 'Sora' }}>
+              <span style={{ color: '#D1D5DB', fontSize: 13, fontFamily: 'Sora, sans-serif' }}>
                 Theme
               </span>
             </div>
@@ -173,7 +173,7 @@ export function SettingsDropup({
                 color: '#C4B5FD',
                 fontSize: 11,
                 fontWeight: 500,
-                fontFamily: 'Sora',
+                fontFamily: 'Sora, sans-serif',
               }}
             >
               {theme === 'dark' ? 'Dark' : 'Light'}
@@ -208,7 +208,7 @@ export function SettingsDropup({
               ) : (
                 <BellOff size={15} color="#6B7280" strokeWidth={2} />
               )}
-              <span style={{ color: '#D1D5DB', fontSize: 13, fontFamily: 'Sora' }}>
+              <span style={{ color: '#D1D5DB', fontSize: 13, fontFamily: 'Sora, sans-serif' }}>
                 Notifications
               </span>
             </div>
@@ -246,7 +246,7 @@ export function SettingsDropup({
               }}
             >
               <LogOut size={15} color="#EF4444" strokeWidth={2} />
-              <span style={{ color: '#EF4444', fontSize: 13, fontFamily: 'Sora' }}>
+              <span style={{ color: '#EF4444', fontSize: 13, fontFamily: 'Sora, sans-serif' }}>
                 Sign out
               </span>
             </button>
@@ -287,7 +287,7 @@ export function SettingsDropup({
             style={{
               color: isOpen ? 'white' : '#9CA3AF',
               fontSize: 14,
-              fontFamily: 'Sora',
+              fontFamily: 'Sora, sans-serif',
               fontWeight: 400,
               lineHeight: '21px',
               flex: 1,
