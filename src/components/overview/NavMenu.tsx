@@ -10,12 +10,14 @@ export interface NavMenuProps {
   onNavigate?: (href: string) => void;
 }
 
-const iconComponents: Record<string, typeof LayoutGrid> = {
+type IconComponent = typeof LayoutGrid;
+
+const iconComponents: Record<string, IconComponent> = {
   grid_view: LayoutGrid,
   chat_bubble: MessageSquare,
   timeline: TrendingUp,
   group: Users,
-};
+} as const;
 
 export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
   const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
@@ -101,7 +103,7 @@ export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
                 style={{
                   color: itemIsActive ? 'white' : '#9CA3AF',
                   fontSize: 14,
-                  fontFamily: 'Sora',
+                  fontFamily: 'Sora, sans-serif',
                   fontWeight: 400,
                   lineHeight: '21px',
                   flex: 1,
@@ -161,7 +163,7 @@ export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
                       style={{
                         color: subActive ? '#C4B5FD' : '#6B7280',
                         fontSize: 13,
-                        fontFamily: 'Sora',
+                        fontFamily: 'Sora, sans-serif',
                         fontWeight: subActive ? 500 : 400,
                         lineHeight: '19.5px',
                         transition: 'color 0.15s ease',
@@ -213,7 +215,7 @@ export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
               style={{
                 color: itemIsActive ? 'white' : '#9CA3AF',
                 fontSize: 14,
-                fontFamily: 'Sora',
+                fontFamily: 'Sora, sans-serif',
                 fontWeight: 400,
                 lineHeight: '21px',
               }}
