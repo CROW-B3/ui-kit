@@ -38,6 +38,20 @@ export interface SidebarProps {
   onNotificationsChange?: (enabled: boolean) => void;
   initialTheme?: 'dark' | 'light';
   initialNotifications?: boolean;
+  /** Chat history items to display (shown only on /ask-crow page) */
+  chatHistory?: ChatHistoryItem[];
+  /** ID of the currently active chat */
+  activeChatId?: string | null;
+  /** Whether the chat history list is expanded */
+  chatHistoryExpanded?: boolean;
+  /** Callback when a chat item is clicked */
+  onChatClick?: (id: string) => void;
+  /** Callback when chat history expand/collapse is toggled */
+  onChatHistoryToggle?: () => void;
+  /** Callback when a chat is renamed */
+  onChatRename?: (id: string, newTitle: string) => void;
+  /** Callback when a chat is deleted */
+  onChatDelete?: (id: string) => void;
 }
 
 export interface GlassPanelProps {
@@ -61,4 +75,32 @@ export interface SettingsModalProps {
   onNotificationsChange?: (enabled: boolean) => void;
   initialTheme?: 'dark' | 'light';
   initialNotifications?: boolean;
+}
+
+export interface ChatHistoryItem {
+  id: string;
+  title: string;
+}
+
+export interface ChatHistorySectionProps {
+  /** List of chat history items to display */
+  items?: ChatHistoryItem[];
+  /** ID of the currently active chat item */
+  activeItemId?: string | null;
+  /** Whether the chat list is expanded */
+  isExpanded?: boolean;
+  /** Whether the section is visible (for fade in/out animations) */
+  isVisible?: boolean;
+  /** Callback when a chat item is clicked */
+  onItemClick?: (id: string) => void;
+  /** Callback when the expand/collapse toggle is clicked */
+  onToggleExpanded?: () => void;
+  /** Callback when rename is requested */
+  onRename?: (id: string, newTitle: string) => void;
+  /** Callback when delete is requested */
+  onDelete?: (id: string) => void;
+  /** Title text for the section header */
+  title?: string;
+  /** Message to show when there are no chat items */
+  emptyMessage?: string;
 }
