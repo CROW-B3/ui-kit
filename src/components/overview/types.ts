@@ -14,6 +14,8 @@ export interface HeaderProps {
   showNotification?: boolean;
   onNotificationClick?: () => void;
   onAvatarClick?: () => void;
+  /** Hide the left section (org name and date picker) - useful for minimal headers */
+  minimal?: boolean;
 }
 
 export interface NavItem {
