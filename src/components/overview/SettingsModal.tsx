@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { X, Moon, Sun, Bell, BellOff, Globe, User, LogOut } from 'lucide-react';
 import type { SettingsModalProps } from './types';
 
@@ -44,6 +44,13 @@ export function SettingsModal({
     };
   }, []);
 
+  const handleClose = useCallback(() => {
+    setIsClosing(true);
+    closeTimeoutRef.current = setTimeout(() => {
+      onClose();
+    }, 200);
+  }, [onClose]);
+
   useEffect(() => {
     if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -53,14 +60,7 @@ export function SettingsModal({
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen]);
-
-  const handleClose = () => {
-    setIsClosing(true);
-    closeTimeoutRef.current = setTimeout(() => {
-      onClose();
-    }, 200);
-  };
+  }, [isOpen, handleClose]);
 
   const handleThemeToggle = () => {
     const newTheme = theme === 'dark' ? 'light' : 'dark';
