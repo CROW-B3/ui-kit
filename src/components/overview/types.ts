@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export interface DateRangeOption {
   label: string;
   value: string;
@@ -37,7 +39,7 @@ export interface SidebarProps {
 }
 
 export interface GlassPanelProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   variant?: 'light' | 'heavy';
 }
