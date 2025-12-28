@@ -11,6 +11,8 @@ export interface InputProps
   inputClassName?: string;
   variant?: 'primary' | 'secondary' | 'outline';
   inputSize?: 'sm' | 'md' | 'lg';
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -25,14 +27,34 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       inputClassName = '',
       variant = 'primary',
       inputSize = 'md',
+      icon,
+      iconPosition = 'right',
       ...props
     },
     ref
   ) => {
     const sizeClasses = {
-      sm: 'px-3 py-2 text-xs',
-      md: 'px-4 py-2.5 text-sm',
-      lg: 'px-5 py-3 text-base',
+      sm: {
+        input: 'px-3 py-2 text-xs',
+        inputWithIcon: iconPosition === 'left' ? 'pl-9' : 'pr-9',
+        iconSize: 'w-4 h-4',
+        iconLeft: 'left-3',
+        iconRight: 'right-3',
+      },
+      md: {
+        input: 'px-4 py-2.5 text-sm',
+        inputWithIcon: iconPosition === 'left' ? 'pl-10' : 'pr-10',
+        iconSize: 'w-5 h-5',
+        iconLeft: 'left-3.5',
+        iconRight: 'right-3.5',
+      },
+      lg: {
+        input: 'px-5 py-3 text-base',
+        inputWithIcon: iconPosition === 'left' ? 'pl-12' : 'pr-12',
+        iconSize: 'w-6 h-6',
+        iconLeft: 'left-4',
+        iconRight: 'right-4',
+      },
     };
 
     const variantClasses = {
@@ -60,20 +82,35 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {label}
           </label>
         )}
-        <input
-          ref={ref}
-          className={cn(
-            baseStyles,
-            sizeClasses[inputSize],
-            variantClasses[variant],
-            error
-              ? 'border-red-500/50 focus:border-red-500/70 focus:ring-red-500/50'
-              : '',
-            inputClassName,
-            className
+        <div className="relative">
+          {icon && (
+            <div
+              className={cn(
+                'absolute top-1/2 -translate-y-1/2 flex items-center justify-center text-white pointer-events-none z-10',
+                iconPosition === 'left'
+                  ? sizeClasses[inputSize].iconLeft
+                  : sizeClasses[inputSize].iconRight
+              )}
+            >
+              <span className={sizeClasses[inputSize].iconSize}>{icon}</span>
+            </div>
           )}
-          {...props}
-        />
+          <input
+            ref={ref}
+            className={cn(
+              baseStyles,
+              sizeClasses[inputSize].input,
+              icon && sizeClasses[inputSize].inputWithIcon,
+              variantClasses[variant],
+              error
+                ? 'border-red-500/50 focus:border-red-500/70 focus:ring-red-500/50'
+                : '',
+              inputClassName,
+              className
+            )}
+            {...props}
+          />
+        </div>
         {error && (
           <p className={cn('mt-2 text-sm text-red-400', errorClassName)}>
             {error}
