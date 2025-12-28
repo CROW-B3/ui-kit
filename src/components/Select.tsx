@@ -15,6 +15,7 @@ export interface SelectProps {
   error?: string;
   selectSize?: 'sm' | 'md' | 'lg';
   variant?: 'primary' | 'secondary' | 'outline';
+  value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
   className?: string;
@@ -32,6 +33,7 @@ export const Select: React.FC<SelectProps> = ({
   error,
   selectSize = 'md',
   variant = 'primary',
+  value,
   defaultValue = '',
   onChange,
   className = '',
@@ -42,8 +44,11 @@ export const Select: React.FC<SelectProps> = ({
   name,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState(defaultValue);
+  const [internalValue, setInternalValue] = useState(defaultValue);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const isControlled = value !== undefined;
+  const selectedValue = isControlled ? value : internalValue;
 
   const sizeClasses = {
     sm: 'px-3 py-2 text-xs',
@@ -82,10 +87,12 @@ export const Select: React.FC<SelectProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleSelect = (value: string) => {
-    setSelectedValue(value);
+  const handleSelect = (newValue: string) => {
+    if (!isControlled) {
+      setInternalValue(newValue);
+    }
     setIsOpen(false);
-    onChange?.(value);
+    onChange?.(newValue);
   };
 
   return (
