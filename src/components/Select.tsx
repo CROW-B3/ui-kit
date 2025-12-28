@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
+import { cn } from '../lib/utils';
 
 export interface SelectOption {
   value: string;
@@ -10,12 +11,16 @@ export interface SelectOption {
 export interface SelectProps {
   options: SelectOption[];
   placeholder?: string;
+  label?: string;
   error?: string;
   selectSize?: 'sm' | 'md' | 'lg';
-  variant?: 'default' | 'outline' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'outline';
   defaultValue?: string;
   onChange?: (value: string) => void;
   className?: string;
+  labelClassName?: string;
+  errorClassName?: string;
+  containerClassName?: string;
   id?: string;
   name?: string;
 }
@@ -23,12 +28,16 @@ export interface SelectProps {
 export const Select: React.FC<SelectProps> = ({
   options,
   placeholder = 'Select...',
+  label,
   error,
   selectSize = 'md',
-  variant = 'default',
+  variant = 'primary',
   defaultValue = '',
   onChange,
   className = '',
+  labelClassName = '',
+  errorClassName = '',
+  containerClassName = '',
   id,
   name,
 }) => {
@@ -37,15 +46,24 @@ export const Select: React.FC<SelectProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const sizeClasses = {
-    sm: 'px-3 py-1.5 text-xs h-8',
-    md: 'px-4 py-2.5 text-sm h-10',
-    lg: 'px-5 py-3 text-base h-12',
+    sm: 'px-3 py-2 text-xs',
+    md: 'px-4 py-2.5 text-sm',
+    lg: 'px-5 py-3 text-base',
+  };
+
+  const dropdownSizeClasses = {
+    sm: 'text-xs',
+    md: 'text-sm',
+    lg: 'text-base',
   };
 
   const variantClasses = {
-    default: 'bg-white/[0.03] border border-white/10',
-    outline: 'bg-transparent border border-white/20',
-    ghost: 'bg-transparent border border-transparent hover:bg-white/5',
+    primary:
+      'bg-white/[0.02] border-white/10 focus:border-violet-500/50 focus:ring-violet-500/50 focus:bg-white/[0.04]',
+    secondary:
+      'bg-white/[0.03] border-white/20 focus:border-purple-500/50 focus:ring-purple-500/50 focus:bg-white/[0.05]',
+    outline:
+      'bg-transparent border-gray-600 focus:border-violet-400 focus:ring-violet-400/30',
   };
 
   const selectedOption = options.find(opt => opt.value === selectedValue);
@@ -71,21 +89,36 @@ export const Select: React.FC<SelectProps> = ({
   };
 
   return (
-    <div className="relative w-full" ref={dropdownRef}>
+    <div
+      className={cn('relative w-full', containerClassName)}
+      ref={dropdownRef}
+    >
+      {label && (
+        <label
+          className={cn(
+            'block text-sm font-medium text-gray-400 mb-2',
+            labelClassName
+          )}
+          htmlFor={id}
+        >
+          {label}
+        </label>
+      )}
+
       <input type="hidden" name={name} id={id} value={selectedValue} />
 
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className={`
-					w-full text-white rounded-full
-					outline-none transition-all shadow-inner cursor-pointer
-					flex items-center justify-between
-					${variantClasses[variant]}
-					${error ? '!border-red-500/50 focus:!border-red-500 focus:ring-1 focus:ring-red-500' : 'focus:border-violet-600 focus:ring-1 focus:ring-violet-600'}
-					${sizeClasses[selectSize]}
-					${className}
-				`}
+        className={cn(
+          'w-full border rounded-full text-gray-200 placeholder-gray-600 focus:outline-none focus:ring-1 transition-all duration-300 shadow-inner cursor-pointer flex items-center justify-between',
+          variantClasses[variant],
+          error
+            ? 'border-red-500/50 focus:border-red-500 focus:ring-red-500'
+            : '',
+          sizeClasses[selectSize],
+          className
+        )}
       >
         <span className={selectedValue ? 'text-white' : 'text-gray-500'}>
           {selectedOption ? selectedOption.label : placeholder}
@@ -113,14 +146,13 @@ export const Select: React.FC<SelectProps> = ({
                 key={option.value}
                 type="button"
                 onClick={() => handleSelect(option.value)}
-                className={`
-									w-full text-left px-4 py-3 rounded-xl text-sm transition-all
-									${
-                    selectedValue === option.value
-                      ? 'bg-violet-600/20 text-white'
-                      : 'text-white hover:bg-white/5'
-                  }
-								`}
+                className={cn(
+                  'w-full text-left px-4 py-3 rounded-xl transition-all',
+                  dropdownSizeClasses[selectSize],
+                  selectedValue === option.value
+                    ? 'bg-violet-600/20 text-white'
+                    : 'text-white hover:bg-white/5'
+                )}
               >
                 {option.label}
               </button>
@@ -129,7 +161,11 @@ export const Select: React.FC<SelectProps> = ({
         </div>
       )}
 
-      {error && <p className="text-xs text-red-400 mt-2 pl-4">{error}</p>}
+      {error && (
+        <p className={cn('mt-2 text-sm text-red-400', errorClassName)}>
+          {error}
+        </p>
+      )}
     </div>
   );
 };
