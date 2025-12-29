@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useId } from 'react';
 import { cn } from '../lib/utils';
 
 export interface ToggleOptionProps {
@@ -16,6 +16,7 @@ export interface ToggleOptionProps {
   containerClassName?: string;
   layout?: 'horizontal' | 'vertical';
   icon?: React.ReactNode;
+  id?: string;
 }
 
 export function ToggleOption({
@@ -33,8 +34,11 @@ export function ToggleOption({
   containerClassName = '',
   layout = 'horizontal',
   icon,
+  id: providedId,
 }: ToggleOptionProps) {
   const [internalChecked, setInternalChecked] = useState(defaultChecked);
+  const reactId = useId();
+  const id = providedId ?? reactId;
 
   const isChecked =
     controlledChecked !== undefined ? controlledChecked : internalChecked;
@@ -42,7 +46,9 @@ export function ToggleOption({
   const handleToggle = () => {
     if (disabled) return;
     const newValue = !isChecked;
-    setInternalChecked(newValue);
+    if (controlledChecked === undefined) {
+      setInternalChecked(newValue);
+    }
     onChange?.(newValue);
   };
 
@@ -112,6 +118,7 @@ export function ToggleOption({
         aria-checked={isChecked}
         disabled={disabled}
         onClick={handleToggle}
+        id={id}
         className={cn(
           'relative inline-flex items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:ring-offset-2 focus:ring-offset-black',
           sizeStyles[size].toggle,
@@ -136,13 +143,13 @@ export function ToggleOption({
         <div className="flex items-center gap-2">
           {icon && <span className="flex-shrink-0">{icon}</span>}
           <label
+            htmlFor={id}
             className={cn(
               'font-medium text-white cursor-pointer',
               sizeStyles[size].label,
               disabled && 'opacity-50 cursor-not-allowed',
               labelClassName
             )}
-            onClick={!disabled ? handleToggle : undefined}
           >
             {label}
           </label>

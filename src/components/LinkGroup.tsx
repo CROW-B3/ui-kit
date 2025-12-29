@@ -58,7 +58,7 @@ export function LinkGroup({
       )}
     >
       {links.map((link, index) => (
-        <React.Fragment key={index}>
+        <React.Fragment key={link.href}>
           <a
             href={link.href}
             onClick={link.onClick}

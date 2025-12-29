@@ -71,10 +71,21 @@ export function PendingInviteCard({
 
     if (permissions.chat) {
       const components = permissions.chat.components.join(' + ');
-      const lookback = permissions.chat.lookbackWindow.replace(
-        /(\d+)(\w+)/,
-        '≤ $1$2'
-      );
+      const lookbackWindow = permissions.chat.lookbackWindow;
+      let lookback: string;
+
+      if (lookbackWindow && typeof lookbackWindow === 'string') {
+        const trimmed = lookbackWindow.trim();
+        const match = /^(\d+)([A-Za-z]+)$/.exec(trimmed);
+        if (match) {
+          lookback = `≤ ${match[1]}${match[2]}`;
+        } else {
+          lookback = trimmed || 'N/A';
+        }
+      } else {
+        lookback = 'N/A';
+      }
+
       tags.push(`Chat: ${components} (${lookback})`);
     }
 

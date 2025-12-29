@@ -7,12 +7,18 @@ interface EmailTagInputProps {
   emails: string[];
   onEmailsChange: (emails: string[]) => void;
   error?: string;
+  onInvalidEmail?: (email: string) => void;
 }
+
+const isValidEmail = (email: string): boolean => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+};
 
 export function EmailTagInput({
   emails,
   onEmailsChange,
   error,
+  onInvalidEmail,
 }: EmailTagInputProps) {
   const [inputValue, setInputValue] = useState('');
 
@@ -35,8 +41,13 @@ export function EmailTagInput({
     if (value.includes(',') || value.includes(' ')) {
       const emailToAdd = value.replace(/[,\s]/g, '').trim();
       if (emailToAdd && !emails.includes(emailToAdd)) {
-        onEmailsChange([...emails, emailToAdd]);
-        setInputValue('');
+        if (isValidEmail(emailToAdd)) {
+          onEmailsChange([...emails, emailToAdd]);
+          setInputValue('');
+        } else {
+          onInvalidEmail?.(emailToAdd);
+          setInputValue('');
+        }
       } else {
         setInputValue('');
       }
@@ -48,8 +59,13 @@ export function EmailTagInput({
   const addEmail = () => {
     const trimmedEmail = inputValue.trim();
     if (trimmedEmail && !emails.includes(trimmedEmail)) {
-      onEmailsChange([...emails, trimmedEmail]);
-      setInputValue('');
+      if (isValidEmail(trimmedEmail)) {
+        onEmailsChange([...emails, trimmedEmail]);
+        setInputValue('');
+      } else {
+        onInvalidEmail?.(trimmedEmail);
+        setInputValue('');
+      }
     }
   };
 

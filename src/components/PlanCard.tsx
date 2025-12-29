@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { cn } from '../lib/utils';
+import { Checkbox } from './Checkbox';
 
 export interface PlanCardSpec {
   label: string;
@@ -120,11 +121,10 @@ export function PlanCard({
 
       {showCheckbox && (
         <div className="absolute top-6 right-6">
-          <input
-            type="checkbox"
+          <Checkbox
             checked={selected}
             onChange={e => onCheckboxChange?.(e.target.checked)}
-            className="w-5 h-5 rounded border-2 border-white/20 bg-transparent checked:bg-transparent checked:border-violet-500 cursor-pointer appearance-none checked:after:content-['✓'] checked:after:text-violet-500 checked:after:text-xs checked:after:flex checked:after:items-center checked:after:justify-center"
+            size="lg"
           />
         </div>
       )}
@@ -234,6 +234,7 @@ export function PlanCard({
               {footer.buttons.map((button, index) => (
                 <button
                   key={index}
+                  type="button"
                   onClick={button.onClick}
                   disabled={disabled}
                   className={cn(

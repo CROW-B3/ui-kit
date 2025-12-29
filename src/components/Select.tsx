@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useId } from 'react';
 import { cn } from '../lib/utils';
 
 export interface SelectOption {
@@ -40,15 +40,35 @@ export const Select: React.FC<SelectProps> = ({
   labelClassName = '',
   errorClassName = '',
   containerClassName = '',
-  id,
+  id: providedId,
   name,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [internalValue, setInternalValue] = useState(defaultValue);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [typeAheadBuffer, setTypeAheadBuffer] = useState('');
+
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const listboxRef = useRef<HTMLDivElement>(null);
+  const typeAheadTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const reactId = useId();
+  const id = providedId ?? reactId;
+  const buttonId = `${id}-button`;
+  const listboxId = `${id}-listbox`;
+  const errorId = error ? `${id}-error` : undefined;
 
   const isControlled = value !== undefined;
   const selectedValue = isControlled ? value : internalValue;
+  const selectedIndex = options.findIndex(opt => opt.value === selectedValue);
+
+  // Sync defaultValue changes in uncontrolled mode
+  useEffect(() => {
+    if (!isControlled && defaultValue !== undefined) {
+      setInternalValue(defaultValue);
+    }
+  }, [defaultValue, isControlled]);
 
   const sizeClasses = {
     sm: 'px-3 py-2 text-xs',
@@ -73,6 +93,7 @@ export const Select: React.FC<SelectProps> = ({
 
   const selectedOption = options.find(opt => opt.value === selectedValue);
 
+  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -87,12 +108,101 @@ export const Select: React.FC<SelectProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Reset highlighted index when dropdown opens
+  useEffect(() => {
+    if (isOpen) {
+      setHighlightedIndex(selectedIndex >= 0 ? selectedIndex : 0);
+    }
+  }, [isOpen, selectedIndex]);
+
   const handleSelect = (newValue: string) => {
     if (!isControlled) {
       setInternalValue(newValue);
     }
     setIsOpen(false);
+    buttonRef.current?.focus();
     onChange?.(newValue);
+  };
+
+  const handleTypeAhead = (char: string) => {
+    if (typeAheadTimeoutRef.current) {
+      clearTimeout(typeAheadTimeoutRef.current);
+    }
+    const newBuffer = typeAheadBuffer + char.toLowerCase();
+    setTypeAheadBuffer(newBuffer);
+
+    const matchIndex = options.findIndex(opt =>
+      opt.label.toLowerCase().startsWith(newBuffer)
+    );
+
+    if (matchIndex >= 0) {
+      setHighlightedIndex(matchIndex);
+    }
+
+    typeAheadTimeoutRef.current = setTimeout(() => {
+      setTypeAheadBuffer('');
+    }, 500);
+  };
+
+  const handleButtonKeyDown = (e: React.KeyboardEvent) => {
+    switch (e.key) {
+      case 'Enter':
+      case ' ':
+      case 'ArrowDown':
+      case 'ArrowUp':
+        e.preventDefault();
+        setIsOpen(true);
+        break;
+      case 'Escape':
+        setIsOpen(false);
+        break;
+      default:
+        if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+          e.preventDefault();
+          setIsOpen(true);
+          handleTypeAhead(e.key);
+        }
+    }
+  };
+
+  const handleListboxKeyDown = (e: React.KeyboardEvent) => {
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setHighlightedIndex(prev =>
+          prev < options.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setHighlightedIndex(prev => (prev > 0 ? prev - 1 : prev));
+        break;
+      case 'Home':
+        e.preventDefault();
+        setHighlightedIndex(0);
+        break;
+      case 'End':
+        e.preventDefault();
+        setHighlightedIndex(options.length - 1);
+        break;
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        if (highlightedIndex >= 0) {
+          handleSelect(options[highlightedIndex].value);
+        }
+        break;
+      case 'Escape':
+        e.preventDefault();
+        setIsOpen(false);
+        buttonRef.current?.focus();
+        break;
+      default:
+        if (e.key.length === 1 && !e.ctrlKey && !e.altKey && !e.metaKey) {
+          e.preventDefault();
+          handleTypeAhead(e.key);
+        }
+    }
   };
 
   return (
@@ -102,11 +212,11 @@ export const Select: React.FC<SelectProps> = ({
     >
       {label && (
         <label
+          id={buttonId}
           className={cn(
             'block text-sm font-medium text-gray-400 mb-2',
             labelClassName
           )}
-          htmlFor={id}
         >
           {label}
         </label>
@@ -115,8 +225,15 @@ export const Select: React.FC<SelectProps> = ({
       <input type="hidden" name={name} id={id} value={selectedValue} />
 
       <button
+        ref={buttonRef}
         type="button"
         onClick={() => setIsOpen(!isOpen)}
+        onKeyDown={handleButtonKeyDown}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-labelledby={label ? buttonId : undefined}
+        aria-invalid={error ? 'true' : undefined}
+        aria-describedby={errorId}
         className={cn(
           'w-full border rounded-full text-gray-200 placeholder-gray-600 focus:outline-none focus:ring-1 transition-all duration-300 shadow-inner cursor-pointer flex items-center justify-between',
           variantClasses[variant],
@@ -135,6 +252,7 @@ export const Select: React.FC<SelectProps> = ({
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
+          aria-hidden="true"
         >
           <path
             strokeLinecap="round"
@@ -147,29 +265,53 @@ export const Select: React.FC<SelectProps> = ({
 
       {isOpen && (
         <div className="absolute z-50 w-full mt-2">
-          <div className="bg-[#0a0a0f] border border-white/10 rounded-2xl p-2 shadow-xl backdrop-blur-sm">
-            {options.map(option => (
-              <button
+          <div
+            ref={listboxRef}
+            role="listbox"
+            id={listboxId}
+            aria-labelledby={label ? buttonId : undefined}
+            aria-activedescendant={
+              highlightedIndex >= 0
+                ? `${id}-option-${highlightedIndex}`
+                : undefined
+            }
+            tabIndex={-1}
+            onKeyDown={handleListboxKeyDown}
+            className="bg-[#0a0a0f] border border-white/10 rounded-2xl p-2 shadow-xl backdrop-blur-sm focus:outline-none"
+          >
+            {options.map((option, index) => (
+              <div
                 key={option.value}
-                type="button"
+                id={`${id}-option-${index}`}
+                role="option"
+                aria-selected={selectedValue === option.value}
                 onClick={() => handleSelect(option.value)}
+                onMouseEnter={() => setHighlightedIndex(index)}
                 className={cn(
-                  'w-full text-left px-4 py-3 rounded-xl transition-all',
+                  'w-full text-left px-4 py-3 rounded-xl transition-all cursor-pointer',
                   dropdownSizeClasses[selectSize],
-                  selectedValue === option.value
-                    ? 'bg-violet-600/20 text-white'
-                    : 'text-white hover:bg-white/5'
+                  selectedValue === option.value &&
+                    'bg-violet-600/20 text-white',
+                  highlightedIndex === index &&
+                    selectedValue !== option.value &&
+                    'bg-white/5',
+                  selectedValue !== option.value &&
+                    highlightedIndex !== index &&
+                    'text-white hover:bg-white/5'
                 )}
               >
                 {option.label}
-              </button>
+              </div>
             ))}
           </div>
         </div>
       )}
 
       {error && (
-        <p className={cn('mt-2 text-sm text-red-400', errorClassName)}>
+        <p
+          id={errorId}
+          className={cn('mt-2 text-sm text-red-400', errorClassName)}
+        >
           {error}
         </p>
       )}

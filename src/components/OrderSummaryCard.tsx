@@ -63,8 +63,11 @@ export const OrderSummaryCard: React.FC<OrderSummaryCardProps> = ({
 
       {/* Summary Items */}
       <div className="space-y-5 mb-7">
-        {items.map((item, index) => (
-          <div key={index} className="flex justify-between items-center">
+        {items.map(item => (
+          <div
+            key={`${item.label}-${item.value}`}
+            className="flex justify-between items-center"
+          >
             <span className="text-xs text-gray-400">{item.label}</span>
             <span
               className={

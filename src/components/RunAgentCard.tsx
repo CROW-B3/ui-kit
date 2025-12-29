@@ -34,8 +34,10 @@ export function RunAgentCard({
           </code>
           <div className="bg-[#050508] pl-2 sticky right-0">
             <button
+              type="button"
               onClick={handleCopy}
               className="text-gray-500 hover:text-white transition-colors"
+              aria-label="Copy command to clipboard"
             >
               <LuCopy className="text-[14px]" />
             </button>

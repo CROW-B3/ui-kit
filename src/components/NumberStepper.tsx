@@ -37,7 +37,9 @@ export function NumberStepper({
   const handleIncrement = () => {
     if (currentValue < max) {
       const newValue = Math.min(currentValue + step, max);
-      setInternalValue(newValue);
+      if (controlledValue === undefined) {
+        setInternalValue(newValue);
+      }
       onChange?.(newValue);
     }
   };
@@ -45,7 +47,9 @@ export function NumberStepper({
   const handleDecrement = () => {
     if (currentValue > min) {
       const newValue = Math.max(currentValue - step, min);
-      setInternalValue(newValue);
+      if (controlledValue === undefined) {
+        setInternalValue(newValue);
+      }
       onChange?.(newValue);
     }
   };

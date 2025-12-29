@@ -58,11 +58,64 @@ export function PageHeader({
   };
 
   const Container = animate ? motion.div : 'div';
+  const Label = animate ? motion.span : 'span';
+  const Title = animate ? motion.h1 : 'h1';
+  const Description = animate ? motion.p : 'p';
+  const Divider = animate ? motion.div : 'div';
+
   const containerProps = animate
     ? {
         initial: { opacity: 0, y: 20 },
         animate: { opacity: 1, y: 0 },
         transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] as const },
+      }
+    : {};
+
+  const labelProps = animate
+    ? {
+        initial: { opacity: 0, y: -10 },
+        animate: { opacity: 1, y: 0 },
+        transition: {
+          duration: 0.5,
+          delay: 0.1,
+          ease: [0.4, 0, 0.2, 1] as const,
+        },
+      }
+    : {};
+
+  const titleProps = animate
+    ? {
+        initial: { opacity: 0, y: -10 },
+        animate: { opacity: 1, y: 0 },
+        transition: {
+          duration: 0.5,
+          delay: 0.2,
+          ease: [0.4, 0, 0.2, 1] as const,
+        },
+      }
+    : {};
+
+  const descriptionProps = animate
+    ? {
+        initial: { opacity: 0, y: -10 },
+        animate: { opacity: 1, y: 0 },
+        transition: {
+          duration: 0.5,
+          delay: 0.3,
+          ease: [0.4, 0, 0.2, 1] as const,
+        },
+      }
+    : {};
+
+  const dividerProps = animate
+    ? {
+        initial: { scaleX: 0 },
+        animate: { scaleX: 1 },
+        transition: {
+          duration: 0.5,
+          delay: 0.4,
+          ease: [0.4, 0, 0.2, 1] as const,
+        },
       }
     : {};
 
@@ -72,43 +125,31 @@ export function PageHeader({
       {...containerProps}
     >
       {label && (
-        <motion.span
+        <Label
           className={cn(
             'text-violet-400 font-bold tracking-[0.2em] uppercase',
             sizeClasses[size].label,
             labelClassName
           )}
-          initial={animate ? { opacity: 0, y: -10 } : {}}
-          animate={animate ? { opacity: 1, y: 0 } : {}}
-          transition={{
-            duration: 0.5,
-            delay: 0.1,
-            ease: [0.4, 0, 0.2, 1] as const,
-          }}
+          {...labelProps}
         >
           {label}
-        </motion.span>
+        </Label>
       )}
 
-      <motion.h1
+      <Title
         className={cn(
           'font-semibold text-white mb-2 tracking-tight',
           sizeClasses[size].title,
           titleClassName
         )}
-        initial={animate ? { opacity: 0, y: -10 } : {}}
-        animate={animate ? { opacity: 1, y: 0 } : {}}
-        transition={{
-          duration: 0.5,
-          delay: 0.2,
-          ease: [0.4, 0, 0.2, 1] as const,
-        }}
+        {...titleProps}
       >
         {title}
-      </motion.h1>
+      </Title>
 
       {description && (
-        <motion.p
+        <Description
           className={cn(
             'text-gray-500 mx-auto leading-relaxed',
             sizeClasses[size].description,
@@ -116,33 +157,21 @@ export function PageHeader({
             align === 'right' && 'mx-0 ml-auto',
             descriptionClassName
           )}
-          initial={animate ? { opacity: 0, y: -10 } : {}}
-          animate={animate ? { opacity: 1, y: 0 } : {}}
-          transition={{
-            duration: 0.5,
-            delay: 0.3,
-            ease: [0.4, 0, 0.2, 1] as const,
-          }}
+          {...descriptionProps}
         >
           {description}
-        </motion.p>
+        </Description>
       )}
 
       {showDivider && (
-        <motion.div
+        <Divider
           className={cn(
             'w-10 h-0.5 bg-gradient-to-r from-violet-600 to-purple-900 rounded-full mt-4 opacity-80',
             align === 'left' && 'mr-auto',
             align === 'right' && 'ml-auto',
             dividerClassName
           )}
-          initial={animate ? { scaleX: 0 } : {}}
-          animate={animate ? { scaleX: 1 } : {}}
-          transition={{
-            duration: 0.5,
-            delay: 0.4,
-            ease: [0.4, 0, 0.2, 1] as const,
-          }}
+          {...dividerProps}
         />
       )}
     </Container>
