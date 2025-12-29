@@ -46,6 +46,7 @@ export function ConnectionOption({
 
   return (
     <motion.button
+      type="button"
       className="w-full flex items-center justify-between p-4 sm:p-5 border-b border-white/5 last:border-b-0 hover:bg-white/[0.03] transition-all group text-left cursor-pointer"
       onClick={onClick}
       initial={{ opacity: 0, y: 20 }}

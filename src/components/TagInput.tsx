@@ -19,9 +19,12 @@ export function TagInput({
   const [input, setInput] = useState('');
 
   const handleAddTag = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && input.trim()) {
-      onTagsChange([...tags, input.trim()]);
-      setInput('');
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (input.trim()) {
+        onTagsChange([...tags, input.trim()]);
+        setInput('');
+      }
     }
   };
 

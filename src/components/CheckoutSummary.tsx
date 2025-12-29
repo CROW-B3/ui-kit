@@ -220,6 +220,7 @@ export function CheckoutSummary({
                   )}
                 >
                   <button
+                    type="button"
                     onClick={primaryAction.onClick}
                     className={cn(
                       'rounded-xl font-medium transition-all duration-200 flex items-center gap-2',
@@ -237,6 +238,7 @@ export function CheckoutSummary({
                     <div className="flex items-center justify-between gap-4 text-xs">
                       {secondaryActions.left && (
                         <button
+                          type="button"
                           onClick={secondaryActions.onLeftClick}
                           className="text-gray-500 hover:text-gray-300 transition-colors"
                         >
@@ -245,6 +247,7 @@ export function CheckoutSummary({
                       )}
                       {secondaryActions.right && (
                         <button
+                          type="button"
                           onClick={secondaryActions.onRightClick}
                           className="text-gray-500 hover:text-gray-300 transition-colors"
                         >

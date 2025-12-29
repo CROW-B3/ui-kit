@@ -34,7 +34,9 @@ export function SegmentedControl<T extends string = string>({
   const selected = controlledValue ?? internalValue;
 
   const handleToggle = (value: T) => {
-    setInternalValue(value);
+    if (controlledValue === undefined) {
+      setInternalValue(value);
+    }
     onChange?.(value);
   };
 
@@ -51,9 +53,15 @@ export function SegmentedControl<T extends string = string>({
           {label}
         </span>
       )}
-      <div className="flex items-center bg-white/[0.03] border border-white/10 rounded-full p-1 relative">
+      <div
+        role="radiogroup"
+        aria-label={label}
+        className="flex items-center bg-white/[0.03] border border-white/10 rounded-full p-1 relative"
+      >
         <button
           type="button"
+          role="radio"
+          aria-checked={selected === options[0].value}
           onClick={() => handleToggle(options[0].value)}
           className={cn(
             'font-medium transition-colors rounded-full relative z-10',
@@ -67,6 +75,8 @@ export function SegmentedControl<T extends string = string>({
         </button>
         <button
           type="button"
+          role="radio"
+          aria-checked={selected === options[1].value}
           onClick={() => handleToggle(options[1].value)}
           className={cn(
             'font-medium transition-colors rounded-full relative z-10',

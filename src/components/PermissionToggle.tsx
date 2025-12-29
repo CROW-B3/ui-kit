@@ -53,8 +53,18 @@ export function PermissionToggle({
             checked={enabled}
             onChange={e => onToggle(e.target.checked)}
             className="sr-only peer"
+            aria-label={`Toggle ${title}`}
           />
-          <div className="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-violet-600"></div>
+          <div
+            className={[
+              'w-9 h-5 bg-gray-700 rounded-full',
+              'peer peer-focus:outline-none peer-checked:bg-violet-600',
+              "after:content-[''] after:absolute after:top-[2px] after:left-[2px]",
+              'after:bg-white after:border-gray-300 after:border',
+              'after:rounded-full after:h-4 after:w-4 after:transition-all',
+              'peer-checked:after:translate-x-full peer-checked:after:border-white',
+            ].join(' ')}
+          ></div>
         </label>
       </div>
       {expandable && expanded && enabled && (

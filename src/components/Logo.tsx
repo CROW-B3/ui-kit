@@ -10,7 +10,6 @@ export interface LogoProps {
   className?: string;
   textClassName?: string;
   imgClassName?: string;
-  containerClassName?: string;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   position?: 'absolute' | 'relative' | 'static';
   disableAnimation?: boolean;
@@ -26,9 +25,8 @@ export function Logo({
   className = '',
   textClassName = '',
   imgClassName = '',
-  containerClassName = '',
   size = 'md',
-  position = 'absolute',
+  position = 'static',
   disableAnimation = false,
   animationVariant = 'slide',
   width,
@@ -46,12 +44,6 @@ export function Logo({
     md: 'text-lg sm:text-xl',
     lg: 'text-xl sm:text-2xl',
     xl: 'text-2xl sm:text-3xl',
-  };
-
-  const positionClasses = {
-    absolute: 'absolute left-8 top-8 z-50',
-    relative: 'relative',
-    static: 'static',
   };
 
   const animations = {
@@ -74,9 +66,9 @@ export function Logo({
   } as const;
 
   const containerClasses = cn(
-    positionClasses[position],
+    position,
+    position === 'absolute' && 'left-8 top-8 z-50',
     'flex items-center gap-3',
-    containerClassName,
     className
   );
 
@@ -85,9 +77,13 @@ export function Logo({
       <img
         src={src}
         alt={alt}
-        width={width || 80}
-        height={height || 80}
-        className={cn('object-contain', sizeClasses[size], imgClassName)}
+        {...(width && { width })}
+        {...(height && { height })}
+        className={cn(
+          'object-contain',
+          !width && !height && sizeClasses[size],
+          imgClassName
+        )}
       />
       {text && (
         <span

@@ -43,7 +43,7 @@ export const Divider: React.FC<DividerProps> = ({
         {text && (
           <span
             className={cn(
-              'text-[10px] uppercase tracking-widest text-gray-600 font-medium shrink-0 writing-mode-vertical',
+              'text-[10px] uppercase tracking-widest text-gray-600 font-medium shrink-0 [writing-mode:vertical-rl]',
               textClassName
             )}
           >

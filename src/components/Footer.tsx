@@ -103,6 +103,9 @@ export function Footer({
       return <div className={inviteSectionClassName}>{inviteContent}</div>;
     }
 
+    const isExternal =
+      inviteHref.startsWith('http://') || inviteHref.startsWith('https://');
+
     return (
       <a
         href={inviteHref}
@@ -112,6 +115,10 @@ export function Footer({
           layout === 'vertical' && 'mb-2',
           inviteLinkClassName
         )}
+        {...(isExternal && {
+          target: '_blank',
+          rel: 'noopener noreferrer',
+        })}
       >
         {invitePrefix}{' '}
         <span

@@ -65,7 +65,7 @@ export function CodeBlock({
       )}
       <div className="w-full bg-[#050508] border border-white/10 rounded-lg p-3 overflow-x-auto group-hover:border-violet-500/30 transition-colors">
         <pre className="text-xs text-gray-300 font-mono leading-relaxed whitespace-pre">
-          {code}
+          <code className={`language-${language}`}>{code}</code>
         </pre>
       </div>
     </div>
