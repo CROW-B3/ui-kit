@@ -58,7 +58,10 @@ export function PermissionToggle({
           <div
             className={[
               'w-9 h-5 bg-gray-700 rounded-full',
-              'peer peer-focus:outline-none peer-checked:bg-violet-600',
+              'peer peer-checked:bg-violet-600',
+              'peer-focus-visible:outline-none peer-focus-visible:ring-2',
+              'peer-focus-visible:ring-violet-500 peer-focus-visible:ring-offset-2',
+              'peer-focus-visible:ring-offset-black',
               "after:content-[''] after:absolute after:top-[2px] after:left-[2px]",
               'after:bg-white after:border-gray-300 after:border',
               'after:rounded-full after:h-4 after:w-4 after:transition-all',

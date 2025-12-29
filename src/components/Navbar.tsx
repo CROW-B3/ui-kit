@@ -46,13 +46,13 @@ function CenteredNavbar({
   logoContainerClassName,
   rightContentClassName,
   centerContentClassName,
-  maxWidth,
+  maxWidth = '7xl',
 }: NavbarProps) {
   return (
     <motion.nav
       className={cn(
         'w-full flex items-center px-6 py-6 z-10 relative mx-auto',
-        MAX_WIDTH_CLASSES[maxWidth!],
+        MAX_WIDTH_CLASSES[maxWidth],
         containerClassName,
         className
       )}
@@ -119,13 +119,13 @@ function DefaultNavbar({
   containerClassName,
   logoContainerClassName,
   rightContentClassName,
-  maxWidth,
+  maxWidth = '7xl',
 }: NavbarProps) {
   return (
     <motion.nav
       className={cn(
         'w-full flex justify-between items-center px-6 py-6 z-10 relative mx-auto',
-        MAX_WIDTH_CLASSES[maxWidth!],
+        MAX_WIDTH_CLASSES[maxWidth],
         containerClassName,
         className
       )}
