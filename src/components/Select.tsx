@@ -108,10 +108,14 @@ export const Select: React.FC<SelectProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Reset highlighted index when dropdown opens
+  // Reset highlighted index and focus listbox when dropdown opens
   useEffect(() => {
     if (isOpen) {
       setHighlightedIndex(selectedIndex >= 0 ? selectedIndex : 0);
+      // Focus the listbox so keyboard navigation works
+      requestAnimationFrame(() => {
+        listboxRef.current?.focus();
+      });
     }
   }, [isOpen, selectedIndex]);
 

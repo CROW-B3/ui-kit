@@ -2,15 +2,13 @@ import React from 'react';
 import { cn } from '../lib/utils';
 
 export interface CheckboxProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
+  extends Omit<React.ComponentPropsWithRef<'input'>, 'size'> {
   label?: React.ReactNode;
   labelClassName?: string;
   containerClassName?: string;
   checkboxClassName?: string;
   size?: 'sm' | 'md' | 'lg';
   variant?: 'primary' | 'secondary';
-
-  ref?: React.Ref<HTMLInputElement>;
 }
 
 export function Checkbox({
