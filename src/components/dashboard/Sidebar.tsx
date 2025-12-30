@@ -58,10 +58,8 @@ export function Sidebar({
         overflow: 'hidden',
         borderRight: '1px rgba(255, 255, 255, 0.08) solid',
         flexShrink: 0,
-        display: 'flex',
-        flexDirection: 'column',
       }}
-      className="hidden md:flex"
+      className="hidden md:flex md:flex-col"
     >
       <div
         style={{
