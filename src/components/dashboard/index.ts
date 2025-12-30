@@ -13,6 +13,7 @@ export * from './SettingsDropup';
 export * from './SettingsModal';
 export * from './Sidebar';
 export * from './SidebarLogo';
+export * from './MobileSidebar';
 export * from './SidePanel';
 export * from './SourceIcon';
 export * from './StatusBadge';
