@@ -44,4 +44,4 @@ export * from './typography/SectionLabel';
 export * from './typography/Subtitle';
 export * from './typography/TypewriterText';
 
-export * from './overview';
+export * from './dashboard';
