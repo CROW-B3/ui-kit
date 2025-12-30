@@ -7,6 +7,7 @@ export * from './IconBadge';
 export * from './ListItem';
 export * from './MetricsCard';
 export * from './NavMenu';
+export * from './PatternCard';
 export * from './SearchInput';
 export * from './SectionHeader';
 export * from './SettingsDropup';

@@ -91,6 +91,9 @@ export function Header({
         />
       )}
 
+      {/* Spacer for minimal mode on desktop - pushes RightSection to right */}
+      {minimal && <div className="hidden md:block flex-1" />}
+
       <RightSection
         showNotification={showNotification}
         onNotificationClick={onNotificationClick}
