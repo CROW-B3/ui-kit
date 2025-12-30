@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Calendar, ChevronDown, Bell, Check } from 'lucide-react';
+import { Calendar, ChevronDown, Bell, Check, Menu } from 'lucide-react';
 import type { DateRangeOption, HeaderProps } from './types';
 
 export type { DateRangeOption, HeaderProps };
@@ -27,6 +27,8 @@ export function Header({
   onNotificationClick,
   onAvatarClick,
   minimal = false,
+  onMenuClick,
+  logoSrc,
 }: HeaderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedRange, setSelectedRange] = useState(dateRange);
@@ -53,7 +55,30 @@ export function Header({
   };
 
   return (
-    <header className={`w-full h-16 sticky top-0 flex-shrink-0 z-50 flex items-center ${minimal ? 'justify-end' : 'justify-between'} px-4 sm:px-6 lg:px-8 border-b border-white/[0.06] bg-[rgba(3,0,5,0.85)] backdrop-blur-xl`}>
+    <header className={`w-full h-16 sticky top-0 flex-shrink-0 z-50 flex items-center ${minimal ? 'justify-between' : 'justify-between'} px-4 sm:px-6 lg:px-8 border-b border-white/[0.06] bg-[rgba(3,0,5,0.85)] backdrop-blur-xl`}>
+      {/* Mobile Left Section - Hamburger + Logo */}
+      <div className="flex items-center gap-3 md:hidden">
+        {onMenuClick && (
+          <button
+            type="button"
+            onClick={onMenuClick}
+            className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors hover:bg-white/[0.06]"
+            aria-label="Toggle menu"
+          >
+            <Menu size={20} color="#9CA3AF" strokeWidth={2} />
+          </button>
+        )}
+        {logoSrc && (
+          <div className="flex items-center gap-2">
+            <img src={logoSrc} alt="Logo" className="w-6 h-6" />
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-white leading-none">CROW</span>
+              <span className="text-[8px] font-medium text-gray-500 tracking-[0.15em] uppercase leading-none">CLIENT</span>
+            </div>
+          </div>
+        )}
+      </div>
+
       {!minimal && (
         <LeftSection
           orgName={orgName}
@@ -96,7 +121,7 @@ function LeftSection({
   handleSelect,
 }: LeftSectionProps) {
   return (
-    <div className="flex items-center gap-3 sm:gap-6 min-w-0">
+    <div className="hidden md:flex items-center gap-3 sm:gap-6 min-w-0">
       <span className="text-sm font-medium text-white tracking-wide hidden sm:block truncate max-w-[140px] lg:max-w-none">
         {orgName}
       </span>

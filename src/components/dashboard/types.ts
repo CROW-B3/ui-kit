@@ -16,6 +16,10 @@ export interface HeaderProps {
   onAvatarClick?: () => void;
   /** Hide the left section (org name and date picker) - useful for minimal headers */
   minimal?: boolean;
+  /** Callback when hamburger menu is clicked (mobile only) */
+  onMenuClick?: () => void;
+  /** Logo image source for mobile header */
+  logoSrc?: string;
 }
 
 export interface NavItem {
@@ -103,4 +107,11 @@ export interface ChatHistorySectionProps {
   title?: string;
   /** Message to show when there are no chat items */
   emptyMessage?: string;
+}
+
+export interface MobileSidebarProps extends SidebarProps {
+  /** Whether the mobile sidebar is open */
+  isOpen: boolean;
+  /** Callback when the mobile sidebar should close */
+  onClose: () => void;
 }
