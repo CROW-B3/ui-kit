@@ -2,7 +2,7 @@
 
 import { LuArrowUpRight } from 'react-icons/lu';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '../lib/utils';
+import { cn } from '../../lib/utils';
 
 const buttonVariants = cva(
   'rounded-full transition-all font-medium flex items-center justify-center gap-2 whitespace-nowrap',

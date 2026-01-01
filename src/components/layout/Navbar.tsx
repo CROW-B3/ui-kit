@@ -1,10 +1,9 @@
 'use client';
 
 import React from 'react';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Logo, type LogoProps } from './Logo';
-import { cn } from '../lib/utils';
+import { Logo, type LogoProps } from '../display/Logo';
+import { cn } from '../../lib/utils';
 
 export interface NavbarProps {
   logo?: {
@@ -24,6 +23,7 @@ export interface NavbarProps {
   rightContentClassName?: string;
   centerContentClassName?: string;
   maxWidth?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '7xl' | 'full';
+  linkComponent?: React.ElementType;
 }
 
 const MAX_WIDTH_CLASSES = {
@@ -47,6 +47,7 @@ function CenteredNavbar({
   rightContentClassName,
   centerContentClassName,
   maxWidth = '7xl',
+  linkComponent: LinkComponent = 'a',
 }: NavbarProps) {
   return (
     <motion.nav
@@ -65,7 +66,7 @@ function CenteredNavbar({
         animate={animate ? { opacity: 1, x: 0 } : {}}
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
-        <Link
+        <LinkComponent
           href={logo?.href || '/'}
           className={cn('flex items-center gap-3', logoContainerClassName)}
         >
@@ -77,7 +78,7 @@ function CenteredNavbar({
             disableAnimation={!animate}
             {...logo?.logoProps}
           />
-        </Link>
+        </LinkComponent>
       </motion.div>
 
       {centerContent && (
@@ -120,6 +121,7 @@ function DefaultNavbar({
   logoContainerClassName,
   rightContentClassName,
   maxWidth = '7xl',
+  linkComponent: LinkComponent = 'a',
 }: NavbarProps) {
   return (
     <motion.nav
@@ -138,7 +140,7 @@ function DefaultNavbar({
         animate={animate ? { opacity: 1, x: 0 } : {}}
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
-        <Link
+        <LinkComponent
           href={logo?.href || '/'}
           className={cn('flex items-center gap-3', logoContainerClassName)}
         >
@@ -150,7 +152,7 @@ function DefaultNavbar({
             disableAnimation={!animate}
             {...logo?.logoProps}
           />
-        </Link>
+        </LinkComponent>
       </motion.div>
 
       {rightContent && (
@@ -183,6 +185,7 @@ export interface NavLinkProps {
   children: React.ReactNode;
   className?: string;
   variant?: 'primary' | 'secondary' | 'ghost';
+  linkComponent?: React.ElementType;
 }
 
 export const NavLink: React.FC<NavLinkProps> = ({
@@ -190,6 +193,7 @@ export const NavLink: React.FC<NavLinkProps> = ({
   children,
   className = '',
   variant = 'primary',
+  linkComponent: LinkComponent = 'a',
 }) => {
   const variantClasses = {
     primary: 'text-white hover:text-violet-400',
@@ -198,7 +202,7 @@ export const NavLink: React.FC<NavLinkProps> = ({
   };
 
   return (
-    <Link
+    <LinkComponent
       href={href}
       className={cn(
         'transition-colors font-medium flex items-center',
@@ -207,6 +211,6 @@ export const NavLink: React.FC<NavLinkProps> = ({
       )}
     >
       {children}
-    </Link>
+    </LinkComponent>
   );
 };

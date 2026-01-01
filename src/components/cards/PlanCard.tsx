@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { cn } from '../lib/utils';
-import { Checkbox } from './Checkbox';
+import { cn } from '../../lib/utils';
+import { Checkbox } from '../inputs/Checkbox';
 
 export interface PlanCardSpec {
   label: string;
