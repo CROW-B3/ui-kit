@@ -4,7 +4,7 @@ import { LuArrowUpRight } from 'react-icons/lu';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '../lib/utils';
+import { cn } from '../../lib/utils';
 
 const inputVariants = cva(
   'w-full rounded-full text-white placeholder:text-white/50 focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed',
