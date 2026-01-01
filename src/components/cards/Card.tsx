@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '../lib/utils';
+import { cn } from '../../lib/utils';
 
 const cardVariants = cva(
   'relative p-8 flex flex-col h-full backdrop-blur-sm group border-white/10 overflow-visible',

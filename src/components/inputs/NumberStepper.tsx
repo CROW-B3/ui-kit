@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { IoIosAdd } from 'react-icons/io';
 import { FiMinus } from 'react-icons/fi';
-import { cn } from '../lib/utils';
+import { cn } from '../../lib/utils';
 
 export interface NumberStepperProps {
   defaultValue?: number;
