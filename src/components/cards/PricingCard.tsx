@@ -93,7 +93,7 @@ export function PricingCard({
 
   const CardContent = (
     <div
-      className={`relative flex flex-col rounded-2xl border ${defaultBackgroundColor} p-5 backdrop-blur-sm transition-all ${className}`}
+      className={`relative flex h-full flex-col rounded-2xl border ${defaultBackgroundColor} p-5 backdrop-blur-sm transition-all ${className}`}
       style={
         {
           borderColor: defaultBorderColor,
@@ -187,6 +187,7 @@ export function PricingCard({
   if (animated) {
     return (
       <motion.div
+        className="h-full"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: animationDelay }}
