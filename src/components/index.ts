@@ -12,6 +12,7 @@ export * from './cards/InvitationDetailsCard';
 export * from './cards/OrderSummaryCard';
 export * from './cards/PendingInviteCard';
 export * from './cards/PlanCard';
+export * from './cards/PricingCard';
 export * from './cards/RunAgentCard';
 export * from './cards/SyncStatusCard';
 
