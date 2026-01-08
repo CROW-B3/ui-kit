@@ -12,62 +12,16 @@ export function SidebarLogo({
   subtitle = 'CLIENT',
 }: SidebarLogoProps) {
   return (
-    <div
-      style={{
-        width: 117.43,
-        height: 60,
-        left: 24,
-        top: 11.75,
-        position: 'absolute',
-      }}
-    >
+    <div className="w-[117.43px] h-[60px] absolute left-6 top-[11.75px]">
       <img
         src={logoSrc}
         alt={`${title} Logo`}
-        style={{
-          width: 58,
-          height: 60,
-          left: 0,
-          top: 0,
-          position: 'absolute',
-          objectFit: 'contain',
-        }}
+        className="w-[58px] h-[60px] absolute left-0 top-0 object-contain"
       />
-      <div
-        style={{
-          left: 58,
-          top: 14,
-          position: 'absolute',
-          justifyContent: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          color: 'white',
-          fontSize: 18,
-          fontFamily: 'Sora, sans-serif',
-          fontWeight: 700,
-          lineHeight: '18px',
-          letterSpacing: 0.45,
-        }}
-      >
+      <div className="absolute left-[58px] top-[14px] flex flex-col justify-center text-white text-lg font-bold font-[Sora,sans-serif] leading-[18px] tracking-[0.45px]">
         {title}
       </div>
-      <div
-        style={{
-          left: 58,
-          top: 36,
-          position: 'absolute',
-          justifyContent: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          color: '#9CA3AF',
-          fontSize: 9,
-          fontFamily: 'Sora, sans-serif',
-          fontWeight: 500,
-          textTransform: 'uppercase',
-          lineHeight: '13.5px',
-          letterSpacing: 0.90,
-        }}
-      >
+      <div className="absolute left-[58px] top-9 flex flex-col justify-center text-gray-400 text-[9px] font-medium font-[Sora,sans-serif] uppercase leading-[13.5px] tracking-[0.9px]">
         {subtitle}
       </div>
     </div>

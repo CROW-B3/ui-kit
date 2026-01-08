@@ -37,13 +37,14 @@ export function MetricsCard({
   chartData = DEFAULT_CHART_DATA,
   chartColor = 'violet',
 }: MetricsCardProps) {
-  const maxValue = Math.max(...chartData);
+  // Safeguard for empty chartData
+  const safeChartData = chartData.length > 0 ? chartData : DEFAULT_CHART_DATA;
+  const maxValue = Math.max(...safeChartData);
   const barColor = chartColors[chartColor];
 
   return (
     <GlassPanel variant="light" className="relative overflow-hidden">
       <div className="p-4 sm:p-5 min-h-[100px] sm:min-h-[109px] flex flex-col">
-        {/* Top row: Title and Badge */}
         <div className="flex items-start justify-between gap-2 mb-auto">
           <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-gray-400">
             {title}
@@ -51,14 +52,13 @@ export function MetricsCard({
           <StatusBadge variant={changeType}>{change}</StatusBadge>
         </div>
 
-        {/* Bottom row: Value and Chart */}
         <div className="flex items-end justify-between mt-4">
           <span className="text-xl sm:text-2xl font-bold text-white">
             {value}
           </span>
 
           <MiniChart
-            chartData={chartData}
+            chartData={safeChartData}
             maxValue={maxValue}
             barColor={barColor}
           />

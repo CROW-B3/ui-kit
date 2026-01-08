@@ -2,8 +2,10 @@
 
 import { X } from 'lucide-react';
 import { useCallback, useEffect, useRef } from 'react';
-
 import { cn } from '../../lib/utils';
+
+const FOCUSABLE_ELEMENTS =
+  'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 export interface SidePanelProps {
   isOpen: boolean;
@@ -33,22 +35,58 @@ export function SidePanel({
   className,
 }: SidePanelProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const previousActiveElement = useRef<HTMLElement | null>(null);
 
-  const handleEscape = useCallback(
+  const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') {
+        onClose();
+        return;
+      }
+
+      // Focus trap
+      if (e.key === 'Tab' && panelRef.current) {
+        const focusableElements =
+          panelRef.current.querySelectorAll(FOCUSABLE_ELEMENTS);
+        const firstElement = focusableElements[0] as HTMLElement;
+        const lastElement = focusableElements[
+          focusableElements.length - 1
+        ] as HTMLElement;
+
+        if (e.shiftKey && document.activeElement === firstElement) {
+          e.preventDefault();
+          lastElement?.focus();
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+          e.preventDefault();
+          firstElement?.focus();
+        }
+      }
     },
     [onClose]
   );
 
   useEffect(() => {
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
+      previousActiveElement.current = document.activeElement as HTMLElement;
+      document.addEventListener('keydown', handleKeyDown);
+
+      // Focus first focusable element in panel
+      setTimeout(() => {
+        if (panelRef.current) {
+          const focusableElements =
+            panelRef.current.querySelectorAll(FOCUSABLE_ELEMENTS);
+          (focusableElements[0] as HTMLElement)?.focus();
+        }
+      }, 0);
+    } else {
+      // Restore focus to previous element
+      previousActiveElement.current?.focus();
     }
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, handleEscape]);
+  }, [isOpen, handleKeyDown]);
 
   useEffect(() => {
     if (isOpen && scrollContainerRef.current) {
@@ -64,12 +102,19 @@ export function SidePanel({
             'fixed inset-0 z-[200] transition-opacity duration-300',
             isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
           )}
-          style={{ background: 'rgba(0, 0, 0, 0.60)', backdropFilter: 'blur(4px)' }}
+          style={{
+            background: 'rgba(0, 0, 0, 0.60)',
+            backdropFilter: 'blur(4px)',
+          }}
           onClick={onClose}
         />
       )}
 
       <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? 'side-panel-title' : undefined}
         className={cn(
           'fixed top-0 right-0 h-full z-[201] flex flex-col transition-transform duration-300 ease-out',
           widthClasses[width],
@@ -89,14 +134,15 @@ export function SidePanel({
         >
           <div className="flex-1 min-w-0 pr-4">
             {title && (
-              <h2 className="text-lg font-semibold truncate" style={{ color: '#F3F4F6' }}>
+              <h2
+                id="side-panel-title"
+                className="text-lg font-semibold truncate text-gray-100"
+              >
                 {title}
               </h2>
             )}
             {subtitle && (
-              <p className="text-sm mt-1 truncate" style={{ color: '#6B7280' }}>
-                {subtitle}
-              </p>
+              <p className="text-sm mt-1 truncate text-gray-500">{subtitle}</p>
             )}
           </div>
           <button

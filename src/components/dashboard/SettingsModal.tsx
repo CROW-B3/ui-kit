@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { X, Moon, Sun, Bell, BellOff, Globe, User, LogOut } from 'lucide-react';
 import type { SettingsModalProps } from './types';
+import { Bell, BellOff, Globe, LogOut, Moon, Sun, User, X } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { cn } from '../../lib/utils';
+import { ToggleSwitch } from './ToggleSwitch';
 
 export type { SettingsModalProps };
 
@@ -21,10 +23,12 @@ export function SettingsModal({
   const [notifications, setNotifications] = useState(initialNotifications);
   const [isClosing, setIsClosing] = useState(false);
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isOpen) {
       setIsClosing(false);
+      modalRef.current?.focus();
     }
   }, [isOpen]);
 
@@ -78,65 +82,37 @@ export function SettingsModal({
 
   return (
     <>
-      {/* Backdrop */}
       <div
         role="presentation"
         aria-hidden="true"
         onClick={handleClose}
-        style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0, 0, 0, 0.6)',
-          backdropFilter: 'blur(4px)',
-          zIndex: 100,
-          opacity: isClosing ? 0 : 1,
-          transition: 'opacity 0.2s ease',
-        }}
+        className={cn(
+          'fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] transition-opacity duration-200',
+          isClosing ? 'opacity-0' : 'opacity-100'
+        )}
       />
 
-      {/* Modal */}
       <div
+        ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby="settings-modal-title"
-        style={{
-          position: 'fixed',
-          top: '50%',
-          left: '50%',
-          transform: isClosing
-            ? 'translate(-50%, -50%) scale(0.95)'
-            : 'translate(-50%, -50%) scale(1)',
-          width: 400,
-          maxWidth: '90vw',
-          background: 'rgba(10, 5, 20, 0.98)',
-          backdropFilter: 'blur(20px)',
-          borderRadius: 16,
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          boxShadow: '0px 24px 48px rgba(0, 0, 0, 0.5), 0px 0px 1px rgba(139, 92, 246, 0.3)',
-          zIndex: 101,
-          opacity: isClosing ? 0 : 1,
-          transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-        }}
+        tabIndex={-1}
+        className={cn(
+          'fixed top-1/2 left-1/2 w-[400px] max-w-[90vw] z-[101]',
+          'bg-[rgba(10,5,20,0.98)] backdrop-blur-[20px] rounded-2xl',
+          'border border-white/[0.08]',
+          'shadow-[0px_24px_48px_rgba(0,0,0,0.5),0px_0px_1px_rgba(139,92,246,0.3)]',
+          'transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
+          isClosing
+            ? 'opacity-0 -translate-x-1/2 -translate-y-1/2 scale-95'
+            : 'opacity-100 -translate-x-1/2 -translate-y-1/2 scale-100'
+        )}
       >
-        {/* Header */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '20px 24px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-          }}
-        >
+        <div className="flex items-center justify-between px-6 py-5 border-b border-white/[0.06]">
           <h2
             id="settings-modal-title"
-            style={{
-              color: 'white',
-              fontSize: 18,
-              fontWeight: 600,
-              fontFamily: 'Sora, sans-serif',
-              margin: 0,
-            }}
+            className="text-white text-lg font-semibold font-[Sora,sans-serif] m-0"
           >
             Settings
           </h2>
@@ -144,281 +120,94 @@ export function SettingsModal({
             type="button"
             onClick={handleClose}
             aria-label="Close settings"
-            style={{
-              width: 32,
-              height: 32,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              background: 'transparent',
-              border: 'none',
-              borderRadius: 8,
-              cursor: 'pointer',
-              transition: 'background 0.15s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.06)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-            }}
+            className="w-8 h-8 flex items-center justify-center bg-transparent border-none rounded-lg cursor-pointer transition-colors hover:bg-white/[0.06]"
           >
-            <X size={18} color="#6B7280" strokeWidth={2} />
+            <X size={18} className="text-gray-500" strokeWidth={2} />
           </button>
         </div>
 
-        {/* User section */}
-        <div
-          style={{
-            padding: '20px 24px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div
-              style={{
-                width: 48,
-                height: 48,
-                borderRadius: 9999,
-                background: 'rgba(139, 92, 246, 0.2)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '1px solid rgba(139, 92, 246, 0.3)',
-              }}
-            >
-              <User size={24} color="#A78BFA" strokeWidth={1.5} />
+        <div className="px-6 py-5 border-b border-white/[0.06]">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-violet-500/20 flex items-center justify-center border border-violet-500/30">
+              <User size={24} className="text-violet-400" strokeWidth={1.5} />
             </div>
             <div>
-              <div
-                style={{
-                  color: 'white',
-                  fontSize: 14,
-                  fontWeight: 500,
-                  fontFamily: 'Sora, sans-serif',
-                }}
-              >
+              <div className="text-white text-sm font-medium font-[Sora,sans-serif]">
                 {userName}
               </div>
-              <div
-                style={{
-                  color: '#6B7280',
-                  fontSize: 12,
-                  fontFamily: 'Sora, sans-serif',
-                  marginTop: 2,
-                }}
-              >
+              <div className="text-gray-500 text-xs font-[Sora,sans-serif] mt-0.5">
                 {userEmail}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Settings options */}
-        <div style={{ padding: '12px 16px' }}>
-          {/* Theme toggle */}
+        <div className="p-3 px-4">
           <button
             type="button"
             onClick={handleThemeToggle}
-            style={{
-              width: '100%',
-              padding: '14px 12px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              background: 'transparent',
-              border: 'none',
-              borderRadius: 10,
-              cursor: 'pointer',
-              transition: 'background 0.15s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-            }}
+            className="w-full px-3 py-3.5 flex items-center justify-between bg-transparent border-none rounded-[10px] cursor-pointer transition-colors hover:bg-white/[0.04]"
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div className="flex items-center gap-3">
               {theme === 'dark' ? (
-                <Moon size={18} color="#A78BFA" strokeWidth={2} />
+                <Moon size={18} className="text-violet-400" strokeWidth={2} />
               ) : (
-                <Sun size={18} color="#FBBF24" strokeWidth={2} />
+                <Sun size={18} className="text-amber-400" strokeWidth={2} />
               )}
-              <span
-                style={{
-                  color: '#D1D5DB',
-                  fontSize: 14,
-                  fontFamily: 'Sora, sans-serif',
-                }}
-              >
+              <span className="text-gray-300 text-sm font-[Sora,sans-serif]">
                 Theme
               </span>
             </div>
-            <div
-              style={{
-                padding: '4px 10px',
-                background: 'rgba(139, 92, 246, 0.15)',
-                borderRadius: 6,
-                color: '#C4B5FD',
-                fontSize: 12,
-                fontWeight: 500,
-                fontFamily: 'Sora, sans-serif',
-              }}
-            >
+            <div className="px-2.5 py-1 bg-violet-500/15 rounded-md text-violet-300 text-xs font-medium font-[Sora,sans-serif]">
               {theme === 'dark' ? 'Dark' : 'Light'}
             </div>
           </button>
 
-          {/* Notifications toggle */}
-          <button
-            type="button"
-            onClick={handleNotificationsToggle}
-            style={{
-              width: '100%',
-              padding: '14px 12px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              background: 'transparent',
-              border: 'none',
-              borderRadius: 10,
-              cursor: 'pointer',
-              transition: 'background 0.15s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div className="w-full px-3 py-3.5 flex items-center justify-between rounded-[10px] hover:bg-white/[0.04] transition-colors">
+            <div className="flex items-center gap-3">
               {notifications ? (
-                <Bell size={18} color="#10B981" strokeWidth={2} />
+                <Bell size={18} className="text-emerald-500" strokeWidth={2} />
               ) : (
-                <BellOff size={18} color="#6B7280" strokeWidth={2} />
+                <BellOff size={18} className="text-gray-500" strokeWidth={2} />
               )}
-              <span
-                style={{
-                  color: '#D1D5DB',
-                  fontSize: 14,
-                  fontFamily: 'Sora, sans-serif',
-                }}
-              >
+              <span className="text-gray-300 text-sm font-[Sora,sans-serif]">
                 Notifications
               </span>
             </div>
-            {/* Toggle switch */}
-            <div
-              style={{
-                width: 44,
-                height: 24,
-                borderRadius: 12,
-                background: notifications ? 'rgba(16, 185, 129, 0.3)' : 'rgba(107, 114, 128, 0.3)',
-                padding: 2,
-                transition: 'background 0.2s ease',
-                position: 'relative',
-              }}
-            >
-              <div
-                style={{
-                  width: 20,
-                  height: 20,
-                  borderRadius: 10,
-                  background: notifications ? '#10B981' : '#4B5563',
-                  transition: 'all 0.2s ease',
-                  transform: notifications ? 'translateX(20px)' : 'translateX(0)',
-                }}
-              />
-            </div>
-          </button>
+            <ToggleSwitch
+              enabled={notifications}
+              onChange={handleNotificationsToggle}
+              aria-label="Toggle notifications"
+            />
+          </div>
 
-          {/* Language */}
           <button
             type="button"
             disabled
             aria-disabled="true"
-            style={{
-              width: '100%',
-              padding: '14px 12px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              background: 'transparent',
-              border: 'none',
-              borderRadius: 10,
-              cursor: 'not-allowed',
-              opacity: 0.6,
-              transition: 'background 0.15s ease',
-            }}
+            className="w-full px-3 py-3.5 flex items-center justify-between bg-transparent border-none rounded-[10px] cursor-not-allowed opacity-60"
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <Globe size={18} color="#6B7280" strokeWidth={2} />
-              <span
-                style={{
-                  color: '#D1D5DB',
-                  fontSize: 14,
-                  fontFamily: 'Sora, sans-serif',
-                }}
-              >
+            <div className="flex items-center gap-3">
+              <Globe size={18} className="text-gray-500" strokeWidth={2} />
+              <span className="text-gray-300 text-sm font-[Sora,sans-serif]">
                 Language
               </span>
             </div>
-            <div
-              style={{
-                color: '#6B7280',
-                fontSize: 13,
-                fontFamily: 'Sora, sans-serif',
-              }}
-            >
+            <div className="text-gray-500 text-[13px] font-[Sora,sans-serif]">
               English
             </div>
           </button>
         </div>
 
-        {/* Logout button */}
         {onLogout && (
-          <div
-            style={{
-              padding: '12px 16px 20px',
-              borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-            }}
-          >
+          <div className="px-4 pt-3 pb-5 border-t border-white/[0.06]">
             <button
               type="button"
               onClick={onLogout}
-              style={{
-                width: '100%',
-                padding: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: 8,
-                background: 'rgba(239, 68, 68, 0.1)',
-                border: '1px solid rgba(239, 68, 68, 0.2)',
-                borderRadius: 10,
-                cursor: 'pointer',
-                transition: 'all 0.15s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.15)';
-                e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
-                e.currentTarget.style.borderColor = 'rgba(239, 68, 68, 0.2)';
-              }}
+              className="w-full p-3 flex items-center justify-center gap-2 bg-red-500/10 border border-red-500/20 rounded-[10px] cursor-pointer transition-all hover:bg-red-500/15 hover:border-red-500/30"
             >
-              <LogOut size={16} color="#EF4444" strokeWidth={2} />
-              <span
-                style={{
-                  color: '#EF4444',
-                  fontSize: 14,
-                  fontWeight: 500,
-                  fontFamily: 'Sora, sans-serif',
-                }}
-              >
+              <LogOut size={16} className="text-red-500" strokeWidth={2} />
+              <span className="text-red-500 text-sm font-medium font-[Sora,sans-serif]">
                 Sign out
               </span>
             </button>

@@ -1,7 +1,17 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { Settings, ChevronUp, Moon, Sun, Bell, BellOff, LogOut, User } from 'lucide-react';
+import {
+  Bell,
+  BellOff,
+  ChevronUp,
+  LogOut,
+  Moon,
+  Settings,
+  Sun,
+  User,
+} from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { cn } from '../../lib/utils';
 import { ToggleSwitch } from './ToggleSwitch';
 
 export interface SettingsDropupProps {
@@ -51,202 +61,82 @@ export function SettingsDropup({
   };
 
   return (
-    <div
-      ref={ref}
-      style={{
-        width: 247,
-        left: 16,
-        bottom: 24,
-        position: 'absolute',
-      }}
-    >
+    <div ref={ref} className="w-[247px] absolute left-4 bottom-6">
       <div
-        style={{
-          position: 'absolute',
-          bottom: 52,
-          left: 0,
-          width: 247,
-          background: 'rgba(10, 5, 20, 0.98)',
-          backdropFilter: 'blur(20px)',
-          borderRadius: 12,
-          border: '1px solid rgba(255, 255, 255, 0.08)',
-          boxShadow: '0px -8px 32px rgba(0, 0, 0, 0.4)',
-          overflow: 'hidden',
-          opacity: isOpen ? 1 : 0,
-          transform: isOpen ? 'translateY(0) scale(1)' : 'translateY(8px) scale(0.96)',
-          pointerEvents: isOpen ? 'auto' : 'none',
-          transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-          zIndex: 50,
-        }}
+        className={cn(
+          'absolute bottom-[52px] left-0 w-[247px]',
+          'bg-[rgba(10,5,20,0.98)] backdrop-blur-[20px] rounded-xl',
+          'border border-white/[0.08] shadow-[0px_-8px_32px_rgba(0,0,0,0.4)]',
+          'overflow-hidden z-50 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
+          isOpen
+            ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
+            : 'opacity-0 translate-y-2 scale-[0.96] pointer-events-none'
+        )}
       >
-        <div
-          style={{
-            padding: '14px 12px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-          }}
-        >
-          <div
-            style={{
-              width: 36,
-              height: 36,
-              borderRadius: 9999,
-              background: 'rgba(139, 92, 246, 0.2)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              border: '1px solid rgba(139, 92, 246, 0.3)',
-              flexShrink: 0,
-            }}
-          >
-            <User size={18} color="#A78BFA" strokeWidth={1.5} />
+        <div className="p-3 px-3 border-b border-white/[0.06] flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-full bg-violet-500/20 flex items-center justify-center border border-violet-500/30 shrink-0">
+            <User size={18} className="text-violet-400" strokeWidth={1.5} />
           </div>
-          <div style={{ overflow: 'hidden' }}>
-            <div
-              style={{
-                color: 'white',
-                fontSize: 13,
-                fontWeight: 500,
-                fontFamily: 'Sora, sans-serif',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
+          <div className="overflow-hidden">
+            <div className="text-white text-[13px] font-medium font-[Sora,sans-serif] truncate">
               {userName}
             </div>
-            <div
-              style={{
-                color: '#6B7280',
-                fontSize: 11,
-                fontFamily: 'Sora, sans-serif',
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-              }}
-            >
+            <div className="text-gray-500 text-[11px] font-[Sora,sans-serif] truncate">
               {userEmail}
             </div>
           </div>
         </div>
 
-        <div style={{ padding: '6px' }}>
+        <div className="p-1.5">
           <button
             type="button"
             onClick={handleThemeToggle}
-            style={{
-              width: '100%',
-              padding: '10px 8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              background: 'transparent',
-              border: 'none',
-              borderRadius: 8,
-              cursor: 'pointer',
-              transition: 'background 0.15s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-            }}
+            className="w-full py-2.5 px-2 flex items-center justify-between bg-transparent border-none rounded-lg cursor-pointer transition-colors hover:bg-white/[0.04]"
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div className="flex items-center gap-2.5">
               {theme === 'dark' ? (
-                <Moon size={15} color="#A78BFA" strokeWidth={2} />
+                <Moon size={15} className="text-violet-400" strokeWidth={2} />
               ) : (
-                <Sun size={15} color="#FBBF24" strokeWidth={2} />
+                <Sun size={15} className="text-amber-400" strokeWidth={2} />
               )}
-              <span style={{ color: '#D1D5DB', fontSize: 13, fontFamily: 'Sora, sans-serif' }}>
+              <span className="text-gray-300 text-[13px] font-[Sora,sans-serif]">
                 Theme
               </span>
             </div>
-            <div
-              style={{
-                padding: '3px 8px',
-                background: 'rgba(139, 92, 246, 0.15)',
-                borderRadius: 5,
-                color: '#C4B5FD',
-                fontSize: 11,
-                fontWeight: 500,
-                fontFamily: 'Sora, sans-serif',
-              }}
-            >
+            <div className="py-0.5 px-2 bg-violet-500/15 rounded-[5px] text-violet-300 text-[11px] font-medium font-[Sora,sans-serif]">
               {theme === 'dark' ? 'Dark' : 'Light'}
             </div>
           </button>
 
-          <button
-            type="button"
-            onClick={handleNotificationsToggle}
-            style={{
-              width: '100%',
-              padding: '10px 8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              background: 'transparent',
-              border: 'none',
-              borderRadius: 8,
-              cursor: 'pointer',
-              transition: 'background 0.15s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'transparent';
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div className="w-full py-2.5 px-2 flex items-center justify-between rounded-lg hover:bg-white/[0.04] transition-colors">
+            <div className="flex items-center gap-2.5">
               {notifications ? (
-                <Bell size={15} color="#10B981" strokeWidth={2} />
+                <Bell size={15} className="text-emerald-500" strokeWidth={2} />
               ) : (
-                <BellOff size={15} color="#6B7280" strokeWidth={2} />
+                <BellOff size={15} className="text-gray-500" strokeWidth={2} />
               )}
-              <span style={{ color: '#D1D5DB', fontSize: 13, fontFamily: 'Sora, sans-serif' }}>
+              <span className="text-gray-300 text-[13px] font-[Sora,sans-serif]">
                 Notifications
               </span>
             </div>
-            <ToggleSwitch enabled={notifications} size="sm" />
-          </button>
+            <ToggleSwitch
+              enabled={notifications}
+              onChange={handleNotificationsToggle}
+              size="sm"
+              aria-label="Toggle notifications"
+            />
+          </div>
         </div>
 
         {onLogout && (
-          <div
-            style={{
-              padding: '6px',
-              borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-            }}
-          >
+          <div className="p-1.5 border-t border-white/[0.06]">
             <button
               type="button"
               onClick={onLogout}
-              style={{
-                width: '100%',
-                padding: '10px 8px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 10,
-                background: 'transparent',
-                border: 'none',
-                borderRadius: 8,
-                cursor: 'pointer',
-                transition: 'background 0.15s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(239, 68, 68, 0.1)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = 'transparent';
-              }}
+              className="w-full py-2.5 px-2 flex items-center gap-2.5 bg-transparent border-none rounded-lg cursor-pointer transition-colors hover:bg-red-500/10"
             >
-              <LogOut size={15} color="#EF4444" strokeWidth={2} />
-              <span style={{ color: '#EF4444', fontSize: 13, fontFamily: 'Sora, sans-serif' }}>
+              <LogOut size={15} className="text-red-500" strokeWidth={2} />
+              <span className="text-red-500 text-[13px] font-[Sora,sans-serif]">
                 Sign out
               </span>
             </button>
@@ -254,57 +144,41 @@ export function SettingsDropup({
         )}
       </div>
 
-      <div style={{ borderTop: '1px rgba(255, 255, 255, 0.08) solid', paddingTop: 12 }}>
+      <div className="border-t border-white/[0.08] pt-3">
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Open settings"
           aria-expanded={isOpen}
-          style={{
-            width: 247,
-            height: 41,
-            borderRadius: 8,
-            background: isOpen ? 'rgba(255, 255, 255, 0.06)' : 'transparent',
-            border: 'none',
-            cursor: 'pointer',
-            transition: 'background 0.15s ease',
-            display: 'flex',
-            alignItems: 'center',
-            paddingLeft: 12,
-            gap: 12,
-          }}
-          onMouseEnter={(e) => {
-            if (!isOpen) e.currentTarget.style.background = 'rgba(255, 255, 255, 0.04)';
-          }}
-          onMouseLeave={(e) => {
-            if (!isOpen) e.currentTarget.style.background = 'transparent';
-          }}
+          className={cn(
+            'w-[247px] h-[41px] rounded-lg border-none cursor-pointer transition-colors',
+            'flex items-center pl-3 gap-3',
+            isOpen ? 'bg-white/[0.06]' : 'bg-transparent hover:bg-white/[0.04]'
+          )}
         >
-          <div style={{ width: 20, height: 24, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Settings size={15} color={isOpen ? '#A78BFA' : '#6B7280'} strokeWidth={2} />
+          <div className="w-5 h-6 flex items-center justify-center">
+            <Settings
+              size={15}
+              className={cn(isOpen ? 'text-violet-400' : 'text-gray-500')}
+              strokeWidth={2}
+            />
           </div>
           <span
-            style={{
-              color: isOpen ? 'white' : '#9CA3AF',
-              fontSize: 14,
-              fontFamily: 'Sora, sans-serif',
-              fontWeight: 400,
-              lineHeight: '21px',
-              flex: 1,
-              textAlign: 'left',
-            }}
+            className={cn(
+              'text-sm font-normal leading-[21px] font-[Sora,sans-serif] flex-1 text-left',
+              isOpen ? 'text-white' : 'text-gray-400'
+            )}
           >
             Settings
           </span>
-          <div style={{ width: 18, height: 22, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: 12 }}>
+          <div className="w-[18px] h-[22px] flex items-center justify-center mr-3">
             <ChevronUp
               size={12}
-              color={isOpen ? '#A78BFA' : '#4B5563'}
+              className={cn(
+                'transition-transform duration-200',
+                isOpen ? 'text-violet-400 rotate-180' : 'text-gray-600'
+              )}
               strokeWidth={2}
-              style={{
-                transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.2s ease',
-              }}
             />
           </div>
         </button>

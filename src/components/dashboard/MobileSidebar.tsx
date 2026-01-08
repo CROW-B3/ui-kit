@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import type { MobileSidebarProps, NavItem } from './types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
-import type { MobileSidebarProps, NavItem } from './types';
+import { useEffect } from 'react';
 import { ChatHistorySection } from './ChatHistorySection';
 import { NavMenu } from './NavMenu';
 import { SettingsDropup } from './SettingsDropup';
@@ -75,7 +75,6 @@ export function MobileSidebar({
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -86,45 +85,28 @@ export function MobileSidebar({
             aria-hidden="true"
           />
 
-          {/* Sidebar Panel */}
           <motion.aside
             initial={{ x: '-100%' }}
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed left-0 top-0 h-full z-[101] md:hidden"
-            style={{
-              width: 280,
-              background: 'black',
-              borderRight: '1px rgba(255, 255, 255, 0.08) solid',
-            }}
+            className="fixed left-0 top-0 h-full w-[280px] bg-black border-r border-white/[0.08] z-[101] md:hidden"
           >
-            {/* Gradient overlays */}
             <div
+              className="absolute inset-0 w-[279px] h-full pointer-events-none"
               style={{
-                width: 279,
-                height: '100%',
-                left: 0,
-                top: 0,
-                position: 'absolute',
-                background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%)',
-                pointerEvents: 'none',
+                background:
+                  'linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%)',
               }}
             />
             <div
+              className="absolute left-0 top-0 w-[279px] h-32 opacity-50 pointer-events-none"
               style={{
-                width: 279,
-                height: 128,
-                left: 0,
-                top: 0,
-                position: 'absolute',
-                opacity: 0.50,
-                background: 'linear-gradient(180deg, #100B1A 0%, rgba(16, 11, 26, 0) 100%)',
-                pointerEvents: 'none',
+                background:
+                  'linear-gradient(180deg, #100B1A 0%, rgba(16, 11, 26, 0) 100%)',
               }}
             />
 
-            {/* Close Button */}
             <button
               type="button"
               onClick={onClose}
@@ -134,7 +116,6 @@ export function MobileSidebar({
               <X size={20} color="#9CA3AF" strokeWidth={2} />
             </button>
 
-            {/* Content */}
             <div className="flex flex-col h-full">
               <SidebarLogo logoSrc={logoSrc} />
 
@@ -144,7 +125,6 @@ export function MobileSidebar({
                 onNavigate={handleNavigate}
               />
 
-              {/* Chat History Section - only visible on Ask CROW page */}
               <ChatHistorySection
                 items={chatHistory}
                 activeItemId={activeChatId}

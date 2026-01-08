@@ -1,7 +1,7 @@
 'use client';
 
+import { ArrowRight, Mic, Search } from 'lucide-react';
 import { useState } from 'react';
-import { Search, ArrowRight, Mic } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export interface SearchInputProps {
@@ -14,8 +14,13 @@ export interface SearchInputProps {
   disabled?: boolean;
   className?: string;
   helperText?: string;
-  /** Use transparent background variant */
   variant?: 'default' | 'transparent';
+}
+
+interface ActionButtonsProps {
+  showMicButton: boolean;
+  disabled: boolean;
+  onSubmit: () => void;
 }
 
 export function SearchInput({
@@ -57,14 +62,13 @@ export function SearchInput({
     <div className={cn('w-full', className)}>
       <div
         className={cn(
-          'relative flex items-center rounded-full overflow-hidden h-[48px] sm:h-[54px]',
+          'relative flex items-center rounded-full overflow-hidden h-12 sm:h-[54px]',
+          'border border-white/10 shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)]',
+          variant === 'transparent'
+            ? 'bg-[rgba(14,10,21,0.6)]'
+            : 'bg-[#0E0A15]',
           disabled && 'opacity-50 cursor-not-allowed'
         )}
-        style={{
-          background: variant === 'transparent' ? 'rgba(14, 10, 21, 0.6)' : '#0E0A15',
-          boxShadow: '0px 4px 6px -4px rgba(0, 0, 0, 0.10)',
-          border: '1px solid rgba(255, 255, 255, 0.10)',
-        }}
       >
         <SearchIcon />
         <input
@@ -101,19 +105,9 @@ export function SearchInput({
 function SearchIcon() {
   return (
     <div className="absolute left-4 flex items-center justify-center">
-      <Search
-        size={24}
-        className="text-gray-500"
-        strokeWidth={2}
-      />
+      <Search size={24} className="text-gray-500" strokeWidth={2} />
     </div>
   );
-}
-
-interface ActionButtonsProps {
-  showMicButton: boolean;
-  disabled: boolean;
-  onSubmit: () => void;
 }
 
 function ActionButtons({
@@ -134,11 +128,7 @@ function ActionButtons({
           )}
           aria-label="Voice input"
         >
-          <Mic
-            size={20}
-            className="text-gray-500"
-            strokeWidth={2}
-          />
+          <Mic size={20} className="text-gray-500" strokeWidth={2} />
         </button>
       )}
 
@@ -148,20 +138,13 @@ function ActionButtons({
         disabled={disabled}
         className={cn(
           'w-9 h-9 flex items-center justify-center rounded-full',
+          'bg-violet-600 shadow-[0px_0px_10px_rgba(124,58,237,0.30)]',
           'transition-colors',
           'disabled:cursor-not-allowed disabled:opacity-50'
         )}
-        style={{
-          background: '#7C3AED',
-          boxShadow: '0px 0px 10px rgba(124, 58, 237, 0.30)',
-        }}
         aria-label="Submit"
       >
-        <ArrowRight
-          size={18}
-          className="text-white"
-          strokeWidth={2}
-        />
+        <ArrowRight size={18} className="text-white" strokeWidth={2} />
       </button>
     </div>
   );
