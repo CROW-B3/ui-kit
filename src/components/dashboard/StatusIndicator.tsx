@@ -38,21 +38,16 @@ export function StatusIndicator({
     <div
       className={cn(
         'inline-flex items-center gap-2 px-4 py-1.5 rounded-full',
-        'backdrop-blur-sm',
+        'backdrop-blur-sm bg-violet-500/10 border border-violet-500/20',
         className
       )}
-      style={{
-        background: 'rgba(139, 92, 246, 0.10)',
-        border: '1px solid rgba(139, 92, 246, 0.20)',
-      }}
     >
       <div className={cn('w-1.5 h-1.5 rounded-full', config.dotColor)} />
       <span
         className={cn(
-          'text-[10px] font-bold uppercase',
+          'text-[10px] font-bold uppercase tracking-[1px] leading-[15px]',
           config.textColor
         )}
-        style={{ letterSpacing: '1px', lineHeight: '15px' }}
       >
         {displayLabel}
       </span>

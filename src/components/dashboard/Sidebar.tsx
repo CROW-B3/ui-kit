@@ -28,7 +28,7 @@ export function Sidebar({
   activeHref = '/',
   onNavigate,
   showSettings = true,
-  logoSrc = '/favicon.png',
+  logoSrc = '/logo.webp',
   userName = 'User',
   userEmail = 'user@example.com',
   onLogout,
@@ -43,47 +43,12 @@ export function Sidebar({
   onChatHistoryToggle,
   onChatRename,
   onChatDelete,
+  showChatHistory = false,
 }: SidebarProps) {
-  // Show chat history only on Ask CROW page (handle trailing slash)
-  const normalizedHref = activeHref?.replace(/\/$/, '') || '';
-  const showChatHistory = normalizedHref === '/ask-crow';
-
   return (
-    <aside
-      style={{
-        width: 280,
-        height: '100%',
-        position: 'relative',
-        background: 'black',
-        overflow: 'hidden',
-        borderRight: '1px rgba(255, 255, 255, 0.08) solid',
-        flexShrink: 0,
-      }}
-      className="hidden md:flex md:flex-col"
-    >
-      <div
-        style={{
-          width: 279,
-          height: '100%',
-          left: 0,
-          top: 0,
-          position: 'absolute',
-          background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0) 100%)',
-          pointerEvents: 'none',
-        }}
-      />
-      <div
-        style={{
-          width: 279,
-          height: 128,
-          left: 0,
-          top: 0,
-          position: 'absolute',
-          opacity: 0.50,
-          background: 'linear-gradient(180deg, #100B1A 0%, rgba(16, 11, 26, 0) 100%)',
-          pointerEvents: 'none',
-        }}
-      />
+    <aside className="w-[280px] h-full relative bg-black overflow-hidden border-r border-white/[0.08] shrink-0 hidden md:flex md:flex-col">
+      <div className="w-[279px] h-full absolute left-0 top-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
+      <div className="w-[279px] h-32 absolute left-0 top-0 opacity-50 bg-gradient-to-b from-[#100B1A] to-transparent pointer-events-none" />
 
       <SidebarLogo logoSrc={logoSrc} />
 
@@ -93,7 +58,6 @@ export function Sidebar({
         onNavigate={onNavigate}
       />
 
-      {/* Chat History Section - only visible on Ask CROW page */}
       <ChatHistorySection
         items={chatHistory}
         activeItemId={activeChatId}
