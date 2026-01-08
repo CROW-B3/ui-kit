@@ -84,7 +84,7 @@ function CenteredNavbar({
       {centerContent && (
         <motion.div
           className={cn(
-            'absolute left-1/2 -translate-x-1/2 flex items-center gap-12',
+            'hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-12',
             centerContentClassName
           )}
           initial={animate ? { opacity: 0, y: -10 } : {}}
