@@ -1,10 +1,54 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { Calendar, ChevronDown, Bell, Check, Menu } from 'lucide-react';
 import type { DateRangeOption, HeaderProps } from './types';
+import { Bell, Calendar, Check, ChevronDown, Menu } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { cn } from '../../lib/utils';
 
 export type { DateRangeOption, HeaderProps };
+
+interface LeftSectionProps {
+  orgName: string;
+  selectedRange: string;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  dropdownRef: React.RefObject<HTMLDivElement | null>;
+  dateRangeOptions: DateRangeOption[];
+  handleSelect: (option: DateRangeOption) => void;
+}
+
+interface DatePickerDropdownProps {
+  selectedRange: string;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
+  dropdownRef: React.RefObject<HTMLDivElement | null>;
+  dateRangeOptions: DateRangeOption[];
+  handleSelect: (option: DateRangeOption) => void;
+}
+
+interface DropdownMenuProps {
+  isOpen: boolean;
+  dateRangeOptions: DateRangeOption[];
+  selectedRange: string;
+  handleSelect: (option: DateRangeOption) => void;
+  focusedIndex: number;
+  setFocusedIndex: (index: number) => void;
+  onClose: () => void;
+}
+
+interface DropdownOptionProps {
+  option: DateRangeOption;
+  isSelected: boolean;
+  isFocused: boolean;
+  handleSelect: (option: DateRangeOption) => void;
+}
+
+interface RightSectionProps {
+  showNotification: boolean;
+  onNotificationClick?: () => void;
+  onAvatarClick?: () => void;
+  userInitials: string;
+}
 
 const defaultDateRangeOptions: DateRangeOption[] = [
   { label: 'Today', value: 'today' },
@@ -35,6 +79,10 @@ export function Header({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    setSelectedRange(dateRange);
+  }, [dateRange]);
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         dropdownRef.current &&
@@ -55,8 +103,7 @@ export function Header({
   };
 
   return (
-    <header className={`w-full h-16 sticky top-0 flex-shrink-0 z-50 flex items-center ${minimal ? 'justify-between' : 'justify-between'} px-4 sm:px-6 lg:px-8 border-b border-white/[0.06] bg-[rgba(3,0,5,0.85)] backdrop-blur-xl`}>
-      {/* Mobile Left Section - Hamburger + Logo */}
+    <header className="w-full h-16 sticky top-0 flex-shrink-0 z-50 flex items-center justify-between px-4 sm:px-6 lg:px-8 border-b border-white/[0.06] bg-[rgba(3,0,5,0.85)] backdrop-blur-xl">
       <div className="flex items-center gap-3 md:hidden">
         {onMenuClick && (
           <button
@@ -65,15 +112,19 @@ export function Header({
             className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors hover:bg-white/[0.06]"
             aria-label="Toggle menu"
           >
-            <Menu size={20} color="#9CA3AF" strokeWidth={2} />
+            <Menu size={20} className="text-gray-400" strokeWidth={2} />
           </button>
         )}
         {logoSrc && (
           <div className="flex items-center gap-2">
-            <img src={logoSrc} alt="Logo" className="w-6 h-6" />
+            <img src={logoSrc} alt="CROW Client logo" className="w-6 h-6" />
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-white leading-none">CROW</span>
-              <span className="text-[8px] font-medium text-gray-500 tracking-[0.15em] uppercase leading-none">CLIENT</span>
+              <span className="text-sm font-bold text-white leading-none">
+                CROW
+              </span>
+              <span className="text-[8px] font-medium text-gray-500 tracking-[0.15em] uppercase leading-none">
+                CLIENT
+              </span>
             </div>
           </div>
         )}
@@ -91,7 +142,6 @@ export function Header({
         />
       )}
 
-      {/* Spacer for minimal mode on desktop - pushes RightSection to right */}
       {minimal && <div className="hidden md:block flex-1" />}
 
       <RightSection
@@ -102,16 +152,6 @@ export function Header({
       />
     </header>
   );
-}
-
-interface LeftSectionProps {
-  orgName: string;
-  selectedRange: string;
-  isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
-  dropdownRef: React.RefObject<HTMLDivElement | null>;
-  dateRangeOptions: DateRangeOption[];
-  handleSelect: (option: DateRangeOption) => void;
 }
 
 function LeftSection({
@@ -143,15 +183,6 @@ function LeftSection({
   );
 }
 
-interface DatePickerDropdownProps {
-  selectedRange: string;
-  isOpen: boolean;
-  setIsOpen: (open: boolean) => void;
-  dropdownRef: React.RefObject<HTMLDivElement | null>;
-  dateRangeOptions: DateRangeOption[];
-  handleSelect: (option: DateRangeOption) => void;
-}
-
 function DatePickerDropdown({
   selectedRange,
   isOpen,
@@ -160,42 +191,87 @@ function DatePickerDropdown({
   dateRangeOptions,
   handleSelect,
 }: DatePickerDropdownProps) {
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isOpen) {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        setIsOpen(true);
+        setFocusedIndex(0);
+      }
+      return;
+    }
+
+    switch (e.key) {
+      case 'Escape':
+        e.preventDefault();
+        setIsOpen(false);
+        setFocusedIndex(-1);
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        setFocusedIndex(prev =>
+          prev < dateRangeOptions.length - 1 ? prev + 1 : 0
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setFocusedIndex(prev =>
+          prev > 0 ? prev - 1 : dateRangeOptions.length - 1
+        );
+        break;
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        if (focusedIndex >= 0 && focusedIndex < dateRangeOptions.length) {
+          handleSelect(dateRangeOptions[focusedIndex]);
+          setFocusedIndex(-1);
+        }
+        break;
+      case 'Tab':
+        setIsOpen(false);
+        setFocusedIndex(-1);
+        break;
+    }
+  };
+
   return (
     <div ref={dropdownRef} className="relative">
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
+        onKeyDown={handleKeyDown}
         aria-label="Select date range"
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        className="h-[30px] px-3 flex items-center gap-2 rounded-full transition-all"
-        style={{
-          background: isOpen
-            ? 'rgba(139, 92, 246, 0.15)'
-            : 'rgba(255, 255, 255, 0.03)',
-          outline: isOpen
-            ? '1px rgba(139, 92, 246, 0.40) solid'
-            : '1px rgba(255, 255, 255, 0.10) solid',
-          outlineOffset: '-1px',
-        }}
+        className={cn(
+          'h-[30px] px-3 flex items-center gap-2 rounded-full transition-all',
+          isOpen
+            ? 'bg-violet-500/15 outline outline-1 outline-violet-500/40 -outline-offset-1'
+            : 'bg-white/[0.03] outline outline-1 outline-white/10 -outline-offset-1'
+        )}
       >
         <Calendar
           size={12}
-          color={isOpen ? '#A78BFA' : '#9CA3AF'}
+          className={cn(isOpen ? 'text-violet-400' : 'text-gray-400')}
           strokeWidth={2}
         />
         <span
-          className="text-xs font-medium whitespace-nowrap"
-          style={{ color: isOpen ? '#E9D5FF' : '#D1D5DB' }}
+          className={cn(
+            'text-xs font-medium whitespace-nowrap',
+            isOpen ? 'text-violet-200' : 'text-gray-300'
+          )}
         >
           {selectedRange}
         </span>
         <ChevronDown
           size={10}
-          color={isOpen ? '#A78BFA' : '#6B7280'}
+          className={cn(
+            'transition-transform duration-200',
+            isOpen ? 'text-violet-400 rotate-180' : 'text-gray-500'
+          )}
           strokeWidth={2}
-          className="transition-transform"
-          style={{ transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
         />
       </button>
 
@@ -204,16 +280,12 @@ function DatePickerDropdown({
         dateRangeOptions={dateRangeOptions}
         selectedRange={selectedRange}
         handleSelect={handleSelect}
+        focusedIndex={focusedIndex}
+        setFocusedIndex={setFocusedIndex}
+        onClose={() => setIsOpen(false)}
       />
     </div>
   );
-}
-
-interface DropdownMenuProps {
-  isOpen: boolean;
-  dateRangeOptions: DateRangeOption[];
-  selectedRange: string;
-  handleSelect: (option: DateRangeOption) => void;
 }
 
 function DropdownMenu({
@@ -221,23 +293,53 @@ function DropdownMenu({
   dateRangeOptions,
   selectedRange,
   handleSelect,
+  focusedIndex,
+  setFocusedIndex,
+  onClose,
 }: DropdownMenuProps) {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    switch (e.key) {
+      case 'Escape':
+        e.preventDefault();
+        onClose();
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        setFocusedIndex(
+          focusedIndex < dateRangeOptions.length - 1 ? focusedIndex + 1 : 0
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setFocusedIndex(
+          focusedIndex > 0 ? focusedIndex - 1 : dateRangeOptions.length - 1
+        );
+        break;
+      case 'Enter':
+      case ' ':
+        e.preventDefault();
+        if (focusedIndex >= 0) {
+          handleSelect(dateRangeOptions[focusedIndex]);
+        }
+        break;
+    }
+  };
+
   return (
     <div
-      className="absolute top-[38px] left-0 w-[200px] rounded-xl overflow-hidden z-50"
-      style={{
-        background: 'rgba(10, 5, 20, 0.98)',
-        backdropFilter: 'blur(20px)',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
-        boxShadow:
-          '0px 20px 40px rgba(0, 0, 0, 0.5), 0px 0px 1px rgba(139, 92, 246, 0.3)',
-        opacity: isOpen ? 1 : 0,
-        transform: isOpen
-          ? 'translateY(0) scale(1)'
-          : 'translateY(-8px) scale(0.96)',
-        pointerEvents: isOpen ? 'auto' : 'none',
-        transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
-      }}
+      role="listbox"
+      aria-label="Date range options"
+      onKeyDown={handleKeyDown}
+      className={cn(
+        'absolute top-[38px] left-0 w-[200px] rounded-xl overflow-hidden z-50',
+        'bg-[rgba(10,5,20,0.98)] backdrop-blur-[20px]',
+        'border border-white/[0.08]',
+        'shadow-[0px_20px_40px_rgba(0,0,0,0.5),0px_0px_1px_rgba(139,92,246,0.3)]',
+        'transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
+        isOpen
+          ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
+          : 'opacity-0 -translate-y-2 scale-[0.96] pointer-events-none'
+      )}
     >
       <div className="px-4 pt-3 pb-2 border-b border-white/[0.06]">
         <span className="text-[10px] font-semibold uppercase tracking-wide text-gray-500">
@@ -245,27 +347,23 @@ function DropdownMenu({
         </span>
       </div>
 
-      <div role="listbox" aria-label="Date range options" className="p-1.5">
-        {dateRangeOptions.map((option) => {
+      <div className="p-1.5">
+        {dateRangeOptions.map((option, index) => {
           const isSelected = selectedRange === option.label;
+          const isFocused = focusedIndex === index;
           return (
             <DropdownOption
               key={option.value}
               option={option}
               isSelected={isSelected}
+              isFocused={isFocused}
               handleSelect={handleSelect}
             />
           );
         })}
       </div>
 
-      <div
-        className="px-4 py-2 border-t border-white/[0.06]"
-        style={{
-          background:
-            'linear-gradient(180deg, transparent 0%, rgba(139, 92, 246, 0.03) 100%)',
-        }}
-      >
+      <div className="px-4 py-2 border-t border-white/[0.06] bg-gradient-to-b from-transparent to-violet-500/[0.03]">
         <span className="text-[10px] text-gray-600">
           Data refreshes every 5 min
         </span>
@@ -274,15 +372,10 @@ function DropdownMenu({
   );
 }
 
-interface DropdownOptionProps {
-  option: DateRangeOption;
-  isSelected: boolean;
-  handleSelect: (option: DateRangeOption) => void;
-}
-
 function DropdownOption({
   option,
   isSelected,
+  isFocused,
   handleSelect,
 }: DropdownOptionProps) {
   return (
@@ -291,30 +384,28 @@ function DropdownOption({
       role="option"
       aria-selected={isSelected}
       onClick={() => handleSelect(option)}
-      className="w-full px-3 py-2.5 flex items-center justify-between rounded-lg transition-all hover:bg-white/[0.04]"
-      style={{
-        background: isSelected ? 'rgba(139, 92, 246, 0.15)' : 'transparent',
-      }}
+      className={cn(
+        'w-full px-3 py-2.5 flex items-center justify-between rounded-lg transition-all',
+        isSelected && 'bg-violet-500/15',
+        isFocused && !isSelected && 'bg-white/[0.04]',
+        !isSelected && !isFocused && 'hover:bg-white/[0.04]'
+      )}
     >
       <span
-        className="text-[13px]"
-        style={{
-          color: isSelected ? '#E9D5FF' : '#D1D5DB',
-          fontWeight: isSelected ? 500 : 400,
-        }}
+        className={cn(
+          'text-[13px]',
+          isSelected
+            ? 'text-violet-200 font-medium'
+            : 'text-gray-300 font-normal'
+        )}
       >
         {option.label}
       </span>
-      {isSelected && <Check size={14} color="#A78BFA" strokeWidth={2.5} />}
+      {isSelected && (
+        <Check size={14} className="text-violet-400" strokeWidth={2.5} />
+      )}
     </button>
   );
-}
-
-interface RightSectionProps {
-  showNotification: boolean;
-  onNotificationClick?: () => void;
-  onAvatarClick?: () => void;
-  userInitials: string;
 }
 
 function RightSection({
@@ -333,15 +424,9 @@ function RightSection({
         }
         className="w-8 h-8 flex items-center justify-center rounded-lg relative transition-colors hover:bg-white/[0.06]"
       >
-        <Bell size={16} color="#6B7280" strokeWidth={2} />
+        <Bell size={16} className="text-gray-500" strokeWidth={2} />
         {showNotification && (
-          <div
-            className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full"
-            style={{
-              background: '#8B5CF6',
-              border: '1.5px solid rgba(3, 0, 5, 0.9)',
-            }}
-          />
+          <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-violet-500 border-[1.5px] border-[rgba(3,0,5,0.9)]" />
         )}
       </button>
 
@@ -349,16 +434,9 @@ function RightSection({
         type="button"
         onClick={onAvatarClick}
         aria-label="User menu"
-        className="w-8 h-8 rounded-full flex items-center justify-center transition-all hover:outline-violet-500/40"
-        style={{
-          background: 'rgba(76, 29, 149, 0.40)',
-          outline: '1px rgba(255, 255, 255, 0.10) solid',
-          outlineOffset: '-1px',
-        }}
+        className="w-8 h-8 rounded-full flex items-center justify-center bg-violet-900/40 outline outline-1 outline-white/10 -outline-offset-1 transition-all hover:outline-violet-500/40"
       >
-        <span className="text-xs font-semibold text-white">
-          {userInitials}
-        </span>
+        <span className="text-xs font-semibold text-white">{userInitials}</span>
       </button>
     </div>
   );

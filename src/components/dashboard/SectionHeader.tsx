@@ -14,6 +14,13 @@ export interface SectionHeaderProps {
   }>;
 }
 
+interface ViewAllLinkProps {
+  href?: string;
+  text: string;
+  onClick?: () => void;
+  LinkComponent?: SectionHeaderProps['LinkComponent'];
+}
+
 export function SectionHeader({
   title,
   viewAllHref,
@@ -24,16 +31,8 @@ export function SectionHeader({
   const showViewAll = viewAllHref || onViewAllClick;
 
   return (
-    <div
-      className="px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between"
-      style={{
-        background: 'rgba(255, 255, 255, 0.01)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
-      }}
-    >
-      <h3 className="text-xs sm:text-sm font-semibold text-white">
-        {title}
-      </h3>
+    <div className="px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between bg-white/[0.01] border-b border-white/[0.06]">
+      <h3 className="text-xs sm:text-sm font-semibold text-white">{title}</h3>
 
       {showViewAll && (
         <ViewAllLink
@@ -47,24 +46,10 @@ export function SectionHeader({
   );
 }
 
-interface ViewAllLinkProps {
-  href?: string;
-  text: string;
-  onClick?: () => void;
-  LinkComponent?: SectionHeaderProps['LinkComponent'];
-}
-
-function ViewAllLink({
-  href,
-  text,
-  onClick,
-  LinkComponent,
-}: ViewAllLinkProps) {
+function ViewAllLink({ href, text, onClick, LinkComponent }: ViewAllLinkProps) {
   const content = (
     <>
-      <span className="text-[10px] sm:text-xs text-violet-400">
-        {text}
-      </span>
+      <span className="text-[10px] sm:text-xs text-violet-400">{text}</span>
       <ArrowRight
         size={12}
         className="text-violet-400 sm:w-3.5 sm:h-3.5"
@@ -73,7 +58,8 @@ function ViewAllLink({
     </>
   );
 
-  const className = "flex items-center gap-1 hover:opacity-80 transition-opacity";
+  const className =
+    'flex items-center gap-1 hover:opacity-80 transition-opacity';
 
   if (LinkComponent && href) {
     return (
@@ -92,11 +78,7 @@ function ViewAllLink({
   }
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={className}
-    >
+    <button type="button" onClick={onClick} className={className}>
       {content}
     </button>
   );
