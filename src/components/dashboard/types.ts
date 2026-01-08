@@ -42,6 +42,8 @@ export interface SidebarProps {
   onNotificationsChange?: (enabled: boolean) => void;
   initialTheme?: 'dark' | 'light';
   initialNotifications?: boolean;
+  /** Whether to show the chat history section */
+  showChatHistory?: boolean;
   /** Chat history items to display (shown only on /ask-crow page) */
   chatHistory?: ChatHistoryItem[];
   /** ID of the currently active chat */
@@ -67,6 +69,7 @@ export interface GlassPanelProps {
 export interface DashboardBackgroundProps {
   variant?: 'default' | 'minimal';
   noiseTextureSrc?: string;
+  sidebarWidth?: number;
 }
 
 export interface SettingsModalProps {

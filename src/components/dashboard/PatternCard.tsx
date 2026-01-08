@@ -1,13 +1,13 @@
 'use client';
 
-import { cn } from '../../lib/utils';
 import { Bell, Clock, MapPin } from 'lucide-react';
+import { cn } from '../../lib/utils';
 
 export type SeverityLevel = 'high' | 'medium' | 'low';
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
 export interface PatternCardProps {
-  id: string;
+  id?: string;
   title: string;
   severity: SeverityLevel;
   affectedStores: string;
@@ -19,7 +19,10 @@ export interface PatternCardProps {
   className?: string;
 }
 
-const severityConfig: Record<SeverityLevel, { label: string; color: string; bg: string; border: string }> = {
+const severityConfig: Record<
+  SeverityLevel,
+  { label: string; color: string; bg: string; border: string }
+> = {
   high: {
     label: 'HIGH',
     color: '#F87171',
@@ -40,7 +43,10 @@ const severityConfig: Record<SeverityLevel, { label: string; color: string; bg: 
   },
 };
 
-const confidenceConfig: Record<ConfidenceLevel, { label: string; color: string; bg: string; border: string }> = {
+const confidenceConfig: Record<
+  ConfidenceLevel,
+  { label: string; color: string; bg: string; border: string }
+> = {
   high: {
     label: 'High',
     color: '#C4B5FD',
@@ -77,10 +83,7 @@ export function PatternCard({
 
   return (
     <div
-      className={cn(
-        'relative overflow-hidden rounded-xl',
-        className
-      )}
+      className={cn('relative overflow-hidden rounded-xl', className)}
       style={{
         background: 'rgba(10, 5, 20, 0.40)',
         boxShadow: '0px 4px 6px -4px rgba(0, 0, 0, 0.10)',
@@ -90,7 +93,6 @@ export function PatternCard({
       }}
     >
       <div className="p-6">
-        {/* Header: Title + Severity Badge */}
         <div className="flex items-start justify-between gap-4 mb-4">
           <h3
             className="text-base font-semibold leading-6 flex-1"
@@ -111,37 +113,24 @@ export function PatternCard({
           </span>
         </div>
 
-        {/* Metadata */}
         <div className="space-y-2 mb-4">
-          {/* Affected stores */}
           <div className="flex items-center gap-2">
             <MapPin size={16} color="#6B7280" />
-            <span
-              className="text-sm leading-5"
-              style={{ color: '#9CA3AF' }}
-            >
+            <span className="text-sm leading-5" style={{ color: '#9CA3AF' }}>
               Affected stores: {affectedStores}
             </span>
           </div>
 
-          {/* Last seen */}
           <div className="flex items-center gap-2">
             <Clock size={16} color="#6B7280" />
-            <span
-              className="text-sm leading-5"
-              style={{ color: '#9CA3AF' }}
-            >
+            <span className="text-sm leading-5" style={{ color: '#9CA3AF' }}>
               Last seen: {lastSeen}
             </span>
           </div>
         </div>
 
-        {/* Confidence */}
         <div className="flex items-center gap-2 mb-6">
-          <span
-            className="text-xs font-medium"
-            style={{ color: '#6B7280' }}
-          >
+          <span className="text-xs font-medium" style={{ color: '#6B7280' }}>
             Confidence:
           </span>
           <span
@@ -157,7 +146,6 @@ export function PatternCard({
           </span>
         </div>
 
-        {/* Actions */}
         <div
           className="pt-4 flex items-center gap-3"
           style={{ borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}

@@ -1,5 +1,7 @@
 'use client';
 
+import { cn } from '../../lib/utils';
+
 export interface ToggleSwitchProps {
   enabled: boolean;
   size?: 'sm' | 'default';
@@ -7,12 +9,13 @@ export interface ToggleSwitchProps {
   'aria-label'?: string;
 }
 
-export function ToggleSwitch({ enabled, size = 'default', onChange, 'aria-label': ariaLabel }: ToggleSwitchProps) {
+export function ToggleSwitch({
+  enabled,
+  size = 'default',
+  onChange,
+  'aria-label': ariaLabel,
+}: ToggleSwitchProps) {
   const isSmall = size === 'sm';
-  const trackWidth = isSmall ? 36 : 44;
-  const trackHeight = isSmall ? 20 : 24;
-  const thumbSize = isSmall ? 16 : 20;
-  const translateX = isSmall ? 16 : 20;
 
   return (
     <span
@@ -20,29 +23,31 @@ export function ToggleSwitch({ enabled, size = 'default', onChange, 'aria-label'
       aria-checked={enabled}
       aria-label={ariaLabel}
       onClick={onChange}
-      onKeyDown={onChange ? (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onChange(); } } : undefined}
+      onKeyDown={
+        onChange
+          ? e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onChange();
+              }
+            }
+          : undefined
+      }
       tabIndex={onChange ? 0 : undefined}
-      style={{
-        display: 'inline-block',
-        width: trackWidth,
-        height: trackHeight,
-        borderRadius: trackHeight / 2,
-        background: enabled ? 'rgba(16, 185, 129, 0.3)' : 'rgba(107, 114, 128, 0.3)',
-        padding: 2,
-        transition: 'background 0.2s ease',
-        position: 'relative',
-        cursor: onChange ? 'pointer' : 'default',
-      }}
+      className={cn(
+        'inline-block relative transition-colors duration-200',
+        isSmall ? 'w-9 h-5 rounded-[10px] p-0.5' : 'w-11 h-6 rounded-xl p-0.5',
+        enabled ? 'bg-emerald-500/30' : 'bg-gray-500/30',
+        onChange && 'cursor-pointer'
+      )}
     >
       <div
-        style={{
-          width: thumbSize,
-          height: thumbSize,
-          borderRadius: thumbSize / 2,
-          background: enabled ? '#10B981' : '#4B5563',
-          transition: 'all 0.2s ease',
-          transform: enabled ? `translateX(${translateX}px)` : 'translateX(0)',
-        }}
+        className={cn(
+          'rounded-full transition-all duration-200',
+          isSmall ? 'w-4 h-4' : 'w-5 h-5',
+          enabled ? 'bg-emerald-500' : 'bg-gray-600',
+          enabled && (isSmall ? 'translate-x-4' : 'translate-x-5')
+        )}
       />
     </span>
   );
