@@ -9,10 +9,17 @@ export interface SourceIconProps {
   size?: 'sm' | 'md';
 }
 
-const sourceConfig: Record<SourceType, { icon: typeof Globe; color: string; bg: string }> = {
+const sourceConfig: Record<
+  SourceType,
+  { icon: typeof Globe; color: string; bg: string }
+> = {
   web: { icon: Globe, color: '#60A5FA', bg: 'rgba(96, 165, 250, 0.15)' },
   cctv: { icon: Video, color: '#F87171', bg: 'rgba(248, 113, 113, 0.15)' },
-  social: { icon: MessageCircle, color: '#A78BFA', bg: 'rgba(167, 139, 250, 0.15)' },
+  social: {
+    icon: MessageCircle,
+    color: '#A78BFA',
+    bg: 'rgba(167, 139, 250, 0.15)',
+  },
 };
 
 export function SourceIcon({ source, size = 'sm' }: SourceIconProps) {

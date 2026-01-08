@@ -1,7 +1,7 @@
 'use client';
 
-import { cn } from '../../lib/utils';
 import type { GlassPanelProps } from './types';
+import { cn } from '../../lib/utils';
 
 export type { GlassPanelProps };
 

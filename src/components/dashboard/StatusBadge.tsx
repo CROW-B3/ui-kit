@@ -1,12 +1,14 @@
 'use client';
 
-import { cva, type VariantProps } from 'class-variance-authority';
+import type { VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
 const badgeVariants = cva('inline-flex items-center rounded font-medium', {
   variants: {
     variant: {
-      positive: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
+      positive:
+        'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20',
       negative: 'bg-rose-500/10 text-rose-400 border border-rose-500/20',
       warning: 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20',
       neutral: 'bg-gray-500/10 text-gray-400 border border-gray-500/20',
