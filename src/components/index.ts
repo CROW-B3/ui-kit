@@ -16,11 +16,12 @@ export * from './cards/PricingCard';
 export * from './cards/RunAgentCard';
 export * from './cards/SyncStatusCard';
 
+export * from './dashboard';
 export * from './display/CodeBlock';
 export * from './display/ConnectionStatus';
 export * from './display/Logo';
-export * from './display/PackageManagerSelector';
 
+export * from './display/PackageManagerSelector';
 export * from './inputs/ApiKeyInput';
 export * from './inputs/Checkbox';
 export * from './inputs/EmailTagInput';
@@ -30,17 +31,18 @@ export * from './inputs/NumberStepper';
 export * from './inputs/PermissionToggle';
 export * from './inputs/Select';
 export * from './inputs/TagInput';
-export * from './inputs/ToggleOption';
 
+export * from './inputs/ToggleOption';
 export * from './layout/Divider';
 export * from './layout/Footer';
 export * from './layout/FormSection';
 export * from './layout/LinkGroup';
 export * from './layout/Navbar';
 export * from './layout/PageHeader';
-export * from './layout/SegmentedControl';
 
+export * from './layout/SegmentedControl';
 export * from './typography/HeroText';
 export * from './typography/SectionLabel';
 export * from './typography/Subtitle';
+
 export * from './typography/TypewriterText';
