@@ -49,8 +49,6 @@ interface DropdownMenuProps {
   selectedRange: string;
   handleSelect: (option: DateRangeOption) => void;
   focusedIndex: number;
-  _setFocusedIndex: (index: number) => void;
-  _onClose: () => void;
   optionRefs: React.RefObject<(HTMLButtonElement | null)[]>;
 }
 
@@ -77,7 +75,7 @@ const DropdownOption = ({
   handleSelect,
   index,
 }: DropdownOptionProps & {
-  ref?: React.Ref<HTMLButtonElement>;
+  ref?: React.RefObject<HTMLButtonElement | null>;
 }) => {
   return (
     <button
@@ -360,8 +358,6 @@ function DatePickerDropdown({
         selectedRange={selectedRange}
         handleSelect={handleSelect}
         focusedIndex={focusedIndex}
-        _setFocusedIndex={setFocusedIndex}
-        _onClose={() => setIsOpen(false)}
         optionRefs={optionRefs}
       />
     </div>
@@ -374,8 +370,6 @@ function DropdownMenu({
   selectedRange,
   handleSelect,
   focusedIndex,
-  _setFocusedIndex,
-  _onClose,
   optionRefs,
 }: DropdownMenuProps) {
   return (
@@ -414,7 +408,7 @@ function DropdownMenu({
               isFocused={isFocused}
               handleSelect={handleSelect}
               index={index}
-              ref={(el: HTMLButtonElement | null) => {
+              ref={el => {
                 if (optionRefs.current) {
                   optionRefs.current[index] = el;
                 }
