@@ -35,6 +35,18 @@ export interface StatusBadgeProps extends VariantProps<typeof badgeVariants> {
   tracking?: boolean;
 }
 
+/**
+ * A status badge component for displaying status information
+ * Supports multiple semantic variants (positive, negative, warning, etc.)
+ * @param {StatusBadgeProps} props - Component props
+ * @param {React.ReactNode} props.children - Badge text content
+ * @param {'positive' | 'negative' | 'warning' | 'neutral' | 'info' | 'high' | 'medium' | 'low'} [props.variant='neutral'] - Semantic variant
+ * @param {'default' | 'sm'} [props.size='default'] - Badge size
+ * @param {string} [props.className=''] - Additional CSS classes
+ * @param {boolean} [props.uppercase=false] - Whether to uppercase the text
+ * @param {boolean} [props.tracking=false] - Whether to add letter spacing
+ * @returns {JSX.Element} The status badge component
+ */
 export function StatusBadge({
   children,
   variant = 'neutral',

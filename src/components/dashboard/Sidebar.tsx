@@ -32,9 +32,7 @@ export function Sidebar({
   userName = 'User',
   userEmail = 'user@example.com',
   onLogout,
-  onThemeChange,
   onNotificationsChange,
-  initialTheme = 'dark',
   initialNotifications = true,
   chatHistory,
   activeChatId,
@@ -45,6 +43,11 @@ export function Sidebar({
   onChatDelete,
   showChatHistory = false,
 }: SidebarProps) {
+  // Auto-show chat history when on Ask CROW page
+  const normalizedHref = activeHref?.replace(/\/$/, '') || '';
+  const isAskCrowPage = normalizedHref === '/ask-crow';
+  const displayChatHistory = showChatHistory || isAskCrowPage;
+
   return (
     <aside className="w-[280px] h-full relative bg-black overflow-hidden border-r border-white/[0.08] shrink-0 hidden md:flex md:flex-col">
       <div className="w-[279px] h-full absolute left-0 top-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
@@ -62,7 +65,7 @@ export function Sidebar({
         items={chatHistory}
         activeItemId={activeChatId}
         isExpanded={chatHistoryExpanded}
-        isVisible={showChatHistory}
+        isVisible={displayChatHistory}
         onItemClick={onChatClick}
         onToggleExpanded={onChatHistoryToggle}
         onRename={onChatRename}
@@ -73,9 +76,7 @@ export function Sidebar({
         <SettingsDropup
           userName={userName}
           userEmail={userEmail}
-          initialTheme={initialTheme}
           initialNotifications={initialNotifications}
-          onThemeChange={onThemeChange}
           onNotificationsChange={onNotificationsChange}
           onLogout={onLogout}
         />

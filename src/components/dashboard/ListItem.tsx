@@ -12,6 +12,18 @@ export interface ListItemProps {
   className?: string;
 }
 
+/**
+ * A clickable list item component with optional highlighting
+ * Shows a chevron icon on hover and supports highlighted state
+ * @param {ListItemProps} props - Component props
+ * @param {React.ReactNode} props.children - Item content
+ * @param {() => void} [props.onClick] - Click handler
+ * @param {string} [props.ariaLabel] - Accessibility label
+ * @param {boolean} [props.showChevron=false] - Whether to show chevron indicator
+ * @param {boolean} [props.highlighted=false] - Whether item is highlighted
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} The list item component
+ */
 export function ListItem({
   children,
   onClick,

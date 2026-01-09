@@ -5,9 +5,7 @@ import {
   BellOff,
   ChevronUp,
   LogOut,
-  Moon,
   Settings,
-  Sun,
   User,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -17,9 +15,7 @@ import { ToggleSwitch } from './ToggleSwitch';
 export interface SettingsDropupProps {
   userName?: string;
   userEmail?: string;
-  initialTheme?: 'dark' | 'light';
   initialNotifications?: boolean;
-  onThemeChange?: (theme: 'dark' | 'light') => void;
   onNotificationsChange?: (enabled: boolean) => void;
   onLogout?: () => void;
 }
@@ -27,14 +23,11 @@ export interface SettingsDropupProps {
 export function SettingsDropup({
   userName = 'User',
   userEmail = 'user@example.com',
-  initialTheme = 'dark',
   initialNotifications = true,
-  onThemeChange,
   onNotificationsChange,
   onLogout,
 }: SettingsDropupProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [theme, setTheme] = useState(initialTheme);
   const [notifications, setNotifications] = useState(initialNotifications);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -47,12 +40,6 @@ export function SettingsDropup({
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
-
-  const handleThemeToggle = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    onThemeChange?.(newTheme);
-  };
 
   const handleNotificationsToggle = () => {
     const newValue = !notifications;
@@ -90,25 +77,9 @@ export function SettingsDropup({
         <div className="p-1.5">
           <button
             type="button"
-            onClick={handleThemeToggle}
+            onClick={handleNotificationsToggle}
             className="w-full py-2.5 px-2 flex items-center justify-between bg-transparent border-none rounded-lg cursor-pointer transition-colors hover:bg-white/[0.04]"
           >
-            <div className="flex items-center gap-2.5">
-              {theme === 'dark' ? (
-                <Moon size={15} className="text-violet-400" strokeWidth={2} />
-              ) : (
-                <Sun size={15} className="text-amber-400" strokeWidth={2} />
-              )}
-              <span className="text-gray-300 text-[13px] font-[Sora,sans-serif]">
-                Theme
-              </span>
-            </div>
-            <div className="py-0.5 px-2 bg-violet-500/15 rounded-[5px] text-violet-300 text-[11px] font-medium font-[Sora,sans-serif]">
-              {theme === 'dark' ? 'Dark' : 'Light'}
-            </div>
-          </button>
-
-          <div className="w-full py-2.5 px-2 flex items-center justify-between rounded-lg hover:bg-white/[0.04] transition-colors">
             <div className="flex items-center gap-2.5">
               {notifications ? (
                 <Bell size={15} className="text-emerald-500" strokeWidth={2} />
@@ -125,7 +96,7 @@ export function SettingsDropup({
               size="sm"
               aria-label="Toggle notifications"
             />
-          </div>
+          </button>
         </div>
 
         {onLogout && (
