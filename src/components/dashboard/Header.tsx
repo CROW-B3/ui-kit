@@ -49,8 +49,8 @@ interface DropdownMenuProps {
   selectedRange: string;
   handleSelect: (option: DateRangeOption) => void;
   focusedIndex: number;
-  setFocusedIndex: (index: number) => void;
-  onClose: () => void;
+  _setFocusedIndex: (index: number) => void;
+  _onClose: () => void;
 }
 
 interface DropdownOptionProps {
@@ -298,8 +298,8 @@ function DatePickerDropdown({
         selectedRange={selectedRange}
         handleSelect={handleSelect}
         focusedIndex={focusedIndex}
-        setFocusedIndex={setFocusedIndex}
-        onClose={() => setIsOpen(false)}
+        _setFocusedIndex={setFocusedIndex}
+        _onClose={() => setIsOpen(false)}
       />
     </div>
   );
