@@ -20,6 +20,7 @@
         "@eslint-react/eslint-plugin": "^2.4.0",
         "@tailwindcss/cli": "4.1.18",
         "@tailwindcss/postcss": "^4.1.17",
+        "@types/node": "^22.10.5",
         "@types/react": "^19.2.7",
         "@types/react-dom": "^19.2.3",
         "autoprefixer": "^10.4.22",
@@ -262,7 +263,7 @@
 
     "@types/ms": ["@types/ms@2.1.0", "", {}, "sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA=="],
 
-    "@types/node": ["@types/node@24.10.0", "", { "dependencies": { "undici-types": "7.16.0" } }, "sha512-qzQZRBqkFsYyaSWXuEHc2WR9c0a0CXwiE5FWUvn7ZM+vdy1uZLfCunD38UzhuB7YN/J11ndbDBcTmOdxJo9Q7A=="],
+    "@types/node": ["@types/node@22.19.3", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-1N9SBnWYOJTrNZCdh/yJE+t910Y128BoyY+zBLWhL3r0TYzlTmFdXrPwHL9DyFZmlEXNQQolTZh3KHV31QDhyA=="],
 
     "@types/react": ["@types/react@19.2.7", "", { "dependencies": { "csstype": "^3.2.2" } }, "sha512-MWtvHrGZLFttgeEj28VXHxpmwYbor/ATPYbBfSFZEIRK0ecCFLl2Qo55z52Hss+UV9CRN7trSeq1zbgx7YDWWg=="],
 
@@ -1010,7 +1011,7 @@
 
     "ufo": ["ufo@1.6.1", "", {}, "sha512-9a4/uxlTWJ4+a5i0ooc1rU7C7YOw3wT+UGqdeNNHWnOF9qcMBgLRS+4IYUqbczewFx4mLEig6gawh7X6mFlEkA=="],
 
-    "undici-types": ["undici-types@7.16.0", "", {}, "sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw=="],
+    "undici-types": ["undici-types@6.21.0", "", {}, "sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ=="],
 
     "unicorn-magic": ["unicorn-magic@0.1.0", "", {}, "sha512-lRfVq8fE8gz6QMBuDM6a+LO3IAzTi05H6gCVaUpir2E1Rwpo4ZUog45KpNXKC/Mn3Yb9UDuHumeFTo9iV/D9FQ=="],
 
@@ -1115,6 +1116,8 @@
     "@tailwindcss/postcss/@tailwindcss/node": ["@tailwindcss/node@4.1.17", "", { "dependencies": { "@jridgewell/remapping": "2.3.5", "enhanced-resolve": "5.18.3", "jiti": "2.6.1", "lightningcss": "1.30.2", "magic-string": "0.30.21", "source-map-js": "1.2.1", "tailwindcss": "4.1.17" } }, "sha512-csIkHIgLb3JisEFQ0vxr2Y57GUNYh447C8xzwj89U/8fdW8LhProdxvnVH6U8M2Y73QKiTIH+LWbK3V2BBZsAg=="],
 
     "@tailwindcss/postcss/@tailwindcss/oxide": ["@tailwindcss/oxide@4.1.17", "", { "optionalDependencies": { "@tailwindcss/oxide-android-arm64": "4.1.17", "@tailwindcss/oxide-darwin-arm64": "4.1.17", "@tailwindcss/oxide-darwin-x64": "4.1.17", "@tailwindcss/oxide-freebsd-x64": "4.1.17", "@tailwindcss/oxide-linux-arm-gnueabihf": "4.1.17", "@tailwindcss/oxide-linux-arm64-gnu": "4.1.17", "@tailwindcss/oxide-linux-arm64-musl": "4.1.17", "@tailwindcss/oxide-linux-x64-gnu": "4.1.17", "@tailwindcss/oxide-linux-x64-musl": "4.1.17", "@tailwindcss/oxide-wasm32-wasi": "4.1.17", "@tailwindcss/oxide-win32-arm64-msvc": "4.1.17", "@tailwindcss/oxide-win32-x64-msvc": "4.1.17" } }, "sha512-F0F7d01fmkQhsTjXezGBLdrl1KresJTcI3DB8EkScCldyKp3Msz4hub4uyYaVnk88BAS1g5DQjjF6F5qczheLA=="],
+
+    "@types/conventional-commits-parser/@types/node": ["@types/node@24.10.0", "", { "dependencies": { "undici-types": "7.16.0" } }, "sha512-qzQZRBqkFsYyaSWXuEHc2WR9c0a0CXwiE5FWUvn7ZM+vdy1uZLfCunD38UzhuB7YN/J11ndbDBcTmOdxJo9Q7A=="],
 
     "@typescript-eslint/eslint-plugin/@typescript-eslint/scope-manager": ["@typescript-eslint/scope-manager@8.46.3", "", { "dependencies": { "@typescript-eslint/types": "8.46.3", "@typescript-eslint/visitor-keys": "8.46.3" } }, "sha512-FCi7Y1zgrmxp3DfWfr+3m9ansUUFoy8dkEdeQSgA9gbm8DaHYvZCdkFRQrtKiedFf3Ha6VmoqoAaP68+i+22kg=="],
 
@@ -1241,6 +1244,8 @@
     "@tailwindcss/postcss/@tailwindcss/oxide/@tailwindcss/oxide-win32-arm64-msvc": ["@tailwindcss/oxide-win32-arm64-msvc@4.1.17", "", { "os": "win32", "cpu": "arm64" }, "sha512-JU5AHr7gKbZlOGvMdb4722/0aYbU+tN6lv1kONx0JK2cGsh7g148zVWLM0IKR3NeKLv+L90chBVYcJ8uJWbC9A=="],
 
     "@tailwindcss/postcss/@tailwindcss/oxide/@tailwindcss/oxide-win32-x64-msvc": ["@tailwindcss/oxide-win32-x64-msvc@4.1.17", "", { "os": "win32", "cpu": "x64" }, "sha512-SKWM4waLuqx0IH+FMDUw6R66Hu4OuTALFgnleKbqhgGU30DY20NORZMZUKgLRjQXNN2TLzKvh48QXTig4h4bGw=="],
+
+    "@types/conventional-commits-parser/@types/node/undici-types": ["undici-types@7.16.0", "", {}, "sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw=="],
 
     "@typescript-eslint/eslint-plugin/@typescript-eslint/scope-manager/@typescript-eslint/types": ["@typescript-eslint/types@8.46.3", "", {}, "sha512-G7Ok9WN/ggW7e/tOf8TQYMaxgID3Iujn231hfi0Pc7ZheztIJVpO44ekY00b7akqc6nZcvregk0Jpah3kep6hA=="],
 

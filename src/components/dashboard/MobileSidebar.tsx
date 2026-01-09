@@ -37,9 +37,7 @@ export function MobileSidebar({
   userName = 'User',
   userEmail = 'user@example.com',
   onLogout,
-  onThemeChange,
   onNotificationsChange,
-  initialTheme = 'dark',
   initialNotifications = true,
   chatHistory,
   activeChatId,
@@ -49,21 +47,31 @@ export function MobileSidebar({
   onChatRename,
   onChatDelete,
 }: MobileSidebarProps) {
-  // Show chat history only on Ask CROW page
+  // Show chat history when on Ask CROW page
   const normalizedHref = activeHref?.replace(/\/$/, '') || '';
   const showChatHistory = normalizedHref === '/ask-crow';
 
-  // Lock body scroll when sidebar is open
+  // Lock body scroll and handle Escape key when sidebar is open
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
+      const handleEscapeKey = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          onClose();
+        }
+      };
+      document.addEventListener('keydown', handleEscapeKey);
+      return () => {
+        document.removeEventListener('keydown', handleEscapeKey);
+        document.body.style.overflow = '';
+      };
     } else {
       document.body.style.overflow = '';
     }
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   // Handle navigation - close sidebar after navigating
   const handleNavigate = (href: string) => {
@@ -91,6 +99,9 @@ export function MobileSidebar({
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className="fixed left-0 top-0 h-full w-[280px] bg-black border-r border-white/[0.08] z-[101] md:hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation menu"
           >
             <div
               className="absolute inset-0 w-[279px] h-full pointer-events-none"
@@ -140,9 +151,7 @@ export function MobileSidebar({
                 <SettingsDropup
                   userName={userName}
                   userEmail={userEmail}
-                  initialTheme={initialTheme}
                   initialNotifications={initialNotifications}
-                  onThemeChange={onThemeChange}
                   onNotificationsChange={onNotificationsChange}
                   onLogout={onLogout}
                 />

@@ -23,6 +23,22 @@ interface ActionButtonsProps {
   onSubmit: () => void;
 }
 
+/**
+ * A search input component with optional microphone and submit button
+ * Supports controlled and uncontrolled input patterns
+ * @param {SearchInputProps} props - Component props
+ * @param {string} [props.placeholder='Search...'] - Input placeholder text
+ * @param {string} [props.value] - Controlled value for the input
+ * @param {string} [props.defaultValue=''] - Default value for uncontrolled input
+ * @param {(value: string) => void} [props.onChange] - Change event handler
+ * @param {(value: string) => void} [props.onSubmit] - Submit handler (Enter or button click)
+ * @param {boolean} [props.showMicButton=true] - Whether to show microphone button
+ * @param {boolean} [props.disabled=false] - Whether input is disabled
+ * @param {string} [props.className] - Additional CSS classes
+ * @param {string} [props.helperText] - Helper text displayed below input
+ * @param {'default' | 'transparent'} [props.variant='default'] - Visual variant
+ * @returns {JSX.Element} The search input component
+ */
 export function SearchInput({
   placeholder = 'Search...',
   value: controlledValue,

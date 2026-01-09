@@ -51,6 +51,16 @@ export interface IconBadgeProps extends VariantProps<typeof iconBadgeVariants> {
   iconClassName?: string;
 }
 
+/**
+ * An icon badge component that displays icons from lucide-react or fallback text
+ * Supports multiple color variants for visual hierarchy
+ * @param {IconBadgeProps} props - Component props
+ * @param {string} props.icon - Icon name (e.g., 'grid_view', 'chat_bubble') or fallback text
+ * @param {'gray' | 'violet' | 'blue' | 'emerald' | 'rose'} [props.variant='gray'] - Color variant
+ * @param {string} [props.className=''] - Additional CSS classes for the badge
+ * @param {string} [props.iconClassName=''] - Additional CSS classes for the icon
+ * @returns {JSX.Element} The icon badge component
+ */
 export function IconBadge({
   icon,
   variant = 'gray',

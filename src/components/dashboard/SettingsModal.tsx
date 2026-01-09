@@ -1,7 +1,7 @@
 'use client';
 
 import type { SettingsModalProps } from './types';
-import { Bell, BellOff, Globe, LogOut, Moon, Sun, User, X } from 'lucide-react';
+import { Bell, BellOff, Globe, LogOut, User, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';
 import { ToggleSwitch } from './ToggleSwitch';
@@ -14,12 +14,9 @@ export function SettingsModal({
   userEmail = 'user@example.com',
   userName = 'User',
   onLogout,
-  onThemeChange,
   onNotificationsChange,
-  initialTheme = 'dark',
   initialNotifications = true,
 }: SettingsModalProps) {
-  const [theme, setTheme] = useState(initialTheme);
   const [notifications, setNotifications] = useState(initialNotifications);
   const [isClosing, setIsClosing] = useState(false);
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -31,10 +28,6 @@ export function SettingsModal({
       modalRef.current?.focus();
     }
   }, [isOpen]);
-
-  useEffect(() => {
-    setTheme(initialTheme);
-  }, [initialTheme]);
 
   useEffect(() => {
     setNotifications(initialNotifications);
@@ -65,12 +58,6 @@ export function SettingsModal({
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, handleClose]);
-
-  const handleThemeToggle = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    setTheme(newTheme);
-    onThemeChange?.(newTheme);
-  };
 
   const handleNotificationsToggle = () => {
     const newValue = !notifications;
@@ -145,25 +132,9 @@ export function SettingsModal({
         <div className="p-3 px-4">
           <button
             type="button"
-            onClick={handleThemeToggle}
+            onClick={handleNotificationsToggle}
             className="w-full px-3 py-3.5 flex items-center justify-between bg-transparent border-none rounded-[10px] cursor-pointer transition-colors hover:bg-white/[0.04]"
           >
-            <div className="flex items-center gap-3">
-              {theme === 'dark' ? (
-                <Moon size={18} className="text-violet-400" strokeWidth={2} />
-              ) : (
-                <Sun size={18} className="text-amber-400" strokeWidth={2} />
-              )}
-              <span className="text-gray-300 text-sm font-[Sora,sans-serif]">
-                Theme
-              </span>
-            </div>
-            <div className="px-2.5 py-1 bg-violet-500/15 rounded-md text-violet-300 text-xs font-medium font-[Sora,sans-serif]">
-              {theme === 'dark' ? 'Dark' : 'Light'}
-            </div>
-          </button>
-
-          <div className="w-full px-3 py-3.5 flex items-center justify-between rounded-[10px] hover:bg-white/[0.04] transition-colors">
             <div className="flex items-center gap-3">
               {notifications ? (
                 <Bell size={18} className="text-emerald-500" strokeWidth={2} />
@@ -179,7 +150,7 @@ export function SettingsModal({
               onChange={handleNotificationsToggle}
               aria-label="Toggle notifications"
             />
-          </div>
+          </button>
 
           <button
             type="button"

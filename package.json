@@ -8,11 +8,12 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.js",
       "default": "./dist/index.js"
     },
-    "./styles.css": "./dist/styles.css"
+    "./styles.css": {
+      "style": "./dist/styles.css",
+      "default": "./dist/styles.css"
+    }
   },
   "type": "module",
   "scripts": {

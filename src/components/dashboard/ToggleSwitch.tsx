@@ -9,6 +9,16 @@ export interface ToggleSwitchProps {
   'aria-label'?: string;
 }
 
+/**
+ * An accessible toggle switch component
+ * Supports keyboard navigation and multiple sizes
+ * @param {ToggleSwitchProps} props - Component props
+ * @param {boolean} props.enabled - Whether the toggle is enabled/checked
+ * @param {'sm' | 'default'} [props.size='default'] - Toggle size variant
+ * @param {() => void} [props.onChange] - Callback function when toggle is toggled
+ * @param {string} [props['aria-label']] - Accessibility label
+ * @returns {JSX.Element} The toggle switch component
+ */
 export function ToggleSwitch({
   enabled,
   size = 'default',

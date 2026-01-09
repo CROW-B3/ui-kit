@@ -6,6 +6,13 @@ export interface TipCardProps {
   children: React.ReactNode;
 }
 
+/**
+ * A tip card component for displaying helpful information or tips
+ * Features a lightbulb icon and glass-morphism styling
+ * @param {TipCardProps} props - Component props
+ * @param {React.ReactNode} props.children - Tip text content
+ * @returns {JSX.Element} The tip card component
+ */
 export function TipCard({ children }: TipCardProps) {
   return (
     <div

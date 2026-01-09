@@ -8,6 +8,15 @@ export interface TagProps {
   className?: string;
 }
 
+/**
+ * A simple tag component for displaying labels or categories
+ * Supports default and active visual states
+ * @param {TagProps} props - Component props
+ * @param {React.ReactNode} props.children - Tag text content
+ * @param {'default' | 'active'} [props.variant='default'] - Visual variant
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} The tag component
+ */
 export function Tag({ children, variant = 'default', className }: TagProps) {
   return (
     <span
