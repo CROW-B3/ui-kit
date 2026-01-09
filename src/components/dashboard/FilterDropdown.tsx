@@ -75,10 +75,9 @@ export function FilterDropdown({
   useEffect(() => {
     if (isOpen) {
       updatePosition();
-      window.addEventListener('scroll', updatePosition, true);
+      // Only listen for resize, not scroll (Lenis handles scroll smoothly)
       window.addEventListener('resize', updatePosition);
       return () => {
-        window.removeEventListener('scroll', updatePosition, true);
         window.removeEventListener('resize', updatePosition);
       };
     }
@@ -174,7 +173,6 @@ export function FilterDropdown({
             ref={dropdownRef}
             role="listbox"
             aria-label={`${label} options`}
-            onKeyDown={handleKeyDown}
             className="fixed min-w-[160px] py-1 rounded-lg z-[9999] bg-[rgba(20,10,35,0.98)] border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)]"
             style={{
               top: dropdownPosition.top,

@@ -125,19 +125,19 @@ export function ChatHistorySection({
     onDelete?.(id);
   };
 
-  if (!isVisible) return null;
-
   return (
     <div
       className={cn(
-        'px-4 mt-4 transition-opacity duration-300 ease-in-out',
-        isVisible ? 'opacity-100' : 'opacity-0'
+        'px-4 mt-4 transition-all duration-300 ease-in-out overflow-hidden',
+        isVisible ? 'opacity-100 animate-fadeInDown max-h-[500px]' : 'opacity-0 max-h-0 pointer-events-none'
       )}
     >
       <button
         type="button"
         onClick={onToggleExpanded}
         className="flex items-center justify-between w-full group"
+        aria-label={`${title} section`}
+        aria-expanded={isExpanded}
       >
         <span className="text-[13px] font-normal text-gray-400 leading-[21px]">
           {title}
@@ -176,12 +176,19 @@ export function ChatHistorySection({
                   className="relative"
                   ref={isMenuOpen ? menuRef : undefined}
                 >
-                  <button
-                    type="button"
+                  <div
+                    role="button"
+                    tabIndex={isEditing ? -1 : 0}
                     onClick={() => !isEditing && onItemClick?.(item.id)}
+                    onKeyDown={(e) => {
+                      if (!isEditing && (e.key === 'Enter' || e.key === ' ')) {
+                        e.preventDefault();
+                        onItemClick?.(item.id);
+                      }
+                    }}
                     className={cn(
                       'group relative flex items-center justify-between w-full rounded-lg transition-all duration-200',
-                      'h-[37px] hover:bg-white/5',
+                      'h-[37px] hover:bg-white/5 cursor-pointer',
                       isActive &&
                         'bg-white/[0.08] shadow-[inset_0px_1px_0px_1px_rgba(255,255,255,0.05)] outline outline-1 outline-white/[0.05] -outline-offset-1',
                       isNew &&
@@ -217,7 +224,7 @@ export function ChatHistorySection({
                         <MoreHorizontal size={14} className="text-white" />
                       </button>
                     )}
-                  </button>
+                  </div>
 
                   {isMenuOpen && (
                     <div

@@ -2,9 +2,8 @@
 
 import { Bell, Clock, MapPin } from 'lucide-react';
 import { cn } from '../../lib/utils';
-
-export type SeverityLevel = 'high' | 'medium' | 'low';
-export type ConfidenceLevel = 'high' | 'medium' | 'low';
+import { SEVERITY_CONFIG, CONFIDENCE_CONFIG } from './constants';
+import type { SeverityLevel, ConfidenceLevel } from './types';
 
 export interface PatternCardProps {
   id?: string;
@@ -19,54 +18,6 @@ export interface PatternCardProps {
   className?: string;
 }
 
-const severityConfig: Record<
-  SeverityLevel,
-  { label: string; color: string; bg: string; border: string }
-> = {
-  high: {
-    label: 'HIGH',
-    color: '#F87171',
-    bg: 'rgba(239, 68, 68, 0.10)',
-    border: 'rgba(239, 68, 68, 0.20)',
-  },
-  medium: {
-    label: 'MEDIUM',
-    color: '#FACC15',
-    bg: 'rgba(234, 179, 8, 0.10)',
-    border: 'rgba(234, 179, 8, 0.20)',
-  },
-  low: {
-    label: 'LOW',
-    color: '#60A5FA',
-    bg: 'rgba(59, 130, 246, 0.10)',
-    border: 'rgba(59, 130, 246, 0.20)',
-  },
-};
-
-const confidenceConfig: Record<
-  ConfidenceLevel,
-  { label: string; color: string; bg: string; border: string }
-> = {
-  high: {
-    label: 'High',
-    color: '#C4B5FD',
-    bg: 'rgba(139, 92, 246, 0.10)',
-    border: 'rgba(139, 92, 246, 0.20)',
-  },
-  medium: {
-    label: 'Medium',
-    color: '#D1D5DB',
-    bg: 'rgba(255, 255, 255, 0.05)',
-    border: 'rgba(255, 255, 255, 0.10)',
-  },
-  low: {
-    label: 'Low',
-    color: '#D1D5DB',
-    bg: 'rgba(255, 255, 255, 0.05)',
-    border: 'rgba(255, 255, 255, 0.10)',
-  },
-};
-
 export function PatternCard({
   title,
   severity,
@@ -78,8 +29,8 @@ export function PatternCard({
   onCreateAlert,
   className,
 }: PatternCardProps) {
-  const severityStyle = severityConfig[severity];
-  const confidenceStyle = confidenceConfig[confidence];
+  const severityStyle = SEVERITY_CONFIG[severity];
+  const confidenceStyle = CONFIDENCE_CONFIG[confidence];
 
   return (
     <div
