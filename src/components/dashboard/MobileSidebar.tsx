@@ -53,22 +53,21 @@ export function MobileSidebar({
 
   // Lock body scroll and handle Escape key when sidebar is open
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-      const handleEscapeKey = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') {
-          onClose();
-        }
-      };
-      document.addEventListener('keydown', handleEscapeKey);
-      return () => {
-        document.removeEventListener('keydown', handleEscapeKey);
-        document.body.style.overflow = '';
-      };
-    } else {
+    if (!isOpen) {
       document.body.style.overflow = '';
+      return;
     }
+
+    document.body.style.overflow = 'hidden';
+    const handleEscapeKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleEscapeKey);
+
     return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
       document.body.style.overflow = '';
     };
   }, [isOpen, onClose]);

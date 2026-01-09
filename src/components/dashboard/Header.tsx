@@ -2,7 +2,7 @@
 
 import type { DateRangeOption, HeaderProps } from './types';
 import { Bell, Calendar, Check, ChevronDown, Menu } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';
 
 export type { DateRangeOption, HeaderProps };
@@ -51,6 +51,7 @@ interface DropdownMenuProps {
   focusedIndex: number;
   _setFocusedIndex: (index: number) => void;
   _onClose: () => void;
+  optionRefs: React.RefObject<(HTMLButtonElement | null)[]>;
 }
 
 interface DropdownOptionProps {
@@ -58,6 +59,7 @@ interface DropdownOptionProps {
   isSelected: boolean;
   isFocused: boolean;
   handleSelect: (option: DateRangeOption) => void;
+  index: number;
 }
 
 interface RightSectionProps {
@@ -66,6 +68,50 @@ interface RightSectionProps {
   onAvatarClick?: () => void;
   userInitials: string;
 }
+
+const DropdownOption = ({
+  ref,
+  option,
+  isSelected,
+  isFocused,
+  handleSelect,
+  index,
+}: DropdownOptionProps & {
+  ref?: React.RefObject<HTMLButtonElement | null>;
+}) => {
+  return (
+    <button
+      ref={ref}
+      type="button"
+      role="option"
+      id={`option-${index}`}
+      aria-selected={isSelected}
+      onClick={() => handleSelect(option)}
+      className={cn(
+        'w-full px-3 py-2.5 flex items-center justify-between rounded-lg transition-all',
+        isSelected && 'bg-violet-500/15',
+        isFocused && !isSelected && 'bg-white/[0.04]',
+        !isSelected && !isFocused && 'hover:bg-white/[0.04]'
+      )}
+    >
+      <span
+        className={cn(
+          'text-[13px]',
+          isSelected
+            ? 'text-violet-200 font-medium'
+            : 'text-gray-300 font-normal'
+        )}
+      >
+        {option.label}
+      </span>
+      {isSelected && (
+        <Check size={14} className="text-violet-400" strokeWidth={2.5} />
+      )}
+    </button>
+  );
+};
+
+DropdownOption.displayName = 'DropdownOption';
 
 const defaultDateRangeOptions: DateRangeOption[] = [
   { label: 'Today', value: 'today' },
@@ -96,6 +142,7 @@ export function Header({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
     setSelectedRange(dateRange);
   }, [dateRange]);
 
@@ -209,6 +256,13 @@ function DatePickerDropdown({
   handleSelect,
 }: DatePickerDropdownProps) {
   const [focusedIndex, setFocusedIndex] = useState(-1);
+  const optionRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  useEffect(() => {
+    if (focusedIndex >= 0 && focusedIndex < optionRefs.current.length) {
+      optionRefs.current[focusedIndex]?.scrollIntoView({ block: 'nearest' });
+    }
+  }, [focusedIndex]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) {
@@ -237,6 +291,14 @@ function DatePickerDropdown({
         setFocusedIndex(prev =>
           prev > 0 ? prev - 1 : dateRangeOptions.length - 1
         );
+        break;
+      case 'Home':
+        e.preventDefault();
+        setFocusedIndex(0);
+        break;
+      case 'End':
+        e.preventDefault();
+        setFocusedIndex(dateRangeOptions.length - 1);
         break;
       case 'Enter':
       case ' ':
@@ -300,6 +362,7 @@ function DatePickerDropdown({
         focusedIndex={focusedIndex}
         _setFocusedIndex={setFocusedIndex}
         _onClose={() => setIsOpen(false)}
+        optionRefs={optionRefs}
       />
     </div>
   );
@@ -313,11 +376,15 @@ function DropdownMenu({
   focusedIndex,
   _setFocusedIndex,
   _onClose,
+  optionRefs,
 }: DropdownMenuProps) {
   return (
     <div
       role="listbox"
       aria-label="Date range options"
+      aria-activedescendant={
+        focusedIndex >= 0 ? `option-${focusedIndex}` : undefined
+      }
       className={cn(
         'absolute top-[38px] left-0 w-[200px] rounded-xl overflow-hidden z-50',
         'bg-[rgba(10,5,20,0.98)] backdrop-blur-[20px]',
@@ -346,6 +413,12 @@ function DropdownMenu({
               isSelected={isSelected}
               isFocused={isFocused}
               handleSelect={handleSelect}
+              index={index}
+              ref={el => {
+                if (optionRefs.current) {
+                  optionRefs.current[index] = el;
+                }
+              }}
             />
           );
         })}
@@ -357,42 +430,6 @@ function DropdownMenu({
         </span>
       </div>
     </div>
-  );
-}
-
-function DropdownOption({
-  option,
-  isSelected,
-  isFocused,
-  handleSelect,
-}: DropdownOptionProps) {
-  return (
-    <button
-      type="button"
-      role="option"
-      aria-selected={isSelected}
-      onClick={() => handleSelect(option)}
-      className={cn(
-        'w-full px-3 py-2.5 flex items-center justify-between rounded-lg transition-all',
-        isSelected && 'bg-violet-500/15',
-        isFocused && !isSelected && 'bg-white/[0.04]',
-        !isSelected && !isFocused && 'hover:bg-white/[0.04]'
-      )}
-    >
-      <span
-        className={cn(
-          'text-[13px]',
-          isSelected
-            ? 'text-violet-200 font-medium'
-            : 'text-gray-300 font-normal'
-        )}
-      >
-        {option.label}
-      </span>
-      {isSelected && (
-        <Check size={14} className="text-violet-400" strokeWidth={2.5} />
-      )}
-    </button>
   );
 }
 

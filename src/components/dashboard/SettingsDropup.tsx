@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  Bell,
-  BellOff,
-  ChevronUp,
-  LogOut,
-  Settings,
-  User,
-} from 'lucide-react';
+import { Bell, BellOff, ChevronUp, LogOut, Settings, User } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';
 import { ToggleSwitch } from './ToggleSwitch';
@@ -29,7 +22,11 @@ export function SettingsDropup({
 }: SettingsDropupProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState(initialNotifications);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const notificationsItemRef = useRef<HTMLDivElement>(null);
+  const logoutItemRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -41,6 +38,63 @@ export function SettingsDropup({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Calculate focusable item count
+  const focusableItemCount = 1 + (onLogout ? 1 : 0);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFocusedIndex(isOpen ? 0 : -1);
+  }, [isOpen]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!isOpen) {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        setIsOpen(true);
+        setFocusedIndex(0);
+      }
+      return;
+    }
+
+    switch (e.key) {
+      case 'Escape':
+        e.preventDefault();
+        setIsOpen(false);
+        triggerRef.current?.focus();
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        setFocusedIndex(prev => (prev < focusableItemCount - 1 ? prev + 1 : 0));
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setFocusedIndex(prev => (prev > 0 ? prev - 1 : focusableItemCount - 1));
+        break;
+      case 'Home':
+        e.preventDefault();
+        setFocusedIndex(0);
+        break;
+      case 'End':
+        e.preventDefault();
+        setFocusedIndex(focusableItemCount - 1);
+        break;
+      case 'Tab':
+        setIsOpen(false);
+        setFocusedIndex(-1);
+        break;
+    }
+  };
+
+  useEffect(() => {
+    if (isOpen && focusedIndex >= 0) {
+      if (focusedIndex === 0) {
+        notificationsItemRef.current?.focus();
+      } else if (focusedIndex === 1 && onLogout) {
+        logoutItemRef.current?.focus();
+      }
+    }
+  }, [focusedIndex, isOpen, onLogout]);
+
   const handleNotificationsToggle = () => {
     const newValue = !notifications;
     setNotifications(newValue);
@@ -50,6 +104,7 @@ export function SettingsDropup({
   return (
     <div ref={ref} className="w-[247px] absolute left-4 bottom-6">
       <div
+        role="menu"
         className={cn(
           'absolute bottom-[52px] left-0 w-[247px]',
           'bg-[rgba(10,5,20,0.98)] backdrop-blur-[20px] rounded-xl',
@@ -75,10 +130,17 @@ export function SettingsDropup({
         </div>
 
         <div className="p-1.5">
-          <button
-            type="button"
-            onClick={handleNotificationsToggle}
-            className="w-full py-2.5 px-2 flex items-center justify-between bg-transparent border-none rounded-lg cursor-pointer transition-colors hover:bg-white/[0.04]"
+          <div
+            ref={notificationsItemRef}
+            role="menuitem"
+            tabIndex={focusedIndex === 0 && isOpen ? 0 : -1}
+            onKeyDown={handleKeyDown}
+            className={cn(
+              'w-full py-2.5 px-2 flex items-center justify-between rounded-lg transition-colors cursor-pointer',
+              focusedIndex === 0 && isOpen
+                ? 'bg-white/[0.06]'
+                : 'hover:bg-white/[0.04]'
+            )}
           >
             <div className="flex items-center gap-2.5">
               {notifications ? (
@@ -96,15 +158,24 @@ export function SettingsDropup({
               size="sm"
               aria-label="Toggle notifications"
             />
-          </button>
+          </div>
         </div>
 
         {onLogout && (
           <div className="p-1.5 border-t border-white/[0.06]">
             <button
+              ref={logoutItemRef}
               type="button"
+              role="menuitem"
+              tabIndex={focusedIndex === 1 && isOpen ? 0 : -1}
               onClick={onLogout}
-              className="w-full py-2.5 px-2 flex items-center gap-2.5 bg-transparent border-none rounded-lg cursor-pointer transition-colors hover:bg-red-500/10"
+              onKeyDown={handleKeyDown}
+              className={cn(
+                'w-full py-2.5 px-2 flex items-center gap-2.5 bg-transparent border-none rounded-lg cursor-pointer transition-colors',
+                focusedIndex === 1 && isOpen
+                  ? 'bg-red-500/10'
+                  : 'hover:bg-red-500/10'
+              )}
             >
               <LogOut size={15} className="text-red-500" strokeWidth={2} />
               <span className="text-red-500 text-[13px] font-[Sora,sans-serif]">
@@ -117,10 +188,13 @@ export function SettingsDropup({
 
       <div className="border-t border-white/[0.08] pt-3">
         <button
+          ref={triggerRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
+          onKeyDown={handleKeyDown}
           aria-label="Open settings"
           aria-expanded={isOpen}
+          aria-haspopup="menu"
           className={cn(
             'w-[247px] h-[41px] rounded-lg border-none cursor-pointer transition-colors',
             'flex items-center pl-3 gap-3',
