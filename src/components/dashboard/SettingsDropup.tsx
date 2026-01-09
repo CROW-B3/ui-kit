@@ -134,7 +134,15 @@ export function SettingsDropup({
             ref={notificationsItemRef}
             role="menuitem"
             tabIndex={focusedIndex === 0 && isOpen ? 0 : -1}
-            onKeyDown={handleKeyDown}
+            onClick={handleNotificationsToggle}
+            onKeyDown={e => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleNotificationsToggle();
+              } else {
+                handleKeyDown(e as React.KeyboardEvent);
+              }
+            }}
             className={cn(
               'w-full py-2.5 px-2 flex items-center justify-between rounded-lg transition-colors cursor-pointer',
               focusedIndex === 0 && isOpen
@@ -154,7 +162,6 @@ export function SettingsDropup({
             </div>
             <ToggleSwitch
               enabled={notifications}
-              onChange={handleNotificationsToggle}
               size="sm"
               aria-label="Toggle notifications"
             />
