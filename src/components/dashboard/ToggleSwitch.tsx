@@ -5,7 +5,7 @@ import { cn } from '../../lib/utils';
 export interface ToggleSwitchProps {
   enabled: boolean;
   size?: 'sm' | 'default';
-  onChange?: () => void;
+  onChange?: (newState: boolean) => void;
   'aria-label'?: string;
 }
 
@@ -14,9 +14,8 @@ export interface ToggleSwitchProps {
  * Supports keyboard navigation and multiple sizes
  * @param {ToggleSwitchProps} props - Component props
  * @param {boolean} props.enabled - Whether the toggle is enabled/checked
- * @param {'sm' | 'default'} [props.size='default'] - Toggle size variant
- * @param {() => void} [props.onChange] - Callback function when toggle is toggled
- * @param {string} [props['aria-label']] - Accessibility label
+ * @param {'sm' | 'default'} [props.size] - Toggle size variant
+ * @param {(newState: boolean) => void} [props.onChange] - Callback function when toggle is toggled, receives the new state
  * @returns {JSX.Element} The toggle switch component
  */
 export function ToggleSwitch({
@@ -27,18 +26,22 @@ export function ToggleSwitch({
 }: ToggleSwitchProps) {
   const isSmall = size === 'sm';
 
+  const handleToggle = () => {
+    onChange?.(!enabled);
+  };
+
   return (
     <span
       role="switch"
       aria-checked={enabled}
       aria-label={ariaLabel}
-      onClick={onChange}
+      onClick={handleToggle}
       onKeyDown={
         onChange
           ? e => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                onChange();
+                handleToggle();
               }
             }
           : undefined
