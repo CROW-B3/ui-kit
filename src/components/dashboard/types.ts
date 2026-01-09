@@ -1,8 +1,19 @@
 import type { ReactNode } from 'react';
 
+// ===== BASIC TYPES =====
+export type SeverityLevel = 'high' | 'medium' | 'low';
+export type ConfidenceLevel = 'high' | 'medium' | 'low';
+
 export interface DateRangeOption {
   label: string;
   value: string;
+}
+
+export interface MetricItem {
+  label: string;
+  value: string;
+  change?: string;
+  changeType?: 'positive' | 'negative' | 'neutral';
 }
 
 export interface HeaderProps {
@@ -38,9 +49,7 @@ export interface SidebarProps {
   userName?: string;
   userEmail?: string;
   onLogout?: () => void;
-  onThemeChange?: (theme: 'dark' | 'light') => void;
   onNotificationsChange?: (enabled: boolean) => void;
-  initialTheme?: 'dark' | 'light';
   initialNotifications?: boolean;
   /** Whether to show the chat history section */
   showChatHistory?: boolean;
@@ -78,9 +87,7 @@ export interface SettingsModalProps {
   userEmail?: string;
   userName?: string;
   onLogout?: () => void;
-  onThemeChange?: (theme: 'dark' | 'light') => void;
   onNotificationsChange?: (enabled: boolean) => void;
-  initialTheme?: 'dark' | 'light';
   initialNotifications?: boolean;
 }
 

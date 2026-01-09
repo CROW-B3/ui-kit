@@ -26,6 +26,15 @@ const statusConfig = {
   },
 } as const;
 
+/**
+ * A status indicator component that displays system status with a colored dot
+ * Shows predefined labels for each status or custom labels
+ * @param {StatusIndicatorProps} props - Component props
+ * @param {'active' | 'inactive' | 'processing'} [props.status='active'] - Status type
+ * @param {string} [props.label] - Custom label text (overrides default)
+ * @param {string} [props.className] - Additional CSS classes
+ * @returns {JSX.Element} The status indicator component
+ */
 export function StatusIndicator({
   status = 'active',
   label,

@@ -7,6 +7,23 @@ import { cn } from '../../lib/utils';
 
 export type { DateRangeOption, HeaderProps };
 
+/**
+ * The main dashboard header component with organization name, date picker, and user menu
+ * Features a sticky header with notification and avatar sections
+ * @param {HeaderProps} props - Component props
+ * @param {string} [props.orgName='Global Retail Ops'] - Organization display name
+ * @param {string} [props.dateRange='Last 7 days'] - Selected date range label
+ * @param {(value: string) => void} [props.onDateRangeChange] - Callback for date range changes
+ * @param {DateRangeOption[]} [props.dateRangeOptions] - Available date range options
+ * @param {string} [props.userInitials='SJ'] - User initials for avatar
+ * @param {boolean} [props.showNotification=true] - Whether to show notification badge
+ * @param {() => void} [props.onNotificationClick] - Notification button handler
+ * @param {() => void} [props.onAvatarClick] - Avatar button handler
+ * @param {boolean} [props.minimal=false] - Minimal layout (hides organization name)
+ * @param {() => void} [props.onMenuClick] - Mobile menu button handler
+ * @param {string} [props.logoSrc] - Logo image source
+ * @returns {JSX.Element} The header component
+ */
 interface LeftSectionProps {
   orgName: string;
   selectedRange: string;
@@ -294,42 +311,13 @@ function DropdownMenu({
   selectedRange,
   handleSelect,
   focusedIndex,
-  setFocusedIndex,
-  onClose,
+  _setFocusedIndex,
+  _onClose,
 }: DropdownMenuProps) {
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    switch (e.key) {
-      case 'Escape':
-        e.preventDefault();
-        onClose();
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        setFocusedIndex(
-          focusedIndex < dateRangeOptions.length - 1 ? focusedIndex + 1 : 0
-        );
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        setFocusedIndex(
-          focusedIndex > 0 ? focusedIndex - 1 : dateRangeOptions.length - 1
-        );
-        break;
-      case 'Enter':
-      case ' ':
-        e.preventDefault();
-        if (focusedIndex >= 0) {
-          handleSelect(dateRangeOptions[focusedIndex]);
-        }
-        break;
-    }
-  };
-
   return (
     <div
       role="listbox"
       aria-label="Date range options"
-      onKeyDown={handleKeyDown}
       className={cn(
         'absolute top-[38px] left-0 w-[200px] rounded-xl overflow-hidden z-50',
         'bg-[rgba(10,5,20,0.98)] backdrop-blur-[20px]',
