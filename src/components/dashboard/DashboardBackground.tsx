@@ -26,12 +26,10 @@ export function DashboardBackground({
       <div className="absolute inset-0 bg-[#030005]" />
 
       <div
-        className={cn(
-          'absolute top-0 bottom-0 right-0',
-          'bg-gradient-to-l from-[#1E1035] via-[#0A0515] to-transparent',
-          'opacity-50'
-        )}
-        style={{ left: `calc(var(--sidebar-width) + 25%)` }}
+        className={cn('absolute top-0 bottom-0 left-0 right-0', 'opacity-50')}
+        style={{
+          background: `radial-gradient(ellipse 80% 70% at 85% 50%, rgba(30, 16, 53, 0.8) 0%, rgba(10, 5, 21, 0.4) 50%, transparent 100%)`,
+        }}
       />
 
       {noiseTextureSrc && (
@@ -44,22 +42,18 @@ export function DashboardBackground({
       )}
 
       <div
-        className={cn(
-          'absolute inset-0',
-          'opacity-40'
-        )}
+        className={cn('absolute inset-0', 'opacity-40')}
         style={{
           background: `radial-gradient(ellipse 55% 90% at calc(50% + calc(var(--sidebar-width) / 2)) 50%, rgba(3, 0, 5, 0) 0%, rgba(3, 0, 5, 0.50) 100%)`,
         }}
       />
 
+      {/* Purple ellipse glow at bottom - using radial gradient for smooth edges */}
       <div
-        className={cn(
-          'absolute w-[950px] h-[450px] bottom-0',
-          'bg-[rgba(133,78,210,0.45)] blur-[150px]',
-          'left-1/2 -translate-x-1/2 translate-y-[70%]',
-          'md:left-[calc(50%+calc(var(--sidebar-width)/2))]'
-        )}
+        className="absolute inset-x-0 bottom-0 h-[800px] pointer-events-none"
+        style={{
+          background: `radial-gradient(ellipse 60% 50% at calc(50% + calc(var(--sidebar-width) / 2)) 100%, rgba(133, 78, 210, 0.5) 0%, rgba(133, 78, 210, 0.3) 25%, rgba(133, 78, 210, 0.1) 50%, transparent 70%)`,
+        }}
       />
     </div>
   );
