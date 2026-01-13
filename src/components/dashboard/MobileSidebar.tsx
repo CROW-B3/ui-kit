@@ -1,57 +1,19 @@
 'use client';
 
-import type { MobileSidebarProps, NavItem } from './types';
+import type { MobileSidebarProps } from './types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
 import { ChatHistorySection } from './ChatHistorySection';
+import { DEFAULT_NAV_ITEMS } from './constants/navigation';
 import { NavMenu } from './NavMenu';
 import { SettingsDropup } from './SettingsDropup';
 import { SidebarLogo } from './SidebarLogo';
+import { normalizePath } from './utils/pathUtils';
 
 export type { MobileSidebarProps };
 
-const defaultNavItems: NavItem[] = [
-  { icon: 'grid_view', label: 'Overview', href: '/' },
-  { icon: 'chat_bubble', label: 'Ask CROW', href: '/ask-crow' },
-  {
-    icon: 'timeline',
-    label: 'Analysis',
-    href: '#',
-    submenu: [
-      { icon: '', label: 'Interactions', href: '/analysis/interactions' },
-      { icon: '', label: 'Patterns', href: '/analysis/patterns' },
-    ],
-  },
-  { icon: 'group', label: 'Team', href: '/team' },
-];
-
-export function MobileSidebar({
-  isOpen,
-  onClose,
-  navItems = defaultNavItems,
-  activeHref = '/',
-  onNavigate,
-  showSettings = true,
-  logoSrc = '/favicon.png',
-  userName = 'User',
-  userEmail = 'user@example.com',
-  onLogout,
-  onNotificationsChange,
-  initialNotifications = true,
-  chatHistory,
-  activeChatId,
-  chatHistoryExpanded = true,
-  onChatClick,
-  onChatHistoryToggle,
-  onChatRename,
-  onChatDelete,
-}: MobileSidebarProps) {
-  // Show chat history when on Ask CROW page
-  const normalizedHref = activeHref?.replace(/\/$/, '') || '';
-  const showChatHistory = normalizedHref === '/ask-crow';
-
-  // Lock body scroll and handle Escape key when sidebar is open
+const useBodyScrollLock = (isOpen: boolean, onClose: () => void) => {
   useEffect(() => {
     if (!isOpen) {
       document.body.style.overflow = '';
@@ -71,8 +33,34 @@ export function MobileSidebar({
       document.body.style.overflow = '';
     };
   }, [isOpen, onClose]);
+};
 
-  // Handle navigation - close sidebar after navigating
+export function MobileSidebar({
+  isOpen,
+  onClose,
+  navItems = DEFAULT_NAV_ITEMS,
+  activeHref = '/',
+  onNavigate,
+  showSettings = true,
+  logoSrc = '/favicon.png',
+  userName = 'User',
+  userEmail = 'user@example.com',
+  onLogout,
+  onNotificationsChange,
+  initialNotifications = true,
+  chatHistory,
+  activeChatId,
+  chatHistoryExpanded = true,
+  onChatClick,
+  onChatHistoryToggle,
+  onChatRename,
+  onChatDelete,
+}: MobileSidebarProps) {
+  useBodyScrollLock(isOpen, onClose);
+
+  const normalizedHref = normalizePath(activeHref);
+  const showChatHistory = normalizedHref === '/ask-crow';
+
   const handleNavigate = (href: string) => {
     onNavigate?.(href);
     onClose();

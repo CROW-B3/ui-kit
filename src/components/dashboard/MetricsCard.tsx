@@ -1,7 +1,8 @@
 'use client';
 
-import { GlassPanel } from './GlassPanel';
-import { StatusBadge } from './StatusBadge';
+import { StatusBadge } from '../display/StatusBadge';
+import { GlassPanel } from '../layout/GlassPanel';
+import { CHART_COLORS } from './constants/gradients';
 
 export interface MetricsCardProps {
   title: string;
@@ -12,22 +13,38 @@ export interface MetricsCardProps {
   chartColor?: 'violet' | 'rose' | 'gray';
 }
 
-const chartColors = {
-  violet: {
-    bg: '#8B5CF6',
-    shadow: '0px 0px 8px rgba(124, 58, 237, 0.50)',
-  },
-  rose: {
-    bg: '#F43F5E',
-    shadow: '0px 0px 8px rgba(244, 63, 94, 0.50)',
-  },
-  gray: {
-    bg: '#6B7280',
-    shadow: 'none',
-  },
-};
-
 const DEFAULT_CHART_DATA = [25, 50, 35, 70, 100] as const;
+
+interface MiniChartProps {
+  chartData: readonly number[];
+  maxValue: number;
+  barColor: { bg: string; shadow: string };
+}
+
+function MiniChart({ chartData, maxValue, barColor }: MiniChartProps) {
+  return (
+    <div className="flex items-end gap-[2px]">
+      {chartData.map((value, index) => {
+        const isLast = index === chartData.length - 1;
+        const height = Math.max((value / maxValue) * 20, 3);
+
+        return (
+          <div
+            key={`bar-${index}-${value}`}
+            style={{
+              width: '12px',
+              height: `${height}px`,
+              borderRadius: '2px 2px 0 0',
+              background: isLast ? barColor.bg : '#374151',
+              boxShadow: isLast ? barColor.shadow : 'none',
+              opacity: isLast ? 1 : 0.5,
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
 
 export function MetricsCard({
   title,
@@ -37,10 +54,9 @@ export function MetricsCard({
   chartData = DEFAULT_CHART_DATA,
   chartColor = 'violet',
 }: MetricsCardProps) {
-  // Safeguard for empty chartData
   const safeChartData = chartData.length > 0 ? chartData : DEFAULT_CHART_DATA;
   const maxValue = Math.max(...safeChartData);
-  const barColor = chartColors[chartColor];
+  const barColor = CHART_COLORS[chartColor];
 
   return (
     <GlassPanel variant="light" className="relative overflow-hidden">
@@ -56,7 +72,6 @@ export function MetricsCard({
           <span className="text-xl sm:text-2xl font-bold text-white">
             {value}
           </span>
-
           <MiniChart
             chartData={safeChartData}
             maxValue={maxValue}
@@ -65,36 +80,5 @@ export function MetricsCard({
         </div>
       </div>
     </GlassPanel>
-  );
-}
-
-interface MiniChartProps {
-  chartData: readonly number[];
-  maxValue: number;
-  barColor: { bg: string; shadow: string };
-}
-
-function MiniChart({ chartData, maxValue, barColor }: MiniChartProps) {
-  return (
-    <div className="flex items-end gap-[2px]">
-      {chartData.map((val, index) => {
-        const isLast = index === chartData.length - 1;
-        const height = Math.max((val / maxValue) * 20, 3);
-
-        return (
-          <div
-            key={`bar-${index}-${val}`}
-            style={{
-              width: '12px',
-              height: `${height}px`,
-              borderRadius: '2px 2px 0 0',
-              background: isLast ? barColor.bg : '#374151',
-              boxShadow: isLast ? barColor.shadow : 'none',
-              opacity: isLast ? 1 : 0.5,
-            }}
-          />
-        );
-      })}
-    </div>
   );
 }

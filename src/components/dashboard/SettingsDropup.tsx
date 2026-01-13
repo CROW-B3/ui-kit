@@ -3,7 +3,7 @@
 import { Bell, BellOff, ChevronUp, LogOut, Settings, User } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';
-import { ToggleSwitch } from './ToggleSwitch';
+import { ToggleSwitch } from '../inputs/ToggleSwitch';
 
 export interface SettingsDropupProps {
   userName?: string;
@@ -32,21 +32,16 @@ export function SettingsDropup({
     const handleClickOutside = (event: MouseEvent) => {
       if (ref.current && !ref.current.contains(event.target as Node)) {
         setIsOpen(false);
+        setFocusedIndex(-1);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Calculate focusable item count
   const focusableItemCount = 1 + (onLogout ? 1 : 0);
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setFocusedIndex(isOpen ? 0 : -1);
-  }, [isOpen]);
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleSettingsKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) {
       if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
         e.preventDefault();
@@ -140,7 +135,7 @@ export function SettingsDropup({
                 e.preventDefault();
                 handleNotificationsToggle();
               } else {
-                handleKeyDown(e as React.KeyboardEvent);
+                handleSettingsKeyDown(e as React.KeyboardEvent);
               }
             }}
             className={cn(
@@ -176,7 +171,7 @@ export function SettingsDropup({
               role="menuitem"
               tabIndex={focusedIndex === 1 && isOpen ? 0 : -1}
               onClick={onLogout}
-              onKeyDown={handleKeyDown}
+              onKeyDown={handleSettingsKeyDown}
               className={cn(
                 'w-full py-2.5 px-2 flex items-center gap-2.5 bg-transparent border-none rounded-lg cursor-pointer transition-colors',
                 focusedIndex === 1 && isOpen
@@ -198,7 +193,7 @@ export function SettingsDropup({
           ref={triggerRef}
           type="button"
           onClick={() => setIsOpen(!isOpen)}
-          onKeyDown={handleKeyDown}
+          onKeyDown={handleSettingsKeyDown}
           aria-label="Open settings"
           aria-expanded={isOpen}
           aria-haspopup="menu"

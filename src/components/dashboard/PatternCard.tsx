@@ -1,9 +1,9 @@
 'use client';
 
+import type { ConfidenceLevel, SeverityLevel } from './types';
 import { Bell, Clock, MapPin } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { SEVERITY_CONFIG, CONFIDENCE_CONFIG } from './constants';
-import type { SeverityLevel, ConfidenceLevel } from './types';
+import { CONFIDENCE_CONFIG, SEVERITY_CONFIG } from './constants';
 
 export interface PatternCardProps {
   id?: string;
@@ -16,6 +16,66 @@ export interface PatternCardProps {
   onViewEvidence?: () => void;
   onCreateAlert?: () => void;
   className?: string;
+}
+
+interface DetailItemProps {
+  icon: typeof MapPin;
+  label: string;
+  value: string;
+}
+
+function DetailItem({ icon: Icon, label, value }: DetailItemProps) {
+  return (
+    <div className="flex items-center gap-2">
+      <Icon size={16} color="#6B7280" />
+      <span className="text-sm leading-5" style={{ color: '#9CA3AF' }}>
+        {label}: {value}
+      </span>
+    </div>
+  );
+}
+
+interface ActionButtonProps {
+  onClick?: () => void;
+  isSecondary?: boolean;
+  showIcon?: boolean;
+  children: React.ReactNode;
+}
+
+function ActionButton({
+  onClick,
+  isSecondary = false,
+  showIcon = false,
+  children,
+}: ActionButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'flex items-center justify-center rounded-lg text-xs font-medium transition-colors',
+        isSecondary ? 'h-[30px] px-3.5 hover:bg-white/5' : 'h-[30px] px-3.5',
+        !isSecondary && showIcon && 'gap-1.5 h-7 px-3'
+      )}
+      style={
+        !isSecondary
+          ? {
+              background: '#7C3AED',
+              boxShadow: '0px 0px 10px rgba(124, 58, 237, 0.30)',
+              outline: '1px #8B5CF6 solid',
+              outlineOffset: '-1px',
+              color: 'white',
+            }
+          : {
+              color: '#D1D5DB',
+              outline: '1px rgba(255, 255, 255, 0.10) solid',
+              outlineOffset: '-1px',
+            }
+      }
+    >
+      {children}
+    </button>
+  );
 }
 
 export function PatternCard({
@@ -45,10 +105,7 @@ export function PatternCard({
     >
       <div className="p-6">
         <div className="flex items-start justify-between gap-4 mb-4">
-          <h3
-            className="text-base font-semibold leading-6 flex-1"
-            style={{ color: 'white' }}
-          >
+          <h3 className="text-base font-semibold leading-6 flex-1 text-white">
             {title}
           </h3>
           <span
@@ -65,19 +122,12 @@ export function PatternCard({
         </div>
 
         <div className="space-y-2 mb-4">
-          <div className="flex items-center gap-2">
-            <MapPin size={16} color="#6B7280" />
-            <span className="text-sm leading-5" style={{ color: '#9CA3AF' }}>
-              Affected stores: {affectedStores}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Clock size={16} color="#6B7280" />
-            <span className="text-sm leading-5" style={{ color: '#9CA3AF' }}>
-              Last seen: {lastSeen}
-            </span>
-          </div>
+          <DetailItem
+            icon={MapPin}
+            label="Affected stores"
+            value={affectedStores}
+          />
+          <DetailItem icon={Clock} label="Last seen" value={lastSeen} />
         </div>
 
         <div className="flex items-center gap-2 mb-6">
@@ -101,41 +151,15 @@ export function PatternCard({
           className="pt-4 flex items-center gap-3"
           style={{ borderTop: '1px solid rgba(255, 255, 255, 0.05)' }}
         >
-          <button
-            type="button"
-            onClick={onViewDetails}
-            className="h-[30px] px-3.5 flex items-center justify-center rounded-lg text-xs font-medium text-white transition-colors"
-            style={{
-              background: '#7C3AED',
-              boxShadow: '0px 0px 10px rgba(124, 58, 237, 0.30)',
-              outline: '1px #8B5CF6 solid',
-              outlineOffset: '-1px',
-            }}
-          >
-            View details
-          </button>
-          <button
-            type="button"
-            onClick={onViewEvidence}
-            className="h-[30px] px-3.5 flex items-center justify-center rounded-lg text-xs font-medium transition-colors hover:bg-white/5"
-            style={{
-              color: '#D1D5DB',
-              outline: '1px rgba(255, 255, 255, 0.10) solid',
-              outlineOffset: '-1px',
-            }}
-          >
+          <ActionButton onClick={onViewDetails}>View details</ActionButton>
+          <ActionButton onClick={onViewEvidence} isSecondary>
             View evidence
-          </button>
+          </ActionButton>
           <div className="flex-1" />
-          <button
-            type="button"
-            onClick={onCreateAlert}
-            className="h-7 px-3 flex items-center gap-1.5 rounded-lg text-xs font-medium transition-colors hover:bg-white/5"
-            style={{ color: '#9CA3AF' }}
-          >
+          <ActionButton onClick={onCreateAlert} isSecondary showIcon>
             <Bell size={14} color="#9CA3AF" />
             Create alert
-          </button>
+          </ActionButton>
         </div>
       </div>
     </div>

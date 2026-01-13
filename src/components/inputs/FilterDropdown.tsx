@@ -73,32 +73,29 @@ export function FilterDropdown({
   }, []);
 
   useEffect(() => {
-    if (isOpen) {
-      updatePosition();
-      // Only listen for resize, not scroll (Lenis handles scroll smoothly)
-      window.addEventListener('resize', updatePosition);
-      return () => {
-        window.removeEventListener('resize', updatePosition);
-      };
-    }
+    if (!isOpen) return;
+    updatePosition();
+    window.addEventListener('resize', updatePosition);
+    return () => window.removeEventListener('resize', updatePosition);
   }, [isOpen, updatePosition]);
 
-  const handleSelect = (optionValue: string) => {
+  const selectOption = (optionValue: string) => {
     setSelectedValue(optionValue);
     onChange?.(optionValue);
     setIsOpen(false);
     setFocusedIndex(-1);
   };
 
-  const handleToggle = () => {
-    if (!isOpen) {
+  const toggleDropdown = () => {
+    const newIsOpen = !isOpen;
+    if (newIsOpen) {
       updatePosition();
       setFocusedIndex(0);
     }
-    setIsOpen(!isOpen);
+    setIsOpen(newIsOpen);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleFilterKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) {
       if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
         e.preventDefault();
@@ -128,7 +125,7 @@ export function FilterDropdown({
       case ' ':
         e.preventDefault();
         if (focusedIndex >= 0 && focusedIndex < options.length) {
-          handleSelect(options[focusedIndex].value);
+          selectOption(options[focusedIndex].value);
         }
         break;
       case 'Tab':
@@ -143,8 +140,8 @@ export function FilterDropdown({
       <button
         ref={buttonRef}
         type="button"
-        onClick={handleToggle}
-        onKeyDown={handleKeyDown}
+        onClick={toggleDropdown}
+        onKeyDown={handleFilterKeyDown}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         aria-label={`${label} filter`}
@@ -185,7 +182,7 @@ export function FilterDropdown({
                 type="button"
                 role="option"
                 aria-selected={selectedValue === option.value}
-                onClick={() => handleSelect(option.value)}
+                onClick={() => selectOption(option.value)}
                 className={cn(
                   'w-full px-3 py-2 flex items-center justify-between text-left transition-colors',
                   focusedIndex === index && 'bg-white/5',

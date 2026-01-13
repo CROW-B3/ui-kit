@@ -1,6 +1,6 @@
 {
   "name": "@b3-crow/ui-kit",
-  "version": "0.0.34",
+  "version": "0.0.35-preview",
   "description": "CROW-B3 UI Kit",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -67,7 +67,8 @@
   },
   "peerDependencies": {
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "next": "^15.0.0"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
@@ -75,6 +76,7 @@
     "clsx": "^2.1.1",
     "cobe": "^0.6.5",
     "framer-motion": "^12.23.26",
+    "lenis": "^1.2.1",
     "lucide-react": "^0.542.0",
     "react-icons": "^5.5.0",
     "tailwind-merge": "^3.4.0"

@@ -23,100 +23,10 @@ interface ActionButtonsProps {
   onSubmit: () => void;
 }
 
-/**
- * A search input component with optional microphone and submit button
- * Supports controlled and uncontrolled input patterns
- * @param {SearchInputProps} props - Component props
- * @param {string} [props.placeholder='Search...'] - Input placeholder text
- * @param {string} [props.value] - Controlled value for the input
- * @param {string} [props.defaultValue=''] - Default value for uncontrolled input
- * @param {(value: string) => void} [props.onChange] - Change event handler
- * @param {(value: string) => void} [props.onSubmit] - Submit handler (Enter or button click)
- * @param {boolean} [props.showMicButton=true] - Whether to show microphone button
- * @param {boolean} [props.disabled=false] - Whether input is disabled
- * @param {string} [props.className] - Additional CSS classes
- * @param {string} [props.helperText] - Helper text displayed below input
- * @param {'default' | 'transparent'} [props.variant='default'] - Visual variant
- * @returns {JSX.Element} The search input component
- */
-export function SearchInput({
-  placeholder = 'Search...',
-  value: controlledValue,
-  defaultValue = '',
-  onChange,
-  onSubmit,
-  showMicButton = true,
-  disabled = false,
-  className,
-  helperText,
-  variant = 'default',
-}: SearchInputProps) {
-  const [internalValue, setInternalValue] = useState(defaultValue);
-  const value = controlledValue ?? internalValue;
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = e.target.value;
-    if (controlledValue === undefined) {
-      setInternalValue(newValue);
-    }
-    onChange?.(newValue);
-  };
-
-  const handleSubmit = () => {
-    if (onSubmit && value.trim() && !disabled) {
-      onSubmit(value);
-    }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleSubmit();
-    }
-  };
-
-  return (
-    <div className={cn('w-full', className)}>
-      <div
-        className={cn(
-          'relative flex items-center rounded-full overflow-hidden h-12 sm:h-[54px]',
-          'border border-white/10 shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)]',
-          variant === 'transparent'
-            ? 'bg-[rgba(14,10,21,0.6)]'
-            : 'bg-[#0E0A15]',
-          disabled && 'opacity-50 cursor-not-allowed'
-        )}
-      >
-        <SearchIcon />
-        <input
-          type="text"
-          placeholder={placeholder}
-          value={value}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          disabled={disabled}
-          className={cn(
-            'w-full h-full pl-[53px] bg-transparent',
-            'text-white text-sm placeholder:text-gray-500',
-            'focus:outline-none',
-            'disabled:cursor-not-allowed',
-            showMicButton ? 'pr-24' : 'pr-14'
-          )}
-        />
-        <ActionButtons
-          showMicButton={showMicButton}
-          disabled={disabled}
-          onSubmit={handleSubmit}
-        />
-      </div>
-
-      {helperText && (
-        <p className="text-[10px] text-gray-600 mt-2 sm:mt-3 text-center">
-          {helperText}
-        </p>
-      )}
-    </div>
-  );
-}
+const containerVariantStyles = {
+  default: 'bg-[#0E0A15]',
+  transparent: 'bg-[rgba(14,10,21,0.6)]',
+} as const;
 
 function SearchIcon() {
   return (
@@ -162,6 +72,83 @@ function ActionButtons({
       >
         <ArrowRight size={18} className="text-white" strokeWidth={2} />
       </button>
+    </div>
+  );
+}
+
+export function SearchInput({
+  placeholder = 'Search...',
+  value: controlledValue,
+  defaultValue = '',
+  onChange,
+  onSubmit,
+  showMicButton = true,
+  disabled = false,
+  className,
+  helperText,
+  variant = 'default',
+}: SearchInputProps) {
+  const [internalValue, setInternalValue] = useState(defaultValue);
+  const value = controlledValue ?? internalValue;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    if (controlledValue === undefined) {
+      setInternalValue(newValue);
+    }
+    onChange?.(newValue);
+  };
+
+  const handleSubmit = () => {
+    if (onSubmit && value.trim() && !disabled) {
+      onSubmit(value);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
+    }
+  };
+
+  return (
+    <div className={cn('w-full', className)}>
+      <div
+        className={cn(
+          'relative flex items-center rounded-full overflow-hidden h-12 sm:h-[54px]',
+          'border border-white/10 shadow-[0px_4px_6px_-4px_rgba(0,0,0,0.10)]',
+          containerVariantStyles[variant],
+          disabled && 'opacity-50 cursor-not-allowed'
+        )}
+      >
+        <SearchIcon />
+        <input
+          type="text"
+          placeholder={placeholder}
+          value={value}
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          disabled={disabled}
+          className={cn(
+            'w-full h-full pl-[53px] bg-transparent',
+            'text-white text-sm placeholder:text-gray-500',
+            'focus:outline-none',
+            'disabled:cursor-not-allowed',
+            showMicButton ? 'pr-24' : 'pr-14'
+          )}
+        />
+        <ActionButtons
+          showMicButton={showMicButton}
+          disabled={disabled}
+          onSubmit={handleSubmit}
+        />
+      </div>
+
+      {helperText && (
+        <p className="text-[10px] text-gray-600 mt-2 sm:mt-3 text-center">
+          {helperText}
+        </p>
+      )}
     </div>
   );
 }

@@ -6,24 +6,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';
 
 export type { DateRangeOption, HeaderProps };
-
-/**
- * The main dashboard header component with organization name, date picker, and user menu
- * Features a sticky header with notification and avatar sections
- * @param {HeaderProps} props - Component props
- * @param {string} [props.orgName='Global Retail Ops'] - Organization display name
- * @param {string} [props.dateRange='Last 7 days'] - Selected date range label
- * @param {(value: string) => void} [props.onDateRangeChange] - Callback for date range changes
- * @param {DateRangeOption[]} [props.dateRangeOptions] - Available date range options
- * @param {string} [props.userInitials='SJ'] - User initials for avatar
- * @param {boolean} [props.showNotification=true] - Whether to show notification badge
- * @param {() => void} [props.onNotificationClick] - Notification button handler
- * @param {() => void} [props.onAvatarClick] - Avatar button handler
- * @param {boolean} [props.minimal=false] - Minimal layout (hides organization name)
- * @param {() => void} [props.onMenuClick] - Mobile menu button handler
- * @param {string} [props.logoSrc] - Logo image source
- * @returns {JSX.Element} The header component
- */
 interface LeftSectionProps {
   orgName: string;
   selectedRange: string;
@@ -67,51 +49,42 @@ interface RightSectionProps {
   userInitials: string;
 }
 
-const DropdownOption = React.forwardRef<
-  HTMLButtonElement,
-  DropdownOptionProps
->(
-  (
-    {
-      option,
-      isSelected,
-      isFocused,
-      handleSelect,
-      index,
-    },
-    ref,
-  ) => {
-    return (
-      <button
-        ref={ref}
-        type="button"
-        role="option"
-        id={`option-${index}`}
-        aria-selected={isSelected}
-        onClick={() => handleSelect(option)}
-        className={cn(
-          'w-full px-3 py-2.5 flex items-center justify-between rounded-lg transition-all',
-          isSelected && 'bg-violet-500/15',
-          isFocused && !isSelected && 'bg-white/[0.04]',
-          !isSelected && !isFocused && 'hover:bg-white/[0.04]'
-        )}
-      >
-        <span
-          className={cn(
-            'text-[13px]',
-            isSelected
-              ? 'text-violet-200 font-medium'
-              : 'text-gray-300 font-normal'
-          )}
-        >
-          {option.label}
-        </span>
-        {isSelected && (
-          <Check size={14} className="text-violet-400" strokeWidth={2.5} />
-        )}
-      </button>
-    );
-  },
+const DropdownOption = ({
+  ref,
+  option,
+  isSelected,
+  isFocused,
+  handleSelect,
+  index,
+}: DropdownOptionProps & {
+  ref?: React.RefObject<HTMLButtonElement | null>;
+}) => (
+  <button
+    ref={ref}
+    type="button"
+    role="option"
+    id={`option-${index}`}
+    aria-selected={isSelected}
+    onClick={() => handleSelect(option)}
+    className={cn(
+      'w-full px-3 py-2.5 flex items-center justify-between rounded-lg transition-all',
+      isSelected && 'bg-violet-500/15',
+      isFocused && !isSelected && 'bg-white/[0.04]',
+      !isSelected && !isFocused && 'hover:bg-white/[0.04]'
+    )}
+  >
+    <span
+      className={cn(
+        'text-[13px]',
+        isSelected ? 'text-violet-200 font-medium' : 'text-gray-300 font-normal'
+      )}
+    >
+      {option.label}
+    </span>
+    {isSelected && (
+      <Check size={14} className="text-violet-400" strokeWidth={2.5} />
+    )}
+  </button>
 );
 
 DropdownOption.displayName = 'DropdownOption';
@@ -126,6 +99,28 @@ const defaultDateRangeOptions: DateRangeOption[] = [
   { label: 'Last month', value: 'last_month' },
   { label: 'This quarter', value: 'this_quarter' },
 ];
+
+const useClickOutsideDropdown = (
+  dropdownRef: React.RefObject<HTMLDivElement | null>,
+  isOpen: boolean,
+  onClose: () => void
+) => {
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen, onClose, dropdownRef]);
+};
 
 export function Header({
   orgName = 'Global Retail Ops',
@@ -145,23 +140,10 @@ export function Header({
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
     setSelectedRange(dateRange);
   }, [dateRange]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  useClickOutsideDropdown(dropdownRef, isOpen, () => setIsOpen(false));
 
   const handleSelect = (option: DateRangeOption) => {
     setSelectedRange(option.label);
@@ -250,6 +232,65 @@ function LeftSection({
   );
 }
 
+const handleDropdownKeyDown = (
+  e: React.KeyboardEvent,
+  isOpen: boolean,
+  focusedIndex: number,
+  dateRangeOptions: DateRangeOption[],
+  setIsOpen: (open: boolean) => void,
+  setFocusedIndex: (index: number) => void,
+  handleSelect: (option: DateRangeOption) => void
+) => {
+  if (!isOpen) {
+    if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+      e.preventDefault();
+      setIsOpen(true);
+      setFocusedIndex(0);
+    }
+    return;
+  }
+
+  switch (e.key) {
+    case 'Escape':
+      e.preventDefault();
+      setIsOpen(false);
+      setFocusedIndex(-1);
+      break;
+    case 'ArrowDown':
+      e.preventDefault();
+      setFocusedIndex(
+        focusedIndex < dateRangeOptions.length - 1 ? focusedIndex + 1 : 0
+      );
+      break;
+    case 'ArrowUp':
+      e.preventDefault();
+      setFocusedIndex(
+        focusedIndex > 0 ? focusedIndex - 1 : dateRangeOptions.length - 1
+      );
+      break;
+    case 'Home':
+      e.preventDefault();
+      setFocusedIndex(0);
+      break;
+    case 'End':
+      e.preventDefault();
+      setFocusedIndex(dateRangeOptions.length - 1);
+      break;
+    case 'Enter':
+    case ' ':
+      e.preventDefault();
+      if (focusedIndex >= 0 && focusedIndex < dateRangeOptions.length) {
+        handleSelect(dateRangeOptions[focusedIndex]);
+        setFocusedIndex(-1);
+      }
+      break;
+    case 'Tab':
+      setIsOpen(false);
+      setFocusedIndex(-1);
+      break;
+  }
+};
+
 function DatePickerDropdown({
   selectedRange,
   isOpen,
@@ -268,54 +309,15 @@ function DatePickerDropdown({
   }, [focusedIndex]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!isOpen) {
-      if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
-        e.preventDefault();
-        setIsOpen(true);
-        setFocusedIndex(0);
-      }
-      return;
-    }
-
-    switch (e.key) {
-      case 'Escape':
-        e.preventDefault();
-        setIsOpen(false);
-        setFocusedIndex(-1);
-        break;
-      case 'ArrowDown':
-        e.preventDefault();
-        setFocusedIndex(prev =>
-          prev < dateRangeOptions.length - 1 ? prev + 1 : 0
-        );
-        break;
-      case 'ArrowUp':
-        e.preventDefault();
-        setFocusedIndex(prev =>
-          prev > 0 ? prev - 1 : dateRangeOptions.length - 1
-        );
-        break;
-      case 'Home':
-        e.preventDefault();
-        setFocusedIndex(0);
-        break;
-      case 'End':
-        e.preventDefault();
-        setFocusedIndex(dateRangeOptions.length - 1);
-        break;
-      case 'Enter':
-      case ' ':
-        e.preventDefault();
-        if (focusedIndex >= 0 && focusedIndex < dateRangeOptions.length) {
-          handleSelect(dateRangeOptions[focusedIndex]);
-          setFocusedIndex(-1);
-        }
-        break;
-      case 'Tab':
-        setIsOpen(false);
-        setFocusedIndex(-1);
-        break;
-    }
+    handleDropdownKeyDown(
+      e,
+      isOpen,
+      focusedIndex,
+      dateRangeOptions,
+      setIsOpen,
+      setFocusedIndex,
+      handleSelect
+    );
   };
 
   return (

@@ -7,42 +7,20 @@ import { cn } from '../../lib/utils';
 
 export type { ChatHistoryItem, ChatHistorySectionProps };
 
-export function ChatHistorySection({
-  items = [],
-  activeItemId,
-  isExpanded = true,
-  isVisible = true,
-  onItemClick,
-  onToggleExpanded,
-  onRename,
-  onDelete,
-  title = 'Chat History',
-  emptyMessage = 'No chats yet. Start a conversation!',
-}: ChatHistorySectionProps) {
+const useNewItemAnimation = (items: ChatHistoryItem[]) => {
   const [newItemId, setNewItemId] = useState<string | null>(null);
   const [canAnimate, setCanAnimate] = useState(false);
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editValue, setEditValue] = useState('');
-  const menuRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
   const seenItemsRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    for (const item of items) {
-      seenItemsRef.current.add(item.id);
-    }
-    const timer = setTimeout(() => {
-      setCanAnimate(true);
-    }, 600);
+    items.forEach(item => seenItemsRef.current.add(item.id));
+    const timer = setTimeout(() => setCanAnimate(true), 600);
     return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
     if (!canAnimate) {
-      for (const item of items) {
-        seenItemsRef.current.add(item.id);
-      }
+      items.forEach(item => seenItemsRef.current.add(item.id));
       return;
     }
 
@@ -59,20 +37,38 @@ export function ChatHistorySection({
       };
     }
 
-    for (const item of items) {
-      seenItems.add(item.id);
-    }
+    items.forEach(item => seenItems.add(item.id));
   }, [items, canAnimate]);
+
+  return newItemId;
+};
+
+export function ChatHistorySection({
+  items = [],
+  activeItemId,
+  isExpanded = true,
+  isVisible = true,
+  onItemClick,
+  onToggleExpanded,
+  onRename,
+  onDelete,
+  title = 'Chat History',
+  emptyMessage = 'No chats yet. Start a conversation!',
+}: ChatHistorySectionProps) {
+  const newItemId = useNewItemAnimation(items);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editValue, setEditValue] = useState('');
+  const menuRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!openMenuId) return;
-
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setOpenMenuId(null);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [openMenuId]);
@@ -84,26 +80,31 @@ export function ChatHistorySection({
     }
   }, [editingId]);
 
+  const closeMenu = () => setOpenMenuId(null);
+  const toggleMenu = (itemId: string) => {
+    setOpenMenuId(openMenuId === itemId ? null : itemId);
+  };
+
   const handleMenuClick = (e: React.MouseEvent, itemId: string) => {
     e.stopPropagation();
-    setOpenMenuId(openMenuId === itemId ? null : itemId);
+    toggleMenu(itemId);
   };
 
   const handleMenuKeyDown = (e: React.KeyboardEvent, itemId: string) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       e.stopPropagation();
-      setOpenMenuId(openMenuId === itemId ? null : itemId);
+      toggleMenu(itemId);
     }
   };
 
-  const handleRenameStart = (item: ChatHistoryItem) => {
+  const startRename = (item: ChatHistoryItem) => {
     setEditingId(item.id);
     setEditValue(item.title);
-    setOpenMenuId(null);
+    closeMenu();
   };
 
-  const handleRenameSubmit = () => {
+  const submitRename = () => {
     if (editingId && editValue.trim()) {
       onRename?.(editingId, editValue.trim());
     }
@@ -113,15 +114,15 @@ export function ChatHistorySection({
 
   const handleRenameKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      handleRenameSubmit();
+      submitRename();
     } else if (e.key === 'Escape') {
       setEditingId(null);
       setEditValue('');
     }
   };
 
-  const handleDelete = (id: string) => {
-    setOpenMenuId(null);
+  const deleteItem = (id: string) => {
+    closeMenu();
     onDelete?.(id);
   };
 
@@ -129,7 +130,9 @@ export function ChatHistorySection({
     <div
       className={cn(
         'px-4 mt-4 transition-all duration-300 ease-in-out overflow-hidden',
-        isVisible ? 'opacity-100 animate-fadeInDown max-h-[500px]' : 'opacity-0 max-h-0 pointer-events-none'
+        isVisible
+          ? 'opacity-100 animate-fadeInDown max-h-[500px]'
+          : 'opacity-0 max-h-0 pointer-events-none'
       )}
     >
       <button
@@ -180,7 +183,7 @@ export function ChatHistorySection({
                     role="button"
                     tabIndex={isEditing ? -1 : 0}
                     onClick={() => !isEditing && onItemClick?.(item.id)}
-                    onKeyDown={(e) => {
+                    onKeyDown={e => {
                       if (!isEditing && (e.key === 'Enter' || e.key === ' ')) {
                         e.preventDefault();
                         onItemClick?.(item.id);
@@ -201,7 +204,7 @@ export function ChatHistorySection({
                         type="text"
                         value={editValue}
                         onChange={e => setEditValue(e.target.value)}
-                        onBlur={handleRenameSubmit}
+                        onBlur={submitRename}
                         onKeyDown={handleRenameKeyDown}
                         className="text-[13px] font-bold bg-transparent border-none outline-none pl-3 pr-8 w-full text-gray-200 leading-[21px]"
                         onClick={e => e.stopPropagation()}
@@ -234,7 +237,7 @@ export function ChatHistorySection({
                       <button
                         type="button"
                         role="menuitem"
-                        onClick={() => handleRenameStart(item)}
+                        onClick={() => startRename(item)}
                         className="flex items-center gap-2 w-full px-3 py-2 text-left hover:bg-white/10 transition-colors"
                       >
                         <Pencil size={14} className="text-gray-400" />
@@ -245,7 +248,7 @@ export function ChatHistorySection({
                       <button
                         type="button"
                         role="menuitem"
-                        onClick={() => handleDelete(item.id)}
+                        onClick={() => deleteItem(item.id)}
                         className="flex items-center gap-2 w-full px-3 py-2 text-left hover:bg-red-500/20 transition-colors"
                       >
                         <Trash2 size={14} className="text-red-400" />

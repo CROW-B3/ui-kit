@@ -1,12 +1,23 @@
-/**
- * Centralized configuration constants for dashboard components
- * Used across ui-kit and dashboard-client to maintain consistency
- */
+import type { FilterOption } from '../inputs/FilterDropdown';
+import type { ConfidenceLevel, SeverityLevel } from './types';
+export {
+  FOCUSABLE_ELEMENTS,
+  KEYBOARD_KEYS,
+  KEYBOARD_PATTERNS,
+} from './constants/accessibility';
+export { ANIMATION_PRESETS, MOTION_VARIANTS } from './constants/animations';
+export { COLOR_PALETTE } from './constants/colors';
+export { CHART_COLORS, GRADIENT_CONFIG } from './constants/gradients';
+export { getIcon, ICON_REGISTRY } from './constants/icons';
+export { DEFAULT_NAV_ITEMS } from './constants/navigation';
+export { SIZING, SPACING } from './constants/sizing';
+export {
+  BORDER_COLORS,
+  DROPDOWN_STYLES,
+  GLASS_STYLES,
+  MODAL_STYLES,
+} from './constants/styles';
 
-import type { FilterOption } from './FilterDropdown';
-import type { SeverityLevel, ConfidenceLevel, MetricItem } from './types';
-
-// ===== SEVERITY CONFIGURATION =====
 export const SEVERITY_CONFIG: Record<
   SeverityLevel,
   { label: string; color: string; bg: string; border: string }
@@ -31,7 +42,6 @@ export const SEVERITY_CONFIG: Record<
   },
 };
 
-// ===== CONFIDENCE CONFIGURATION (Pattern/Default) =====
 export const CONFIDENCE_CONFIG: Record<
   ConfidenceLevel,
   { label: string; color: string; bg: string; border: string }
@@ -56,7 +66,6 @@ export const CONFIDENCE_CONFIG: Record<
   },
 };
 
-// ===== FILTER OPTIONS =====
 export const DEFAULT_DATE_RANGE_OPTIONS: FilterOption[] = [
   { label: 'Date range', value: 'all' },
   { label: 'Today', value: 'today' },

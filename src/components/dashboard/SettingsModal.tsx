@@ -4,7 +4,7 @@ import type { SettingsModalProps } from './types';
 import { Bell, BellOff, Globe, LogOut, User, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';
-import { ToggleSwitch } from './ToggleSwitch';
+import { ToggleSwitch } from '../inputs/ToggleSwitch';
 
 export type { SettingsModalProps };
 
@@ -59,7 +59,7 @@ export function SettingsModal({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen, handleClose]);
 
-  const handleNotificationsToggle = () => {
+  const toggleNotifications = () => {
     const newValue = !notifications;
     setNotifications(newValue);
     onNotificationsChange?.(newValue);
@@ -132,7 +132,7 @@ export function SettingsModal({
         <div className="p-3 px-4">
           <button
             type="button"
-            onClick={handleNotificationsToggle}
+            onClick={toggleNotifications}
             className="w-full px-3 py-3.5 flex items-center justify-between bg-transparent border-none rounded-[10px] cursor-pointer transition-colors hover:bg-white/[0.04]"
           >
             <div className="flex items-center gap-3">
@@ -147,7 +147,7 @@ export function SettingsModal({
             </div>
             <ToggleSwitch
               enabled={notifications}
-              onChange={handleNotificationsToggle}
+              onChange={toggleNotifications}
               aria-label="Toggle notifications"
             />
           </button>

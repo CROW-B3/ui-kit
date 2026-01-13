@@ -1,15 +1,11 @@
 'use client';
 
 import type { NavItem } from './types';
-import {
-  ChevronDown,
-  LayoutGrid,
-  MessageSquare,
-  TrendingUp,
-  Users,
-} from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '../../lib/utils';
+import { ICON_REGISTRY } from './constants/icons';
+import { isActivePath } from './utils/pathUtils';
 
 export interface NavMenuProps {
   items: NavItem[];
@@ -17,29 +13,30 @@ export interface NavMenuProps {
   onNavigate?: (href: string) => void;
 }
 
-type IconComponent = typeof LayoutGrid;
+const isSubmenuActive = (subItems: NavItem[] | undefined, activeHref: string) =>
+  subItems?.some(item => isActivePath(activeHref, item.href));
 
-const iconComponents: Record<string, IconComponent> = {
-  grid_view: LayoutGrid,
-  chat_bubble: MessageSquare,
-  timeline: TrendingUp,
-  group: Users,
-} as const;
+function renderIcon(iconName: string, active: boolean) {
+  const IconComponent = ICON_REGISTRY[iconName];
+  if (!IconComponent) return null;
+  return (
+    <IconComponent
+      size={15}
+      className={cn(
+        'transition-colors',
+        active ? 'text-violet-300' : 'text-gray-500'
+      )}
+      strokeWidth={2}
+    />
+  );
+}
 
 export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
-  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
-
-  const normalizePath = (path: string) => path.replace(/\/$/, '') || '/';
-
-  const isActive = (href: string) => {
-    const normalizedActive = normalizePath(activeHref);
-    const normalizedHref = normalizePath(href);
-    return normalizedActive === normalizedHref;
-  };
-
-  const isSubmenuActive = (subItems?: NavItem[]) =>
-    subItems?.some(item => isActive(item.href));
-  const isExpanded = (label: string) => expandedMenus.includes(label);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>(() =>
+    items
+      .filter(item => item.submenu && isSubmenuActive(item.submenu, activeHref))
+      .map(item => item.label)
+  );
 
   const toggleMenu = (label: string) => {
     setExpandedMenus(prev =>
@@ -48,10 +45,8 @@ export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
   };
 
   const handleNavigate = (href: string, e: React.MouseEvent) => {
-    if (onNavigate) {
-      e.preventDefault();
-      onNavigate(href);
-    }
+    e.preventDefault();
+    onNavigate?.(href);
   };
 
   const handleKeyDown = (label: string, e: React.KeyboardEvent) => {
@@ -61,28 +56,13 @@ export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
     }
   };
 
-  const renderIcon = (iconName: string, active: boolean) => {
-    const IconComponent = iconComponents[iconName];
-    if (!IconComponent) return null;
-    return (
-      <IconComponent
-        size={15}
-        className={cn(
-          'transition-colors',
-          active ? 'text-violet-300' : 'text-gray-500'
-        )}
-        strokeWidth={2}
-      />
-    );
-  };
-
   return (
     <nav className="w-[247px] ml-4 mt-[99.5px] flex flex-col gap-1">
       {items.map(item => {
         const itemIsActive = item.submenu
-          ? isSubmenuActive(item.submenu)
-          : isActive(item.href);
-        const expanded = item.submenu && isExpanded(item.label);
+          ? isSubmenuActive(item.submenu, activeHref)
+          : isActivePath(activeHref, item.href);
+        const expanded = item.submenu && expandedMenus.includes(item.label);
         const submenuHeight = item.submenu ? item.submenu.length * 35.5 : 0;
 
         return item.submenu ? (
@@ -131,20 +111,23 @@ export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
               }}
             >
               {item.submenu.map(subitem => {
-                const subActive = isActive(subitem.href);
+                const subActive = isActivePath(subitem.href, activeHref);
                 return (
                   <a
                     key={subitem.label}
                     href={subitem.href}
                     onClick={e => handleNavigate(subitem.href, e)}
                     className={cn(
-                      'w-[203px] h-[35.5px] rounded-lg flex items-center pl-3',
+                      'w-[203px] h-[35.5px] rounded-lg flex items-center pl-3 gap-2',
                       'no-underline cursor-pointer transition-colors duration-150',
                       subActive
                         ? 'bg-violet-500/10'
                         : 'bg-transparent hover:bg-white/[0.04]'
                     )}
                   >
+                    {subActive && (
+                      <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-br from-violet-400 to-violet-600 shrink-0" />
+                    )}
                     <span
                       className={cn(
                         'text-[13px] leading-[19.5px] font-[Sora,sans-serif] transition-colors duration-150',

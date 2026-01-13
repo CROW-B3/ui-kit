@@ -2,29 +2,18 @@
 
 import type { NavItem, SidebarProps } from './types';
 import { ChatHistorySection } from './ChatHistorySection';
+import { DEFAULT_NAV_ITEMS } from './constants/navigation';
 import { NavMenu } from './NavMenu';
 import { SettingsDropup } from './SettingsDropup';
 import { SidebarLogo } from './SidebarLogo';
+import { normalizePath } from './utils/pathUtils';
 
 export type { NavItem, SidebarProps };
 
-const defaultNavItems: NavItem[] = [
-  { icon: 'grid_view', label: 'Overview', href: '/' },
-  { icon: 'chat_bubble', label: 'Ask CROW', href: '/ask-crow' },
-  {
-    icon: 'timeline',
-    label: 'Analysis',
-    href: '#',
-    submenu: [
-      { icon: '', label: 'Interactions', href: '/analysis/interactions' },
-      { icon: '', label: 'Patterns', href: '/analysis/patterns' },
-    ],
-  },
-  { icon: 'group', label: 'Team', href: '/team' },
-];
+const isAskCrowPage = (href: string) => normalizePath(href) === '/ask-crow';
 
 export function Sidebar({
-  navItems = defaultNavItems,
+  navItems = DEFAULT_NAV_ITEMS,
   activeHref = '/',
   onNavigate,
   showSettings = true,
@@ -43,10 +32,7 @@ export function Sidebar({
   onChatDelete,
   showChatHistory = false,
 }: SidebarProps) {
-  // Auto-show chat history when on Ask CROW page
-  const normalizedHref = activeHref?.replace(/\/$/, '') || '';
-  const isAskCrowPage = normalizedHref === '/ask-crow';
-  const displayChatHistory = showChatHistory || isAskCrowPage;
+  const displayChatHistory = showChatHistory || isAskCrowPage(activeHref);
 
   return (
     <aside className="w-[280px] h-full relative bg-black overflow-hidden border-r border-white/[0.08] shrink-0 hidden md:flex md:flex-col">

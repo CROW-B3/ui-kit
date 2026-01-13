@@ -4,8 +4,7 @@ import { X } from 'lucide-react';
 import { useCallback, useEffect, useRef } from 'react';
 import { cn } from '../../lib/utils';
 
-const FOCUSABLE_ELEMENTS =
-  'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+import { FOCUSABLE_ELEMENTS } from './constants/accessibility';
 
 export interface SidePanelProps {
   isOpen: boolean;
