@@ -12,7 +12,6 @@ export * from '../layout/ListItem';
 export * from '../layout/SectionHeader';
 export * from './ChatHistorySection';
 export * from './CollapseToggleButton';
-export * from './constants';
 export * from './constants/accessibility';
 export * from './constants/animations';
 export * from './constants/colors';
