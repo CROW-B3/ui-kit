@@ -11,6 +11,7 @@ export interface SettingsDropupProps {
   initialNotifications?: boolean;
   onNotificationsChange?: (enabled: boolean) => void;
   onLogout?: () => void;
+  isCollapsed?: boolean;
 }
 
 export function SettingsDropup({
@@ -19,6 +20,7 @@ export function SettingsDropup({
   initialNotifications = true,
   onNotificationsChange,
   onLogout,
+  isCollapsed = false,
 }: SettingsDropupProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState(initialNotifications);
@@ -97,14 +99,15 @@ export function SettingsDropup({
   };
 
   return (
-    <div ref={ref} className="w-[247px] absolute left-4 bottom-6">
+    <div ref={ref} className={cn('absolute bottom-6 transition-all duration-300', isCollapsed ? 'w-[56px] left-3' : 'w-[247px] left-4')}>
       <div
         role="menu"
         className={cn(
-          'absolute bottom-[52px] left-0 w-[247px]',
+          'absolute bottom-[52px] w-[247px]',
           'bg-[rgba(10,5,20,0.98)] backdrop-blur-[20px] rounded-xl',
           'border border-white/[0.08] shadow-[0px_-8px_32px_rgba(0,0,0,0.4)]',
           'overflow-hidden z-50 transition-all duration-200 ease-[cubic-bezier(0.16,1,0.3,1)]',
+          isCollapsed ? 'left-[-95px]' : 'left-0',
           isOpen
             ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
             : 'opacity-0 translate-y-2 scale-[0.96] pointer-events-none'
@@ -188,7 +191,7 @@ export function SettingsDropup({
         )}
       </div>
 
-      <div className="border-t border-white/[0.08] pt-3">
+      <div className={cn('border-t border-white/[0.08] transition-all duration-300', isCollapsed ? 'pt-2' : 'pt-3')}>
         <button
           ref={triggerRef}
           type="button"
@@ -198,8 +201,9 @@ export function SettingsDropup({
           aria-expanded={isOpen}
           aria-haspopup="menu"
           className={cn(
-            'w-[247px] h-[41px] rounded-lg border-none cursor-pointer transition-colors',
-            'flex items-center pl-3 gap-3',
+            'h-[41px] rounded-lg border-none cursor-pointer transition-all duration-300',
+            'flex items-center gap-3',
+            isCollapsed ? 'w-[56px] justify-center pl-0' : 'w-[247px] pl-3',
             isOpen ? 'bg-white/[0.06]' : 'bg-transparent hover:bg-white/[0.04]'
           )}
         >
@@ -210,24 +214,28 @@ export function SettingsDropup({
               strokeWidth={2}
             />
           </div>
-          <span
-            className={cn(
-              'text-sm font-normal leading-[21px] font-[Sora,sans-serif] flex-1 text-left',
-              isOpen ? 'text-white' : 'text-gray-400'
-            )}
-          >
-            Settings
-          </span>
-          <div className="w-[18px] h-[22px] flex items-center justify-center mr-3">
-            <ChevronUp
-              size={12}
-              className={cn(
-                'transition-transform duration-200',
-                isOpen ? 'text-violet-400 rotate-180' : 'text-gray-600'
-              )}
-              strokeWidth={2}
-            />
-          </div>
+          {!isCollapsed && (
+            <>
+              <span
+                className={cn(
+                  'text-sm font-normal leading-[21px] font-[Sora,sans-serif] flex-1 text-left transition-opacity duration-200',
+                  isOpen ? 'text-white' : 'text-gray-400'
+                )}
+              >
+                Settings
+              </span>
+              <div className="w-[18px] h-[22px] flex items-center justify-center mr-3">
+                <ChevronUp
+                  size={12}
+                  className={cn(
+                    'transition-transform duration-200',
+                    isOpen ? 'text-violet-400 rotate-180' : 'text-gray-600'
+                  )}
+                  strokeWidth={2}
+                />
+              </div>
+            </>
+          )}
         </button>
       </div>
     </div>

@@ -2,7 +2,7 @@
 
 import type { NavItem } from './types';
 import { ChevronDown } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';
 import { ICON_REGISTRY } from './constants/icons';
 import { isActivePath } from './utils/pathUtils';
@@ -11,6 +11,8 @@ export interface NavMenuProps {
   items: NavItem[];
   activeHref: string;
   onNavigate?: (href: string) => void;
+  isCollapsed?: boolean;
+  onRequestExpand?: (menuLabel: string) => void;
 }
 
 const isSubmenuActive = (subItems: NavItem[] | undefined, activeHref: string) =>
@@ -31,14 +33,28 @@ function renderIcon(iconName: string, active: boolean) {
   );
 }
 
-export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
+export function NavMenu({ items, activeHref, onNavigate, isCollapsed = false, onRequestExpand }: NavMenuProps) {
   const [expandedMenus, setExpandedMenus] = useState<string[]>(() =>
     items
       .filter(item => item.submenu && isSubmenuActive(item.submenu, activeHref))
       .map(item => item.label)
   );
+  const prevCollapsedRef = useRef(isCollapsed);
+
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => {
+    if (isCollapsed && !prevCollapsedRef.current) {
+      setExpandedMenus([]);
+    }
+    prevCollapsedRef.current = isCollapsed;
+  }, [isCollapsed]);
 
   const toggleMenu = (label: string) => {
+    if (isCollapsed) {
+      setExpandedMenus([label]);
+      onRequestExpand?.(label);
+      return;
+    }
     setExpandedMenus(prev =>
       prev.includes(label) ? prev.filter(l => l !== label) : [...prev, label]
     );
@@ -57,7 +73,12 @@ export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
   };
 
   return (
-    <nav className="w-[247px] ml-4 mt-[99.5px] flex flex-col gap-1">
+    <nav
+      className={cn(
+        'mt-2 flex flex-col gap-1 transition-[width,margin] duration-300',
+        isCollapsed ? 'w-[56px] ml-3' : 'w-[247px] ml-4'
+      )}
+    >
       {items.map(item => {
         const itemIsActive = item.submenu
           ? isSubmenuActive(item.submenu, activeHref)
@@ -74,9 +95,10 @@ export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
               aria-label={`${item.label} menu`}
               aria-expanded={expanded}
               className={cn(
-                'w-[247px] h-[41px] relative rounded-lg border-none cursor-pointer',
-                'flex items-center pl-3 gap-3 transition-colors duration-150',
-                expanded
+                'h-[41px] relative rounded-lg border-none cursor-pointer',
+                'flex items-center gap-3 transition-all duration-300',
+                isCollapsed ? 'w-[56px] justify-center pl-0' : 'w-[247px] pl-3',
+                expanded && !isCollapsed
                   ? 'bg-white/[0.03]'
                   : 'bg-transparent hover:bg-white/[0.04]'
               )}
@@ -84,32 +106,38 @@ export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
               <div className="w-5 h-6 flex items-center justify-center shrink-0">
                 {renderIcon(item.icon, !!itemIsActive)}
               </div>
-              <span
-                className={cn(
-                  'text-sm font-normal leading-[21px] flex-1 text-left font-[Sora,sans-serif]',
-                  itemIsActive ? 'text-white' : 'text-gray-400'
-                )}
-              >
-                {item.label}
-              </span>
-              <div className="w-[18px] h-[22px] flex items-center justify-center mr-3">
-                <ChevronDown
-                  size={12}
-                  className={cn(
-                    'text-gray-600 transition-transform duration-200',
-                    expanded && 'rotate-180'
-                  )}
-                  strokeWidth={2}
-                />
-              </div>
+              {!isCollapsed && (
+                <>
+                  <span
+                    className={cn(
+                      'text-sm font-normal leading-[21px] flex-1 text-left font-[Sora,sans-serif]',
+                      'transition-opacity duration-200',
+                      itemIsActive ? 'text-white' : 'text-gray-400'
+                    )}
+                  >
+                    {item.label}
+                  </span>
+                  <div className="w-[18px] h-[22px] flex items-center justify-center mr-3">
+                    <ChevronDown
+                      size={12}
+                      className={cn(
+                        'text-gray-600 transition-transform duration-200',
+                        expanded && 'rotate-180'
+                      )}
+                      strokeWidth={2}
+                    />
+                  </div>
+                </>
+              )}
             </button>
-            <div
-              className="ml-11 overflow-hidden transition-all duration-250"
-              style={{
-                maxHeight: expanded ? submenuHeight : 0,
-                opacity: expanded ? 1 : 0,
-              }}
-            >
+            {!isCollapsed && (
+              <div
+                className="ml-11 overflow-hidden transition-all duration-250"
+                style={{
+                  maxHeight: expanded ? submenuHeight : 0,
+                  opacity: expanded ? 1 : 0,
+                }}
+              >
               {item.submenu.map(subitem => {
                 const subActive = isActivePath(subitem.href, activeHref);
                 return (
@@ -141,7 +169,8 @@ export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
                   </a>
                 );
               })}
-            </div>
+              </div>
+            )}
           </div>
         ) : (
           <a
@@ -149,8 +178,9 @@ export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
             href={item.href}
             onClick={e => handleNavigate(item.href, e)}
             className={cn(
-              'w-[247px] h-[41px] rounded-lg flex items-center pl-3 gap-3',
-              'no-underline cursor-pointer transition-all duration-150',
+              'h-[41px] rounded-lg flex items-center gap-3',
+              'no-underline cursor-pointer transition-all duration-300',
+              isCollapsed ? 'w-[56px] justify-center pl-0' : 'w-[247px] pl-3',
               itemIsActive
                 ? 'bg-white/[0.08] shadow-[inset_0px_1px_0px_1px_rgba(255,255,255,0.05)] outline outline-1 outline-white/[0.05] -outline-offset-1'
                 : 'bg-transparent hover:bg-white/[0.04]'
@@ -159,14 +189,16 @@ export function NavMenu({ items, activeHref, onNavigate }: NavMenuProps) {
             <div className="w-5 h-6 flex items-center justify-center shrink-0">
               {renderIcon(item.icon, !!itemIsActive)}
             </div>
-            <span
-              className={cn(
-                'text-sm font-normal leading-[21px] font-[Sora,sans-serif]',
-                itemIsActive ? 'text-white' : 'text-gray-400'
-              )}
-            >
-              {item.label}
-            </span>
+            {!isCollapsed && (
+              <span
+                className={cn(
+                  'text-sm font-normal leading-[21px] font-[Sora,sans-serif] transition-opacity duration-200',
+                  itemIsActive ? 'text-white' : 'text-gray-400'
+                )}
+              >
+                {item.label}
+              </span>
+            )}
           </a>
         );
       })}

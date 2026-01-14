@@ -55,6 +55,8 @@ export interface SidebarProps {
   onChatHistoryToggle?: () => void;
   onChatRename?: (id: string, newTitle: string) => void;
   onChatDelete?: (id: string) => void;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
 export interface GlassPanelProps {

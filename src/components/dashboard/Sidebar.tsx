@@ -7,6 +7,7 @@ import { NavMenu } from './NavMenu';
 import { SettingsDropup } from './SettingsDropup';
 import { SidebarLogo } from './SidebarLogo';
 import { normalizePath } from './utils/pathUtils';
+import { cn } from '../../lib/utils';
 
 export type { NavItem, SidebarProps };
 
@@ -31,32 +32,61 @@ export function Sidebar({
   onChatRename,
   onChatDelete,
   showChatHistory = false,
+  isCollapsed = false,
+  onToggleCollapse,
 }: SidebarProps) {
   const displayChatHistory = showChatHistory || isAskCrowPage(activeHref);
 
   return (
-    <aside className="w-[280px] h-full relative bg-black overflow-hidden border-r border-white/[0.08] shrink-0 hidden md:flex md:flex-col">
-      <div className="w-[279px] h-full absolute left-0 top-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
-      <div className="w-[279px] h-32 absolute left-0 top-0 opacity-50 bg-gradient-to-b from-[#100B1A] to-transparent pointer-events-none" />
+    <aside
+      className={cn(
+        'h-full relative bg-black overflow-hidden border-r border-white/[0.08] shrink-0 hidden md:flex md:flex-col',
+        'transition-[width] duration-300',
+        isCollapsed ? 'w-[80px]' : 'w-[280px]'
+      )}
+    >
+      <div
+        className={cn(
+          'h-full absolute left-0 top-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none transition-[width] duration-300',
+          isCollapsed ? 'w-[79px]' : 'w-[279px]'
+        )}
+      />
+      <div
+        className={cn(
+          'h-32 absolute left-0 top-0 opacity-50 bg-gradient-to-b from-[#100B1A] to-transparent pointer-events-none transition-[width] duration-300',
+          isCollapsed ? 'w-[79px]' : 'w-[279px]'
+        )}
+      />
 
-      <SidebarLogo logoSrc={logoSrc} />
+      <div
+        className={cn(
+          'relative z-10 pt-3 h-[60px] flex items-center transition-all duration-300',
+          isCollapsed ? 'px-1.5 justify-center' : 'px-3'
+        )}
+      >
+        <SidebarLogo logoSrc={logoSrc} isCollapsed={isCollapsed} onToggleCollapse={onToggleCollapse} />
+      </div>
 
       <NavMenu
         items={navItems}
         activeHref={activeHref}
         onNavigate={onNavigate}
+        isCollapsed={isCollapsed}
+        onRequestExpand={onToggleCollapse}
       />
 
-      <ChatHistorySection
-        items={chatHistory}
-        activeItemId={activeChatId}
-        isExpanded={chatHistoryExpanded}
-        isVisible={displayChatHistory}
-        onItemClick={onChatClick}
-        onToggleExpanded={onChatHistoryToggle}
-        onRename={onChatRename}
-        onDelete={onChatDelete}
-      />
+      {!isCollapsed && (
+        <ChatHistorySection
+          items={chatHistory}
+          activeItemId={activeChatId}
+          isExpanded={chatHistoryExpanded}
+          isVisible={displayChatHistory}
+          onItemClick={onChatClick}
+          onToggleExpanded={onChatHistoryToggle}
+          onRename={onChatRename}
+          onDelete={onChatDelete}
+        />
+      )}
 
       {showSettings && (
         <SettingsDropup
@@ -65,6 +95,7 @@ export function Sidebar({
           initialNotifications={initialNotifications}
           onNotificationsChange={onNotificationsChange}
           onLogout={onLogout}
+          isCollapsed={isCollapsed}
         />
       )}
     </aside>

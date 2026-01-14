@@ -49,42 +49,35 @@ interface RightSectionProps {
   userInitials: string;
 }
 
-const DropdownOption = ({
-  ref,
-  option,
-  isSelected,
-  isFocused,
-  handleSelect,
-  index,
-}: DropdownOptionProps & {
-  ref?: React.RefObject<HTMLButtonElement | null>;
-}) => (
-  <button
-    ref={ref}
-    type="button"
-    role="option"
-    id={`option-${index}`}
-    aria-selected={isSelected}
-    onClick={() => handleSelect(option)}
-    className={cn(
-      'w-full px-3 py-2.5 flex items-center justify-between rounded-lg transition-all',
-      isSelected && 'bg-violet-500/15',
-      isFocused && !isSelected && 'bg-white/[0.04]',
-      !isSelected && !isFocused && 'hover:bg-white/[0.04]'
-    )}
-  >
-    <span
+const DropdownOption = React.forwardRef<HTMLButtonElement, DropdownOptionProps>(
+  ({ option, isSelected, isFocused, handleSelect, index }, ref) => (
+    <button
+      ref={ref}
+      type="button"
+      role="option"
+      id={`option-${index}`}
+      aria-selected={isSelected}
+      onClick={() => handleSelect(option)}
       className={cn(
-        'text-[13px]',
-        isSelected ? 'text-violet-200 font-medium' : 'text-gray-300 font-normal'
+        'w-full px-3 py-2.5 flex items-center justify-between rounded-lg transition-all',
+        isSelected && 'bg-violet-500/15',
+        isFocused && !isSelected && 'bg-white/[0.04]',
+        !isSelected && !isFocused && 'hover:bg-white/[0.04]'
       )}
     >
-      {option.label}
-    </span>
-    {isSelected && (
-      <Check size={14} className="text-violet-400" strokeWidth={2.5} />
-    )}
-  </button>
+      <span
+        className={cn(
+          'text-[13px]',
+          isSelected ? 'text-violet-200 font-medium' : 'text-gray-300 font-normal'
+        )}
+      >
+        {option.label}
+      </span>
+      {isSelected && (
+        <Check size={14} className="text-violet-400" strokeWidth={2.5} />
+      )}
+    </button>
+  )
 );
 
 DropdownOption.displayName = 'DropdownOption';
@@ -139,6 +132,7 @@ export function Header({
   const [selectedRange, setSelectedRange] = useState(dateRange);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks-extra/no-direct-set-state-in-use-effect
   useEffect(() => {
     setSelectedRange(dateRange);
   }, [dateRange]);
