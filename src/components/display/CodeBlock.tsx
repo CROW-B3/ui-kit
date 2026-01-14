@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { LuCopy, LuCheck } from 'react-icons/lu';
 import { motion, AnimatePresence } from 'framer-motion';
+import { codeToHtml } from 'shiki';
 
 interface CodeBlockProps {
   code: string;
@@ -18,6 +19,18 @@ export function CodeBlock({
   onCopy,
 }: CodeBlockProps) {
   const [isCopied, setIsCopied] = useState(false);
+  const [highlightedHtml, setHighlightedHtml] = useState<string>('');
+
+  useEffect(() => {
+    const highlightCode = async () => {
+      const html = await codeToHtml(code, {
+        lang: language,
+        theme: 'github-dark-default',
+      });
+      setHighlightedHtml(html);
+    };
+    highlightCode();
+  }, [code, language]);
 
   const handleCopy = async () => {
     try {
@@ -25,7 +38,7 @@ export function CodeBlock({
       setIsCopied(true);
       onCopy?.(true);
       setTimeout(() => setIsCopied(false), 2000);
-    } catch (err) {
+    } catch {
       onCopy?.(false);
     }
   };
@@ -63,10 +76,14 @@ export function CodeBlock({
           </button>
         </div>
       )}
-      <div className="w-full bg-[#050508] border border-white/10 rounded-lg p-3 overflow-x-auto group-hover:border-violet-500/30 transition-colors">
-        <pre className="text-xs text-gray-300 font-mono leading-relaxed whitespace-pre">
-          <code className={`language-${language}`}>{code}</code>
-        </pre>
+      <div className="w-full bg-[#050508] border border-white/10 rounded-lg overflow-x-auto group-hover:border-violet-500/30 transition-colors [&_pre]:!bg-transparent [&_pre]:p-3 [&_pre]:m-0 [&_code]:text-xs [&_code]:leading-relaxed">
+        {highlightedHtml ? (
+          <div dangerouslySetInnerHTML={{ __html: highlightedHtml }} />
+        ) : (
+          <pre className="text-xs text-gray-300 font-mono leading-relaxed whitespace-pre p-3">
+            <code>{code}</code>
+          </pre>
+        )}
       </div>
     </div>
   );
