@@ -80,8 +80,8 @@ export function EmailTagInput({
       </label>
       <div
         className={`w-full bg-white/5 border ${
-          error ? 'border-red-500/50' : 'border-white/10'
-        } rounded-2xl px-3 py-2 flex flex-wrap gap-2 focus-within:border-violet-500/50 transition-colors shadow-inner min-h-[52px] items-center`}
+          error ? 'border-red-500/30' : 'border-white/5'
+        } rounded-2xl px-3 py-2 flex flex-wrap gap-2 focus-within:border-violet-500/30 transition-colors shadow-inner min-h-[52px] items-center`}
       >
         {emails.map((email, index) => (
           <span
@@ -103,7 +103,7 @@ export function EmailTagInput({
           value={inputValue}
           onChange={handleChange}
           onKeyDown={handleKeyDown}
-          className="bg-transparent border-none focus:ring-0 text-sm p-0 text-gray-300 placeholder:text-gray-600 flex-grow min-w-[120px] h-6"
+          className="bg-transparent border-none focus:ring-0 focus:outline-none text-sm p-0 text-gray-300 placeholder:text-gray-600 flex-grow min-w-[120px] h-6"
           placeholder={emails.length === 0 ? 'name@company.com' : ''}
         />
       </div>
