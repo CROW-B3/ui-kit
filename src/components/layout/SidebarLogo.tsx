@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { cn } from '../../lib/utils';
-import { CollapseToggleButton } from './CollapseToggleButton';
+import { CollapseToggleButton } from '../buttons/CollapseToggleButton';
 
 export interface SidebarLogoProps {
   logoSrc: string;

@@ -1,6 +1,6 @@
 'use client';
 
-import type { DateRangeOption, HeaderProps } from './types';
+import type { DateRangeOption, HeaderProps } from '../../lib/types';
 import { Bell, Calendar, Check, ChevronDown, Menu } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';

@@ -1,6 +1,6 @@
 'use client';
 
-import type { SettingsModalProps } from './types';
+import type { SettingsModalProps } from '../../lib/types';
 import { Bell, BellOff, Globe, LogOut, User, X } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';

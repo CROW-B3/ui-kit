@@ -1,15 +1,15 @@
 'use client';
 
-import type { MobileSidebarProps } from './types';
+import type { MobileSidebarProps } from '../../lib/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
-import { ChatHistorySection } from './ChatHistorySection';
-import { DEFAULT_NAV_ITEMS } from './constants/navigation';
+import { ChatHistorySection } from '../chat/ChatHistorySection';
+import { DEFAULT_NAV_ITEMS } from '../../lib/constants/navigation';
 import { NavMenu } from './NavMenu';
-import { SettingsDropup } from './SettingsDropup';
+import { SettingsDropup } from '../inputs/SettingsDropup';
 import { SidebarLogo } from './SidebarLogo';
-import { normalizePath } from './utils/pathUtils';
+import { normalizePath } from '../../lib/utils/pathUtils';
 
 export type { MobileSidebarProps };
 

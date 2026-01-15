@@ -1,6 +1,6 @@
 'use client';
 
-import type { GlassPanelProps } from '../dashboard/types';
+import type { GlassPanelProps } from '../../lib/types';
 import { cn } from '../../lib/utils';
 
 export type { GlassPanelProps };

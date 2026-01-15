@@ -1,4 +1,4 @@
-import type { FilterOption } from '../inputs/FilterDropdown';
+import type { FilterOption } from '../components/inputs/FilterDropdown';
 import type { ConfidenceLevel, SeverityLevel } from './types';
 export {
   FOCUSABLE_ELEMENTS,

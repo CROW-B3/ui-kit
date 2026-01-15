@@ -1,6 +1,6 @@
 'use client';
 
-import type { ChatHistoryItem, ChatHistorySectionProps } from './types';
+import type { ChatHistoryItem, ChatHistorySectionProps } from '../../lib/types';
 import { ChevronDown, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';

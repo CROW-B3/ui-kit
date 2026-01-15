@@ -1,12 +1,12 @@
 'use client';
 
-import type { NavItem, SidebarProps } from './types';
-import { ChatHistorySection } from './ChatHistorySection';
-import { DEFAULT_NAV_ITEMS } from './constants/navigation';
+import type { NavItem, SidebarProps } from '../../lib/types';
+import { ChatHistorySection } from '../chat/ChatHistorySection';
+import { DEFAULT_NAV_ITEMS } from '../../lib/constants/navigation';
 import { NavMenu } from './NavMenu';
-import { SettingsDropup } from './SettingsDropup';
+import { SettingsDropup } from '../inputs/SettingsDropup';
 import { SidebarLogo } from './SidebarLogo';
-import { normalizePath } from './utils/pathUtils';
+import { normalizePath } from '../../lib/utils/pathUtils';
 import { cn } from '../../lib/utils';
 
 export type { NavItem, SidebarProps };

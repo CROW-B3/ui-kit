@@ -1,9 +1,9 @@
 'use client';
 
-import type { ConfidenceLevel, SeverityLevel } from './types';
+import type { ConfidenceLevel, SeverityLevel } from '../../lib/types';
 import { Bell, Clock, MapPin } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { CONFIDENCE_CONFIG, SEVERITY_CONFIG } from './constants';
+import { CONFIDENCE_CONFIG, SEVERITY_CONFIG } from '../../lib/constants';
 
 export interface PatternCardProps {
   id?: string;

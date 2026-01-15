@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import { useCallback, useEffect, useRef } from 'react';
 import { cn } from '../../lib/utils';
 
-import { FOCUSABLE_ELEMENTS } from './constants/accessibility';
+import { FOCUSABLE_ELEMENTS } from '../../lib/constants/accessibility';
 
 export interface SidePanelProps {
   isOpen: boolean;

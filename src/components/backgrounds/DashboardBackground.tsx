@@ -1,6 +1,6 @@
 'use client';
 
-import type { DashboardBackgroundProps } from './types';
+import type { DashboardBackgroundProps } from '../../lib/types';
 
 export type { DashboardBackgroundProps };
 

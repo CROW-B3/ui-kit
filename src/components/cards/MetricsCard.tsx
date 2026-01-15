@@ -2,7 +2,7 @@
 
 import { StatusBadge } from '../display/StatusBadge';
 import { GlassPanel } from '../layout/GlassPanel';
-import { CHART_COLORS } from './constants/gradients';
+import { CHART_COLORS } from '../../lib/constants/gradients';
 
 export interface MetricsCardProps {
   title: string;

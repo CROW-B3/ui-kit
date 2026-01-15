@@ -3,7 +3,7 @@
 import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
-import { ICON_REGISTRY } from '../dashboard/constants/icons';
+import { ICON_REGISTRY } from '../../lib/constants/icons';
 
 const iconBadgeVariants = cva(
   'w-8 h-8 rounded-lg flex items-center justify-center border',

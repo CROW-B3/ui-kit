@@ -1,11 +1,11 @@
 'use client';
 
-import type { NavItem } from './types';
+import type { NavItem } from '../../lib/types';
 import { ChevronDown } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';
-import { ICON_REGISTRY } from './constants/icons';
-import { isActivePath } from './utils/pathUtils';
+import { ICON_REGISTRY } from '../../lib/constants/icons';
+import { isActivePath } from '../../lib/utils/pathUtils';
 
 export interface NavMenuProps {
   items: NavItem[];
