@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { LuCopy, LuCheck } from 'react-icons/lu';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { LuCheck, LuCopy } from 'react-icons/lu';
 import { codeToHtml } from 'shiki';
 
 interface CodeBlockProps {
