@@ -12,6 +12,11 @@ export const DEFAULT_NAV_ITEMS: NavItem[] = [
     href: '/ask-crow',
   },
   {
+    icon: 'package',
+    label: 'Products',
+    href: '/products',
+  },
+  {
     icon: 'timeline',
     label: 'Analysis',
     href: '#',
