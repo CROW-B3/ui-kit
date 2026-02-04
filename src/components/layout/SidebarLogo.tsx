@@ -83,7 +83,7 @@ export function SidebarLogo({
 
       {/* Collapse Button - Always visible on right when expanded */}
       {!isCollapsed && onToggleCollapse && (
-        <div className="h-[60px] flex items-center justify-center flex-shrink-0 ml-4">
+        <div className="h-[60px] flex items-center justify-center flex-shrink-0 ml-17">
           <CollapseToggleButton isCollapsed={isCollapsed} onToggle={onToggleCollapse} />
         </div>
       )}
