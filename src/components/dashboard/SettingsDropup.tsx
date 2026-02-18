@@ -42,7 +42,6 @@ export function SettingsDropup({
   const focusableItemCount = 1 + (onLogout ? 1 : 0);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFocusedIndex(isOpen ? 0 : -1);
   }, [isOpen]);
 

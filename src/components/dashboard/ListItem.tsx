@@ -19,8 +19,8 @@ export interface ListItemProps {
  * @param {React.ReactNode} props.children - Item content
  * @param {() => void} [props.onClick] - Click handler
  * @param {string} [props.ariaLabel] - Accessibility label
- * @param {boolean} [props.showChevron=false] - Whether to show chevron indicator
- * @param {boolean} [props.highlighted=false] - Whether item is highlighted
+ * @param {boolean} [props.showChevron] - Whether to show chevron indicator
+ * @param {boolean} [props.highlighted] - Whether item is highlighted
  * @param {string} [props.className] - Additional CSS classes
  * @returns {JSX.Element} The list item component
  */
