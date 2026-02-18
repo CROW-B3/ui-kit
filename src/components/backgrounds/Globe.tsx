@@ -1,17 +1,10 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import dynamic from 'next/dynamic';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BiCctv } from 'react-icons/bi';
 import { BsGlobe2 } from 'react-icons/bs';
 import { HiOutlineShare } from 'react-icons/hi';
-
-// Dynamically import react-globe.gl to avoid SSR issues
-const GlobeGL = dynamic(() => import('react-globe.gl'), {
-  ssr: false,
-  loading: () => <div className="w-full h-full" />,
-});
 
 // Helper types
 interface Vertex {
@@ -25,7 +18,7 @@ interface Edge {
   b: number;
 }
 
-// Helper functions - defined before use
+// Helper functions
 const rotateY = (v: Vertex, angle: number): Vertex => {
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);
@@ -180,13 +173,54 @@ export interface GlobeProps {
   size?: number;
 }
 
-interface PointData {
-  lat: number;
-  lng: number;
-  label: string;
-  icon: React.ReactNode;
-  index: number;
+interface PointPosition {
+  x: number;
+  y: number;
+  z: number;
+  scale: number;
+  opacity: number;
 }
+
+// Convert lat/long to 3D position
+const calculatePointPosition = (
+  lat: number,
+  long: number,
+  rotation: number,
+  size: number
+): PointPosition => {
+  const latRad = (lat * Math.PI) / 180;
+  const longRad = (long * Math.PI) / 180;
+
+  let vertex: Vertex = {
+    x: Math.cos(latRad) * Math.sin(longRad),
+    y: Math.sin(latRad),
+    z: Math.cos(latRad) * Math.cos(longRad),
+  };
+
+  vertex = rotateY(vertex, rotation);
+  vertex = rotateX(vertex, 0.3);
+
+  const projected = project(vertex, size * 0.4, size);
+  const baseScale = vertex.z > 0 ? 1 + vertex.z * 0.3 : 0.7 + vertex.z * 0.3;
+
+  // Smooth fade transition
+  let opacity = 1;
+  if (vertex.z > 0.3) {
+    opacity = 1;
+  } else if (vertex.z > -0.3) {
+    opacity = (vertex.z + 0.3) / 0.6;
+  } else {
+    opacity = 0;
+  }
+
+  return {
+    x: projected.x,
+    y: projected.y,
+    z: vertex.z,
+    scale: Math.max(0.5, baseScale),
+    opacity,
+  };
+};
 
 const defaultPoints: GlobePoint[] = [
   {
@@ -203,171 +237,20 @@ const defaultPoints: GlobePoint[] = [
 ];
 
 export function Globe({ points, size = 600 }: GlobeProps) {
-  const globeRef = useRef<any>(null);
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [pointPositions, setPointPositions] = useState<PointPosition[]>([]);
   const [visibleIndices, setVisibleIndices] = useState<Set<number>>(
     () => new Set()
   );
-  const sequenceRef = useRef(0);
-  const lastPulseTime = useRef(0);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const rotationRef = useRef(-0.2);
+  const scaleIndexRef = useRef(0);
+  const scalingRef = useRef(false);
+  const scaleStartTimeRef = useRef(0);
+  const animationRef = useRef<number | undefined>(undefined);
+  const revealIndexRef = useRef(0);
+  const lastRevealTime = useRef(0);
 
   const displayPoints = points || defaultPoints;
-
-  // Convert points to globe data format
-  const pointsData: PointData[] = displayPoints.map((point, index) => ({
-    lat: point.location[0],
-    lng: point.location[1],
-    label: point.label,
-    icon: point.icon,
-    index,
-  }));
-
-  // Sequential icon pulse animation
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const now = Date.now();
-      if (now - lastPulseTime.current > 2000) {
-        // Pulse every 2 seconds
-        setActiveIndex(sequenceRef.current);
-
-        // Add to visible set
-        setVisibleIndices(prev => {
-          const next = new Set(prev);
-          next.add(sequenceRef.current);
-          return next;
-        });
-
-        // Reset active after animation
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
-        }
-        timeoutRef.current = setTimeout(() => {
-          setActiveIndex(null);
-        }, 500);
-
-        sequenceRef.current = (sequenceRef.current + 1) % displayPoints.length;
-        lastPulseTime.current = now;
-      }
-    }, 100);
-
-    return () => {
-      clearInterval(interval);
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-    };
-  }, [displayPoints.length]);
-
-  // Configure globe on mount
-  useEffect(() => {
-    if (globeRef.current) {
-      // Set auto-rotation
-      globeRef.current.controls().autoRotate = true;
-      globeRef.current.controls().autoRotateSpeed = 0.5;
-      globeRef.current.controls().enableZoom = false;
-
-      // Set initial POV
-      globeRef.current.pointOfView({ lat: 20, lng: 0, altitude: 2.5 });
-    }
-  }, []);
-
-  // Custom HTML element for each point
-  const htmlElement = useCallback(
-    (d: object) => {
-      const data = d as PointData;
-      const isActive = activeIndex === data.index;
-      const isVisible = visibleIndices.has(data.index);
-
-      const container = document.createElement('div');
-      container.className = 'globe-point-container';
-      container.style.cssText = `
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        pointer-events: none;
-        transform: translate(-50%, -50%);
-        opacity: ${isVisible ? '1' : '0'};
-        transition: opacity 0.5s ease-out, transform 0.3s ease-out;
-        ${isActive ? 'transform: translate(-50%, -50%) scale(1.35);' : ''}
-      `;
-
-      // Icon circle
-      const iconDiv = document.createElement('div');
-      iconDiv.style.cssText = `
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        background: rgba(0, 0, 0, 0.7);
-        border: 2px solid rgba(255, 255, 255, 0.5);
-        backdrop-filter: blur(4px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      `;
-      iconDiv.innerHTML = `<span style="font-size: 1.875rem; display: flex; align-items: center; justify-content: center;">●</span>`;
-      container.appendChild(iconDiv);
-
-      // Label
-      const labelDiv = document.createElement('div');
-      labelDiv.style.cssText = `
-        margin-top: 8px;
-        white-space: nowrap;
-        font-size: 14px;
-        color: white;
-        font-weight: 500;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-      `;
-      labelDiv.textContent = data.label;
-      container.appendChild(labelDiv);
-
-      return container;
-    },
-    [activeIndex, visibleIndices]
-  );
-
-  return (
-    <div className="relative" style={{ width: size, height: size }}>
-      <GlobeGL
-        ref={globeRef}
-        width={size}
-        height={size}
-        backgroundColor="rgba(0,0,0,0)"
-        globeImageUrl=""
-        showGlobe={false}
-        showAtmosphere={false}
-        htmlElementsData={pointsData}
-        htmlElement={htmlElement}
-        htmlAltitude={0.1}
-      />
-
-      {/* Wireframe globe overlay using custom Three.js mesh */}
-      <WireframeGlobe size={size} globeRef={globeRef} />
-
-      {/* React-rendered icons on top for better animation control */}
-      <IconOverlay
-        points={displayPoints}
-        size={size}
-        activeIndex={activeIndex}
-        visibleIndices={visibleIndices}
-        globeRef={globeRef}
-      />
-    </div>
-  );
-}
-
-// Wireframe globe overlay component
-function WireframeGlobe({
-  size,
-  globeRef,
-}: {
-  size: number;
-  globeRef: React.RefObject<any>;
-}) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -377,42 +260,29 @@ function WireframeGlobe({
     if (!ctx) return;
 
     const { vertices, edges } = generateIcosphere(2);
-    const radius = size * 0.35;
-    let rotation = 0;
+    const radius = size * 0.4;
 
     const render = () => {
       ctx.clearRect(0, 0, size, size);
 
-      // Get rotation from globe if available
-      if (globeRef.current) {
-        const pov = globeRef.current.pointOfView();
-        if (pov) {
-          rotation = (-pov.lng * Math.PI) / 180;
-        }
-      }
-
       // Rotate and project vertices
       const rotated = vertices.map(v => {
-        let rv = rotateY(v, rotation);
+        let rv = rotateY(v, rotationRef.current);
         rv = rotateX(rv, 0.3);
         return rv;
       });
 
       // Draw edges
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-      ctx.lineWidth = 1;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.lineWidth = 1.5;
 
       edges.forEach(edge => {
         const v1 = rotated[edge.a];
         const v2 = rotated[edge.b];
 
-        if (v1.z > -0.3 || v2.z > -0.3) {
+        if (v1.z > -0.5 || v2.z > -0.5) {
           const p1 = project(v1, radius, size);
           const p2 = project(v2, radius, size);
-
-          const avgZ = (v1.z + v2.z) / 2;
-          const alpha = Math.max(0, Math.min(1, (avgZ + 0.5) * 0.6));
-          ctx.strokeStyle = `rgba(255, 255, 255, ${alpha * 0.4})`;
 
           ctx.beginPath();
           ctx.moveTo(p1.x, p1.y);
@@ -422,20 +292,71 @@ function WireframeGlobe({
       });
 
       // Draw vertices as small dots
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
       rotated.forEach(v => {
-        if (v.z > -0.3) {
+        if (v.z > -0.5) {
           const p = project(v, radius, size);
-          const alpha = Math.max(0, Math.min(1, (v.z + 0.5) * 0.8));
-          ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.5})`;
           ctx.beginPath();
-          ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
           ctx.fill();
         }
       });
 
+      // Sequential reveal of icons (one by one)
+      const now = Date.now();
+      if (
+        revealIndexRef.current < displayPoints.length &&
+        now - lastRevealTime.current > 2000
+      ) {
+        setVisibleIndices(prev => {
+          const next = new Set(prev);
+          next.add(revealIndexRef.current);
+          return next;
+        });
+        revealIndexRef.current++;
+        lastRevealTime.current = now;
+      }
+
+      // Update point positions
+      const positions = displayPoints.map(point =>
+        calculatePointPosition(
+          point.location[0],
+          point.location[1],
+          rotationRef.current,
+          size
+        )
+      );
+
+      // Sequential scaling - brief pulse when icon reaches front
+      const currentPos = positions[scaleIndexRef.current];
+
+      if (currentPos && currentPos.z > 0.4 && !scalingRef.current) {
+        scalingRef.current = true;
+        scaleStartTimeRef.current = now;
+      }
+
+      if (scalingRef.current) {
+        const elapsed = now - scaleStartTimeRef.current;
+        const scaleDuration = 500;
+
+        if (elapsed < scaleDuration && currentPos) {
+          const progress = elapsed / scaleDuration;
+          const pulseAmount = Math.sin(progress * Math.PI);
+          currentPos.scale *= 1 + pulseAmount * 0.35;
+        } else {
+          scalingRef.current = false;
+          scaleIndexRef.current =
+            (scaleIndexRef.current + 1) % displayPoints.length;
+        }
+      }
+
+      setPointPositions(positions);
+      rotationRef.current += 0.003;
       animationRef.current = requestAnimationFrame(render);
     };
 
+    // Start first reveal immediately
+    lastRevealTime.current = Date.now() - 2000;
     render();
 
     return () => {
@@ -443,115 +364,43 @@ function WireframeGlobe({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [size, globeRef]);
+  }, [size, displayPoints]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={size}
-      height={size}
-      className="absolute inset-0 pointer-events-none"
-      style={{ width: size, height: size }}
-    />
-  );
-}
+    <div className="relative" style={{ width: size, height: size }}>
+      {/* 3D Wireframe Globe Canvas */}
+      <canvas
+        ref={canvasRef}
+        width={size}
+        height={size}
+        style={{
+          width: size,
+          height: size,
+          maxWidth: '100%',
+          aspectRatio: '1',
+        }}
+      />
 
-// Icon overlay component with React animations
-function IconOverlay({
-  points,
-  size,
-  activeIndex,
-  visibleIndices,
-  globeRef,
-}: {
-  points: GlobePoint[];
-  size: number;
-  activeIndex: number | null;
-  visibleIndices: Set<number>;
-  globeRef: React.RefObject<any>;
-}) {
-  const [positions, setPositions] = useState<
-    { x: number; y: number; z: number; visible: boolean }[]
-  >([]);
-  const animationRef = useRef<number | undefined>(undefined);
-
-  useEffect(() => {
-    const updatePositions = () => {
-      if (!globeRef.current) {
-        animationRef.current = requestAnimationFrame(updatePositions);
-        return;
-      }
-
-      const pov = globeRef.current.pointOfView();
-      if (!pov) {
-        animationRef.current = requestAnimationFrame(updatePositions);
-        return;
-      }
-
-      const rotation = (-pov.lng * Math.PI) / 180;
-      const radius = size * 0.35;
-
-      const newPositions = points.map(point => {
-        const lat = point.location[0];
-        const lng = point.location[1];
-
-        const latRad = (lat * Math.PI) / 180;
-        const lngRad = (lng * Math.PI) / 180;
-
-        let vertex = {
-          x: Math.cos(latRad) * Math.sin(lngRad),
-          y: Math.sin(latRad),
-          z: Math.cos(latRad) * Math.cos(lngRad),
-        };
-
-        vertex = rotateY(vertex, rotation);
-        vertex = rotateX(vertex, 0.3);
-
-        const projected = project(vertex, radius, size);
-
-        return {
-          x: projected.x,
-          y: projected.y,
-          z: vertex.z,
-          visible: vertex.z > -0.2,
-        };
-      });
-
-      setPositions(newPositions);
-      animationRef.current = requestAnimationFrame(updatePositions);
-    };
-
-    updatePositions();
-
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current);
-      }
-    };
-  }, [points, size, globeRef]);
-
-  return (
-    <div className="absolute inset-0 pointer-events-none">
-      {points.map((point, index) => {
-        const pos = positions[index];
-        const isActive = activeIndex === index;
+      {/* Data points - synchronized with globe rotation */}
+      {displayPoints.map((point, index) => {
+        const pos = pointPositions[index];
         const isVisible = visibleIndices.has(index);
-
         if (!pos || !isVisible) return null;
 
         return (
           <motion.div
             key={point.label}
-            className="absolute -translate-x-1/2 -translate-y-1/2"
+            className="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-none"
             style={{
               left: pos.x,
               top: pos.y,
+              opacity: pos.opacity,
               zIndex: pos.z > 0 ? 10 : 5,
             }}
             initial={{ opacity: 0, scale: 0 }}
             animate={{
-              opacity: pos.visible ? 1 : 0,
-              scale: isActive ? 1.35 : 1,
+              opacity: pos.opacity,
+              scale: pos.scale,
             }}
             transition={{
               opacity: { duration: 0.3 },
