@@ -79,12 +79,7 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
   const globeRef = useRef<ThreeGlobe | null>(null);
 
   const [pointPositions, setPointPositions] = useState<PointPosition[]>([]);
-  const [visibleIndices, setVisibleIndices] = useState<Set<number>>(
-    () => new Set()
-  );
 
-  const revealIndexRef = useRef(0);
-  const lastRevealTime = useRef(Date.now() - 2000);
   const scaleIndexRef = useRef(0);
   const scalingRef = useRef(false);
   const scaleStartTimeRef = useRef(0);
@@ -145,20 +140,6 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
       const now = Date.now();
 
       globe.rotation.y += 0.002;
-
-      if (
-        revealIndexRef.current < displayPoints.length &&
-        now - lastRevealTime.current > 2000
-      ) {
-        // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
-        setVisibleIndices(prev => {
-          const next = new Set(prev);
-          next.add(revealIndexRef.current);
-          return next;
-        });
-        revealIndexRef.current++;
-        lastRevealTime.current = now;
-      }
 
       const positions: PointPosition[] = displayPoints.map((point, index) => {
         const [lat, lng] = point.location;
@@ -250,8 +231,7 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
 
       {displayPoints.map((point, index) => {
         const pos = pointPositions[index];
-        const isVisible = visibleIndices.has(index);
-        if (!pos || !isVisible) return null;
+        if (!pos) return null;
 
         return (
           <motion.div
