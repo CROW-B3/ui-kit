@@ -3,7 +3,6 @@ export * from '../lib/constants';
 export * from '../lib/types';
 export * from './backgrounds/AnimatedBackground';
 export * from './backgrounds/DashboardBackground';
-
 export * from './backgrounds/Globe';
 export * from './backgrounds/GradientBackground';
 export * from './buttons/Button';
