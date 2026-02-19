@@ -1,6 +1,9 @@
 'use client';
 
 import { lazy, Suspense } from 'react';
+import { BiCctv } from 'react-icons/bi';
+import { BsGlobe2 } from 'react-icons/bs';
+import { HiOutlineShare } from 'react-icons/hi';
 
 export interface GlobePoint {
   label: string;
@@ -13,7 +16,24 @@ export interface GlobeProps {
   size?: number;
 }
 
-// Lazy load Three.js and three-globe
+const DEFAULT_POINTS: GlobePoint[] = [
+  {
+    label: 'Internet',
+    icon: <BsGlobe2 className="text-3xl" />,
+    location: [20, 0] as [number, number],
+  },
+  {
+    label: 'CCTV',
+    icon: <BiCctv className="text-3xl" />,
+    location: [0, -60] as [number, number],
+  },
+  {
+    label: 'Social Media',
+    icon: <HiOutlineShare className="text-3xl" />,
+    location: [-10, 50] as [number, number],
+  },
+];
+
 const GlobeRenderer = lazy(() => import('./GlobeRenderer'));
 
 function GlobeLoader({ size }: { size: number }) {
@@ -36,7 +56,7 @@ function GlobeLoader({ size }: { size: number }) {
   );
 }
 
-export function Globe({ points = [], size = 600 }: GlobeProps) {
+export function Globe({ points = DEFAULT_POINTS, size = 600 }: GlobeProps) {
   return (
     <Suspense fallback={<GlobeLoader size={size} />}>
       <GlobeRenderer points={points} size={size} />
