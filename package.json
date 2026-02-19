@@ -11,6 +11,10 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./globe": {
+      "types": "./dist/components/backgrounds/Globe.d.ts",
+      "default": "./dist/components/backgrounds/Globe.js"
+    },
     "./code-block": {
       "types": "./dist/components/display/CodeBlock.d.ts",
       "default": "./dist/components/display/CodeBlock.js"
@@ -62,6 +66,7 @@
     "@vitest/browser-playwright": "^4.0.18",
     "@vitest/coverage-v8": "^4.0.18",
     "autoprefixer": "^10.4.22",
+    "cobe": "^0.6.5",
     "commitlint": "^20.1.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.26",
@@ -110,16 +115,11 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
-    "@types/three": "^0.182.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.26",
     "lenis": "^1.2.1",
     "lucide-react": "^0.542.0",
-    "react-icons": "^5.5.0",
-    "shiki": "^3.21.0",
-    "tailwind-merge": "^3.4.0",
-    "three": "^0.182.0",
-    "three-globe": "^2.45.0"
+    "tailwind-merge": "^3.4.0"
   }
 }
