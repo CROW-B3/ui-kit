@@ -5,163 +5,9 @@ import { useEffect, useRef, useState } from 'react';
 import { BiCctv } from 'react-icons/bi';
 import { BsGlobe2 } from 'react-icons/bs';
 import { HiOutlineShare } from 'react-icons/hi';
+import * as THREE from 'three';
+import ThreeGlobe from 'three-globe';
 
-// Helper types
-interface Vertex {
-  x: number;
-  y: number;
-  z: number;
-}
-
-interface Edge {
-  a: number;
-  b: number;
-}
-
-// Helper functions
-const rotateY = (v: Vertex, angle: number): Vertex => {
-  const cos = Math.cos(angle);
-  const sin = Math.sin(angle);
-  return {
-    x: v.x * cos - v.z * sin,
-    y: v.y,
-    z: v.x * sin + v.z * cos,
-  };
-};
-
-const rotateX = (v: Vertex, angle: number): Vertex => {
-  const cos = Math.cos(angle);
-  const sin = Math.sin(angle);
-  return {
-    x: v.x,
-    y: v.y * cos - v.z * sin,
-    z: v.y * sin + v.z * cos,
-  };
-};
-
-const project = (
-  v: Vertex,
-  radius: number,
-  size: number
-): { x: number; y: number } => {
-  return {
-    x: size / 2 + v.x * radius,
-    y: size / 2 - v.y * radius,
-  };
-};
-
-// Generate icosphere vertices and edges for wireframe mesh
-const generateIcosphere = (
-  subdivisions: number = 2
-): { vertices: Vertex[]; edges: Edge[] } => {
-  const t = (1 + Math.sqrt(5)) / 2;
-
-  let vertices: Vertex[] = [
-    { x: -1, y: t, z: 0 },
-    { x: 1, y: t, z: 0 },
-    { x: -1, y: -t, z: 0 },
-    { x: 1, y: -t, z: 0 },
-    { x: 0, y: -1, z: t },
-    { x: 0, y: 1, z: t },
-    { x: 0, y: -1, z: -t },
-    { x: 0, y: 1, z: -t },
-    { x: t, y: 0, z: -1 },
-    { x: t, y: 0, z: 1 },
-    { x: -t, y: 0, z: -1 },
-    { x: -t, y: 0, z: 1 },
-  ];
-
-  let faces = [
-    [0, 11, 5],
-    [0, 5, 1],
-    [0, 1, 7],
-    [0, 7, 10],
-    [0, 10, 11],
-    [1, 5, 9],
-    [5, 11, 4],
-    [11, 10, 2],
-    [10, 7, 6],
-    [7, 1, 8],
-    [3, 9, 4],
-    [3, 4, 2],
-    [3, 2, 6],
-    [3, 6, 8],
-    [3, 8, 9],
-    [4, 9, 5],
-    [2, 4, 11],
-    [6, 2, 10],
-    [8, 6, 7],
-    [9, 8, 1],
-  ];
-
-  const normalize = (v: Vertex): Vertex => {
-    const len = Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
-    return { x: v.x / len, y: v.y / len, z: v.z / len };
-  };
-
-  const getMidpoint = (v1: Vertex, v2: Vertex): Vertex => {
-    return normalize({
-      x: (v1.x + v2.x) / 2,
-      y: (v1.y + v2.y) / 2,
-      z: (v1.z + v2.z) / 2,
-    });
-  };
-
-  vertices = vertices.map(normalize);
-
-  for (let i = 0; i < subdivisions; i++) {
-    const newFaces: number[][] = [];
-
-    faces.forEach(face => {
-      const [a, b, c] = face;
-      const va = vertices[a];
-      const vb = vertices[b];
-      const vc = vertices[c];
-
-      const mab = getMidpoint(va, vb);
-      const mbc = getMidpoint(vb, vc);
-      const mca = getMidpoint(vc, va);
-
-      const iab = vertices.length;
-      vertices.push(mab);
-      const ibc = vertices.length;
-      vertices.push(mbc);
-      const ica = vertices.length;
-      vertices.push(mca);
-
-      newFaces.push([a, iab, ica]);
-      newFaces.push([b, ibc, iab]);
-      newFaces.push([c, ica, ibc]);
-      newFaces.push([iab, ibc, ica]);
-    });
-
-    faces = newFaces;
-  }
-
-  const edgeSet = new Set<string>();
-  const edges: Edge[] = [];
-
-  faces.forEach(face => {
-    const [a, b, c] = face;
-    const pairs = [
-      [a, b],
-      [b, c],
-      [c, a],
-    ];
-
-    pairs.forEach(([i, j]) => {
-      const key = i < j ? `${i}-${j}` : `${j}-${i}`;
-      if (!edgeSet.has(key)) {
-        edgeSet.add(key);
-        edges.push({ a: i, b: j });
-      }
-    });
-  });
-
-  return { vertices, edges };
-};
-
-// Component types
 export interface GlobePoint {
   label: string;
   icon: React.ReactNode;
@@ -181,47 +27,6 @@ interface PointPosition {
   opacity: number;
 }
 
-// Convert lat/long to 3D position
-const calculatePointPosition = (
-  lat: number,
-  long: number,
-  rotation: number,
-  size: number
-): PointPosition => {
-  const latRad = (lat * Math.PI) / 180;
-  const longRad = (long * Math.PI) / 180;
-
-  let vertex: Vertex = {
-    x: Math.cos(latRad) * Math.sin(longRad),
-    y: Math.sin(latRad),
-    z: Math.cos(latRad) * Math.cos(longRad),
-  };
-
-  vertex = rotateY(vertex, rotation);
-  vertex = rotateX(vertex, 0.3);
-
-  const projected = project(vertex, size * 0.4, size);
-  const baseScale = vertex.z > 0 ? 1 + vertex.z * 0.3 : 0.7 + vertex.z * 0.3;
-
-  // Smooth fade transition
-  let opacity = 1;
-  if (vertex.z > 0.3) {
-    opacity = 1;
-  } else if (vertex.z > -0.3) {
-    opacity = (vertex.z + 0.3) / 0.6;
-  } else {
-    opacity = 0;
-  }
-
-  return {
-    x: projected.x,
-    y: projected.y,
-    z: vertex.z,
-    scale: Math.max(0.5, baseScale),
-    opacity,
-  };
-};
-
 const defaultPoints: GlobePoint[] = [
   {
     label: 'Internet',
@@ -236,74 +41,129 @@ const defaultPoints: GlobePoint[] = [
   },
 ];
 
+// Generate arcs between points
+function generateArcs(points: GlobePoint[]) {
+  const arcs: {
+    startLat: number;
+    startLng: number;
+    endLat: number;
+    endLng: number;
+    color: string;
+  }[] = [];
+
+  for (let i = 0; i < points.length; i++) {
+    for (let j = i + 1; j < points.length; j++) {
+      arcs.push({
+        startLat: points[i].location[0],
+        startLng: points[i].location[1],
+        endLat: points[j].location[0],
+        endLng: points[j].location[1],
+        color: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4'][
+          Math.floor(Math.random() * 4)
+        ],
+      });
+    }
+  }
+
+  return arcs;
+}
+
+// Generate points data for three-globe
+function generatePointsData(points: GlobePoint[]) {
+  return points.map(p => ({
+    lat: p.location[0],
+    lng: p.location[1],
+    size: 0.5,
+    color: '#ffffff',
+  }));
+}
+
 export function Globe({ points, size = 600 }: GlobeProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const animationRef = useRef<number | undefined>(undefined);
+  const globeRef = useRef<ThreeGlobe | null>(null);
+
   const [pointPositions, setPointPositions] = useState<PointPosition[]>([]);
   const [visibleIndices, setVisibleIndices] = useState<Set<number>>(
     () => new Set()
   );
-  const rotationRef = useRef(-0.2);
+
+  const revealIndexRef = useRef(0);
+  const lastRevealTime = useRef(Date.now() - 2000);
   const scaleIndexRef = useRef(0);
   const scalingRef = useRef(false);
   const scaleStartTimeRef = useRef(0);
-  const animationRef = useRef<number | undefined>(undefined);
-  const revealIndexRef = useRef(0);
-  const lastRevealTime = useRef(0);
 
   const displayPoints = points || defaultPoints;
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    // Scene setup
+    const scene = new THREE.Scene();
 
-    const { vertices, edges } = generateIcosphere(2);
-    const radius = size * 0.4;
+    // Camera
+    const camera = new THREE.PerspectiveCamera(50, 1, 1, 1000);
+    camera.position.z = 350;
 
-    const render = () => {
-      ctx.clearRect(0, 0, size, size);
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(size, size);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    container.appendChild(renderer.domElement);
+    rendererRef.current = renderer;
 
-      // Rotate and project vertices
-      const rotated = vertices.map(v => {
-        let rv = rotateY(v, rotationRef.current);
-        rv = rotateX(rv, 0.3);
-        return rv;
-      });
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
+    scene.add(ambientLight);
 
-      // Draw edges
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
-      ctx.lineWidth = 1.5;
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 2.2);
+    directionalLight.position.set(1, 1, 1);
+    scene.add(directionalLight);
 
-      edges.forEach(edge => {
-        const v1 = rotated[edge.a];
-        const v2 = rotated[edge.b];
+    const GLOBE_RADIUS = 100;
 
-        if (v1.z > -0.5 || v2.z > -0.5) {
-          const p1 = project(v1, radius, size);
-          const p2 = project(v2, radius, size);
+    // Create three-globe
+    const globe = new ThreeGlobe({ animateIn: true })
+      .globeImageUrl(
+        'https://unpkg.com/three-globe@2.45.0/example/img/earth-night.jpg'
+      )
+      .bumpImageUrl(
+        'https://unpkg.com/three-globe@2.45.0/example/img/earth-topology.png'
+      )
+      .showAtmosphere(true)
+      .atmosphereColor('#3a82f7')
+      .atmosphereAltitude(0.15)
+      // Points on globe
+      .pointsData(generatePointsData(displayPoints))
+      .pointAltitude(0.01)
+      .pointColor('color')
+      .pointRadius('size')
+      // Arcs between points
+      .arcsData(generateArcs(displayPoints))
+      .arcColor('color')
+      .arcDashLength(0.4)
+      .arcDashGap(0.2)
+      .arcDashAnimateTime(1500)
+      .arcStroke(0.5)
+      .arcAltitudeAutoScale(0.3);
 
-          ctx.beginPath();
-          ctx.moveTo(p1.x, p1.y);
-          ctx.lineTo(p2.x, p2.y);
-          ctx.stroke();
-        }
-      });
+    globeRef.current = globe;
+    scene.add(globe);
 
-      // Draw vertices as small dots
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-      rotated.forEach(v => {
-        if (v.z > -0.5) {
-          const p = project(v, radius, size);
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-          ctx.fill();
-        }
-      });
+    // Tilt scene slightly
+    scene.rotation.x = 0.2;
+
+    // Animation
+    const animate = () => {
+      const now = Date.now();
+
+      // Rotate globe
+      globe.rotation.y += 0.002;
 
       // Sequential reveal of icons (one by one)
-      const now = Date.now();
       if (
         revealIndexRef.current < displayPoints.length &&
         now - lastRevealTime.current > 2000
@@ -317,71 +177,100 @@ export function Globe({ points, size = 600 }: GlobeProps) {
         lastRevealTime.current = now;
       }
 
-      // Update point positions
-      const positions = displayPoints.map(point =>
-        calculatePointPosition(
-          point.location[0],
-          point.location[1],
-          rotationRef.current,
-          size
-        )
-      );
+      // Calculate icon screen positions
+      const positions: PointPosition[] = displayPoints.map((point, index) => {
+        const [lat, lng] = point.location;
 
-      // Sequential scaling - brief pulse when icon reaches front
-      const currentPos = positions[scaleIndexRef.current];
+        // Convert lat/lng to 3D position
+        const phi = ((90 - lat) * Math.PI) / 180;
+        const theta = ((lng + 180) * Math.PI) / 180;
 
-      if (currentPos && currentPos.z > 0.4 && !scalingRef.current) {
-        scalingRef.current = true;
-        scaleStartTimeRef.current = now;
-      }
+        const pos = new THREE.Vector3(
+          -GLOBE_RADIUS * Math.sin(phi) * Math.cos(theta),
+          GLOBE_RADIUS * Math.cos(phi),
+          GLOBE_RADIUS * Math.sin(phi) * Math.sin(theta)
+        );
 
-      if (scalingRef.current) {
-        const elapsed = now - scaleStartTimeRef.current;
-        const scaleDuration = 500;
+        // Apply globe rotation
+        pos.applyAxisAngle(new THREE.Vector3(0, 1, 0), globe.rotation.y);
+        // Apply scene tilt
+        pos.applyAxisAngle(new THREE.Vector3(1, 0, 0), 0.2);
 
-        if (elapsed < scaleDuration && currentPos) {
-          const progress = elapsed / scaleDuration;
-          const pulseAmount = Math.sin(progress * Math.PI);
-          currentPos.scale *= 1 + pulseAmount * 0.35;
+        // Project to screen
+        const projected = pos.clone().project(camera);
+        const screenX = (projected.x * 0.5 + 0.5) * size;
+        const screenY = (-projected.y * 0.5 + 0.5) * size;
+
+        // Depth-based opacity and scale
+        const normalizedZ = pos.z / GLOBE_RADIUS;
+        let opacity = 1;
+        if (normalizedZ > 0.3) {
+          opacity = 1;
+        } else if (normalizedZ > -0.3) {
+          opacity = (normalizedZ + 0.3) / 0.6;
         } else {
-          scalingRef.current = false;
-          scaleIndexRef.current =
-            (scaleIndexRef.current + 1) % displayPoints.length;
+          opacity = 0;
         }
-      }
+
+        let scale =
+          normalizedZ > 0 ? 1 + normalizedZ * 0.3 : 0.7 + normalizedZ * 0.3;
+        scale = Math.max(0.5, scale);
+
+        // Pulse animation when reaching front
+        if (index === scaleIndexRef.current) {
+          if (normalizedZ > 0.4 && !scalingRef.current) {
+            scalingRef.current = true;
+            scaleStartTimeRef.current = now;
+          }
+
+          if (scalingRef.current) {
+            const elapsed = now - scaleStartTimeRef.current;
+            const duration = 500;
+
+            if (elapsed < duration) {
+              const progress = elapsed / duration;
+              const pulse = Math.sin(progress * Math.PI);
+              scale *= 1 + pulse * 0.35;
+            } else {
+              scalingRef.current = false;
+              scaleIndexRef.current =
+                (scaleIndexRef.current + 1) % displayPoints.length;
+            }
+          }
+        }
+
+        return {
+          x: screenX,
+          y: screenY,
+          z: normalizedZ,
+          scale,
+          opacity,
+        };
+      });
 
       setPointPositions(positions);
-      rotationRef.current += 0.003;
-      animationRef.current = requestAnimationFrame(render);
+
+      renderer.render(scene, camera);
+      animationRef.current = requestAnimationFrame(animate);
     };
 
-    // Start first reveal immediately
-    lastRevealTime.current = Date.now() - 2000;
-    render();
+    animate();
 
     return () => {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
+      }
+      if (rendererRef.current && container) {
+        container.removeChild(rendererRef.current.domElement);
+        rendererRef.current.dispose();
       }
     };
   }, [size, displayPoints]);
 
   return (
     <div className="relative" style={{ width: size, height: size }}>
-      {/* 3D Wireframe Globe Canvas */}
-      <canvas
-        ref={canvasRef}
-        width={size}
-        height={size}
-        style={{
-          width: size,
-          height: size,
-          maxWidth: '100%',
-          aspectRatio: '1',
-        }}
-      />
+      <div ref={containerRef} className="absolute inset-0" />
 
-      {/* Data points - synchronized with globe rotation */}
       {displayPoints.map((point, index) => {
         const pos = pointPositions[index];
         const isVisible = visibleIndices.has(index);
@@ -408,12 +297,9 @@ export function Globe({ points, size = 600 }: GlobeProps) {
             }}
           >
             <div className="relative">
-              {/* Icon circle */}
               <div className="w-16 h-16 rounded-full bg-black/70 border-2 border-white/50 backdrop-blur-sm flex items-center justify-center text-white shadow-lg">
                 {point.icon}
               </div>
-
-              {/* Label */}
               <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap">
                 <span className="text-sm text-white font-medium drop-shadow-lg">
                   {point.label}
