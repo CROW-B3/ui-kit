@@ -11,10 +11,6 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./globe": {
-      "types": "./dist/components/backgrounds/Globe.d.ts",
-      "default": "./dist/components/backgrounds/Globe.js"
-    },
     "./code-block": {
       "types": "./dist/components/display/CodeBlock.d.ts",
       "default": "./dist/components/display/CodeBlock.js"
@@ -66,7 +62,8 @@
     "@vitest/browser-playwright": "^4.0.18",
     "@vitest/coverage-v8": "^4.0.18",
     "autoprefixer": "^10.4.22",
-    "cobe": "^0.6.5",
+    "three": "^0.182.0",
+    "three-globe": "^2.45.0",
     "commitlint": "^20.1.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.26",
@@ -80,8 +77,6 @@
     "shiki": "^3.21.0",
     "storybook": "^10.2.10",
     "tailwindcss": "^4.1.17",
-    "three": "^0.182.0",
-    "three-globe": "^2.45.0",
     "typescript": "^5.9.3",
     "vitest": "^4.0.18"
   },
