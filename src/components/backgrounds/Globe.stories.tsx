@@ -24,7 +24,25 @@ export default meta;
 type Story = StoryObj<typeof Globe>;
 
 export const Default: Story = {
-  args: {},
+  args: {
+    points: [
+      {
+        label: 'Internet',
+        icon: <BsGlobe2 className="text-3xl" />,
+        location: [20, 0] as [number, number],
+      },
+      {
+        label: 'CCTV',
+        icon: <BiCctv className="text-3xl" />,
+        location: [0, -60] as [number, number],
+      },
+      {
+        label: 'Social Media',
+        icon: <HiOutlineShare className="text-3xl" />,
+        location: [-10, 50] as [number, number],
+      },
+    ],
+  },
 };
 
 export const CustomSize: Story = {
