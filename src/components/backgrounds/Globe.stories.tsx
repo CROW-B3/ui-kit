@@ -7,6 +7,24 @@ import { MdSecurity } from 'react-icons/md';
 
 import { Globe } from './Globe';
 
+const defaultPoints = [
+  {
+    label: 'Internet',
+    icon: <BsGlobe2 className="text-3xl" />,
+    location: [20, 0] as [number, number],
+  },
+  {
+    label: 'CCTV',
+    icon: <BiCctv className="text-3xl" />,
+    location: [0, -60] as [number, number],
+  },
+  {
+    label: 'Social Media',
+    icon: <HiOutlineShare className="text-3xl" />,
+    location: [-10, 50] as [number, number],
+  },
+];
+
 const meta: Meta<typeof Globe> = {
   title: 'Backgrounds/Globe',
   component: Globe,
@@ -18,32 +36,15 @@ const meta: Meta<typeof Globe> = {
     },
   },
   tags: ['autodocs'],
+  args: {
+    points: defaultPoints,
+  },
 };
 
 export default meta;
 type Story = StoryObj<typeof Globe>;
 
-export const Default: Story = {
-  args: {
-    points: [
-      {
-        label: 'Internet',
-        icon: <BsGlobe2 className="text-3xl" />,
-        location: [20, 0] as [number, number],
-      },
-      {
-        label: 'CCTV',
-        icon: <BiCctv className="text-3xl" />,
-        location: [0, -60] as [number, number],
-      },
-      {
-        label: 'Social Media',
-        icon: <HiOutlineShare className="text-3xl" />,
-        location: [-10, 50] as [number, number],
-      },
-    ],
-  },
-};
+export const Default: Story = {};
 
 export const CustomSize: Story = {
   args: {
