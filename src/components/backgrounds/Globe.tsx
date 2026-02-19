@@ -11,7 +11,7 @@ import ThreeGlobe from 'three-globe';
 export interface GlobePoint {
   label: string;
   icon: React.ReactNode;
-  location: [number, number]; // [latitude, longitude] in degrees
+  location: [number, number];
 }
 
 export interface GlobeProps {
@@ -41,8 +41,7 @@ const defaultPoints: GlobePoint[] = [
   },
 ];
 
-// Generate arcs between points
-function generateArcs(points: GlobePoint[]) {
+function generateArcs(points: GlobePoint[], randomArcCount = 6) {
   const arcs: {
     startLat: number;
     startLng: number;
@@ -51,6 +50,15 @@ function generateArcs(points: GlobePoint[]) {
     color: string;
   }[] = [];
 
+  const colors = [
+    'rgba(255, 107, 107, 0.4)',
+    'rgba(78, 205, 196, 0.4)',
+    'rgba(69, 183, 209, 0.4)',
+    'rgba(150, 206, 180, 0.4)',
+    'rgba(168, 85, 247, 0.4)',
+    'rgba(59, 130, 246, 0.4)',
+  ];
+
   for (let i = 0; i < points.length; i++) {
     for (let j = i + 1; j < points.length; j++) {
       arcs.push({
@@ -58,17 +66,29 @@ function generateArcs(points: GlobePoint[]) {
         startLng: points[i].location[1],
         endLat: points[j].location[0],
         endLng: points[j].location[1],
-        color: ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4'][
-          Math.floor(Math.random() * 4)
-        ],
+        color: colors[Math.floor(Math.random() * colors.length)],
       });
     }
+  }
+
+  for (let i = 0; i < randomArcCount; i++) {
+    const startLat = Math.random() * 140 - 70;
+    const startLng = Math.random() * 360 - 180;
+    const endLat = Math.random() * 140 - 70;
+    const endLng = Math.random() * 360 - 180;
+
+    arcs.push({
+      startLat,
+      startLng,
+      endLat,
+      endLng,
+      color: colors[Math.floor(Math.random() * colors.length)],
+    });
   }
 
   return arcs;
 }
 
-// Generate points data for three-globe
 function generatePointsData(points: GlobePoint[]) {
   return points.map(p => ({
     lat: p.location[0],
@@ -101,21 +121,16 @@ export function Globe({ points, size = 600 }: GlobeProps) {
     const container = containerRef.current;
     if (!container) return;
 
-    // Scene setup
     const scene = new THREE.Scene();
-
-    // Camera
     const camera = new THREE.PerspectiveCamera(50, 1, 1, 1000);
     camera.position.z = 350;
 
-    // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(size, size);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // Lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
     scene.add(ambientLight);
 
@@ -125,7 +140,6 @@ export function Globe({ points, size = 600 }: GlobeProps) {
 
     const GLOBE_RADIUS = 100;
 
-    // Create three-globe
     const globe = new ThreeGlobe({ animateIn: true })
       .globeImageUrl(
         'https://unpkg.com/three-globe@2.45.0/example/img/earth-night.jpg'
@@ -136,34 +150,28 @@ export function Globe({ points, size = 600 }: GlobeProps) {
       .showAtmosphere(true)
       .atmosphereColor('#3a82f7')
       .atmosphereAltitude(0.15)
-      // Points on globe
       .pointsData(generatePointsData(displayPoints))
       .pointAltitude(0.01)
       .pointColor('color')
       .pointRadius('size')
-      // Arcs between points
       .arcsData(generateArcs(displayPoints))
       .arcColor('color')
       .arcDashLength(0.4)
       .arcDashGap(0.2)
-      .arcDashAnimateTime(1500)
-      .arcStroke(0.5)
+      .arcDashAnimateTime(2000)
+      .arcStroke(0.3)
       .arcAltitudeAutoScale(0.3);
 
     globeRef.current = globe;
     scene.add(globe);
 
-    // Tilt scene slightly
     scene.rotation.x = 0.2;
 
-    // Animation
     const animate = () => {
       const now = Date.now();
 
-      // Rotate globe
       globe.rotation.y += 0.002;
 
-      // Sequential reveal of icons (one by one)
       if (
         revealIndexRef.current < displayPoints.length &&
         now - lastRevealTime.current > 2000
@@ -177,11 +185,9 @@ export function Globe({ points, size = 600 }: GlobeProps) {
         lastRevealTime.current = now;
       }
 
-      // Calculate icon screen positions
       const positions: PointPosition[] = displayPoints.map((point, index) => {
         const [lat, lng] = point.location;
 
-        // Convert lat/lng to 3D position
         const phi = ((90 - lat) * Math.PI) / 180;
         const theta = ((lng + 180) * Math.PI) / 180;
 
@@ -191,17 +197,13 @@ export function Globe({ points, size = 600 }: GlobeProps) {
           GLOBE_RADIUS * Math.sin(phi) * Math.sin(theta)
         );
 
-        // Apply globe rotation
         pos.applyAxisAngle(new THREE.Vector3(0, 1, 0), globe.rotation.y);
-        // Apply scene tilt
         pos.applyAxisAngle(new THREE.Vector3(1, 0, 0), 0.2);
 
-        // Project to screen
         const projected = pos.clone().project(camera);
         const screenX = (projected.x * 0.5 + 0.5) * size;
         const screenY = (-projected.y * 0.5 + 0.5) * size;
 
-        // Depth-based opacity and scale
         const normalizedZ = pos.z / GLOBE_RADIUS;
         let opacity = 1;
         if (normalizedZ > 0.3) {
@@ -216,7 +218,6 @@ export function Globe({ points, size = 600 }: GlobeProps) {
           normalizedZ > 0 ? 1 + normalizedZ * 0.3 : 0.7 + normalizedZ * 0.3;
         scale = Math.max(0.5, scale);
 
-        // Pulse animation when reaching front
         if (index === scaleIndexRef.current) {
           if (normalizedZ > 0.4 && !scalingRef.current) {
             scalingRef.current = true;
