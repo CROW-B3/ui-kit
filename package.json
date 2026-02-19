@@ -5,10 +5,19 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "sideEffects": false,
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./globe": {
+      "types": "./dist/components/backgrounds/Globe.d.ts",
+      "default": "./dist/components/backgrounds/Globe.js"
+    },
+    "./code-block": {
+      "types": "./dist/components/display/CodeBlock.d.ts",
+      "default": "./dist/components/display/CodeBlock.js"
     },
     "./styles.css": {
       "style": "./dist/styles.css",
@@ -24,7 +33,9 @@
     "lint:fix": "eslint src/ --fix",
     "format": "bunx prettier src/ --write",
     "prepare": "husky install",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "repository": {
     "type": "git",
@@ -45,7 +56,9 @@
     "@types/node": "^22.10.5",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.182.0",
     "autoprefixer": "^10.4.22",
+    "cobe": "^0.6.5",
     "commitlint": "^20.1.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.26",
@@ -53,8 +66,24 @@
     "lint-staged": "^16.2.6",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
+    "react-icons": "^5.5.0",
+    "shiki": "^3.21.0",
     "tailwindcss": "^4.1.17",
-    "typescript": "^5.9.3"
+    "three": "^0.182.0",
+    "three-globe": "^2.45.0",
+    "typescript": "^5.9.3",
+    "storybook": "^10.2.10",
+    "@storybook/react-vite": "^10.2.10",
+    "@chromatic-com/storybook": "^5.0.1",
+    "@storybook/addon-vitest": "^10.2.10",
+    "@storybook/addon-a11y": "^10.2.10",
+    "@storybook/addon-docs": "^10.2.10",
+    "@storybook/addon-onboarding": "^10.2.10",
+    "eslint-plugin-storybook": "^10.2.10",
+    "vitest": "^4.0.18",
+    "playwright": "^1.58.2",
+    "@vitest/browser-playwright": "^4.0.18",
+    "@vitest/coverage-v8": "^4.0.18"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
@@ -68,21 +97,29 @@
   "peerDependencies": {
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "next": "^15.0.0"
+    "next": "^15.0.0",
+    "three": "^0.182.0",
+    "three-globe": "^2.45.0",
+    "shiki": "^3.21.0"
+  },
+  "peerDependenciesMeta": {
+    "three": {
+      "optional": true
+    },
+    "three-globe": {
+      "optional": true
+    },
+    "shiki": {
+      "optional": true
+    }
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
-    "@types/three": "^0.182.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "cobe": "^0.6.5",
     "framer-motion": "^12.23.26",
     "lenis": "^1.2.1",
     "lucide-react": "^0.542.0",
-    "react-icons": "^5.5.0",
-    "shiki": "^3.21.0",
-    "tailwind-merge": "^3.4.0",
-    "three": "^0.182.0",
-    "three-globe": "^2.45.0"
+    "tailwind-merge": "^3.4.0"
   }
 }
