@@ -13,6 +13,7 @@ interface PointPosition {
   z: number;
   scale: number;
   opacity: number;
+  isInCenter: boolean;
 }
 
 function generateArcs(points: GlobePoint[], randomArcCount = 6) {
@@ -79,12 +80,30 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
   const globeRef = useRef<ThreeGlobe | null>(null);
 
   const [pointPositions, setPointPositions] = useState<PointPosition[]>([]);
-
-  const scaleIndexRef = useRef(0);
-  const scalingRef = useRef(false);
-  const scaleStartTimeRef = useRef(0);
+  const [visiblePoints, setVisiblePoints] = useState<Set<number>>(
+    () => new Set()
+  );
 
   const displayPoints = points;
+
+  useEffect(() => {
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+
+    for (let i = 0; i < displayPoints.length; i++) {
+      // eslint-disable-next-line react-web-api/no-leaked-timeout -- Cleanup is handled below
+      const timeout = setTimeout(() => {
+        setVisiblePoints(prev => new Set(prev).add(i));
+      }, i * 800);
+
+      timeouts.push(timeout);
+    }
+
+    return () => {
+      for (const t of timeouts) {
+        clearTimeout(t);
+      }
+    };
+  }, [displayPoints]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -134,14 +153,12 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
     globeRef.current = globe;
     scene.add(globe);
 
-    scene.rotation.x = 0.2;
+    scene.rotation.x = 0;
 
     const animate = () => {
-      const now = Date.now();
+      globe.rotation.y += 0.003;
 
-      globe.rotation.y += 0.002;
-
-      const positions: PointPosition[] = displayPoints.map((point, index) => {
+      const positions: PointPosition[] = displayPoints.map((point, _index) => {
         const [lat, lng] = point.location;
 
         const phi = ((90 - lat) * Math.PI) / 180;
@@ -154,7 +171,6 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
         );
 
         pos.applyAxisAngle(new THREE.Vector3(0, 1, 0), globe.rotation.y);
-        pos.applyAxisAngle(new THREE.Vector3(1, 0, 0), 0.2);
 
         const projected = pos.clone().project(camera);
         const screenX = (projected.x * 0.5 + 0.5) * size;
@@ -174,26 +190,18 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
           normalizedZ > 0 ? 1 + normalizedZ * 0.3 : 0.7 + normalizedZ * 0.3;
         scale = Math.max(0.5, scale);
 
-        if (index === scaleIndexRef.current) {
-          if (normalizedZ > 0.4 && !scalingRef.current) {
-            scalingRef.current = true;
-            scaleStartTimeRef.current = now;
-          }
+        const centerX = size / 2;
+        const centerY = size / 2;
+        const distanceFromCenter = Math.sqrt(
+          (screenX - centerX) ** 2 + (screenY - centerY) ** 2
+        );
+        const centerThreshold = 80;
+        const isInCenter =
+          distanceFromCenter < centerThreshold && normalizedZ > 0;
 
-          if (scalingRef.current) {
-            const elapsed = now - scaleStartTimeRef.current;
-            const duration = 500;
-
-            if (elapsed < duration) {
-              const progress = elapsed / duration;
-              const pulse = Math.sin(progress * Math.PI);
-              scale *= 1 + pulse * 0.35;
-            } else {
-              scalingRef.current = false;
-              scaleIndexRef.current =
-                (scaleIndexRef.current + 1) % displayPoints.length;
-            }
-          }
+        if (isInCenter) {
+          const centerProgress = 1 - distanceFromCenter / centerThreshold;
+          scale *= 1 + centerProgress * 0.3;
         }
 
         return {
@@ -202,10 +210,11 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
           z: normalizedZ,
           scale,
           opacity,
+          isInCenter,
         };
       });
 
-      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect
+      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect -- Animation loop requires setState on each frame
       setPointPositions(positions);
 
       renderer.render(scene, camera);
@@ -233,6 +242,10 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
         const pos = pointPositions[index];
         if (!pos) return null;
 
+        if (!visiblePoints.has(index)) return null;
+
+        const showText = pos.isInCenter;
+
         return (
           <motion.div
             key={point.label}
@@ -257,11 +270,19 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
               <div className="w-16 h-16 rounded-full bg-black/70 border-2 border-white/50 backdrop-blur-sm flex items-center justify-center text-white shadow-lg">
                 {point.icon}
               </div>
-              <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap">
-                <span className="text-sm text-white font-medium drop-shadow-lg">
-                  {point.label}
-                </span>
-              </div>
+              {showText && (
+                <motion.div
+                  className="absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <span className="text-sm text-white font-medium drop-shadow-lg">
+                    {point.label}
+                  </span>
+                </motion.div>
+              )}
             </div>
           </motion.div>
         );
