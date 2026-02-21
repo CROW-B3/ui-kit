@@ -20,17 +20,17 @@ const DEFAULT_POINTS: GlobePoint[] = [
   {
     label: 'Internet',
     icon: <BsGlobe2 className="text-3xl" />,
-    location: [20, 0] as [number, number],
+    location: [0, -90] as [number, number],
   },
   {
     label: 'CCTV',
     icon: <BiCctv className="text-3xl" />,
-    location: [0, -60] as [number, number],
+    location: [0, 30] as [number, number],
   },
   {
     label: 'Social Media',
     icon: <HiOutlineShare className="text-3xl" />,
-    location: [-10, 50] as [number, number],
+    location: [0, 150] as [number, number],
   },
 ];
 
