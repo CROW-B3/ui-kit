@@ -4,6 +4,27 @@
 @source "../dist/**/*.js";
 
 @layer utilities {
+  /* Primary Button Gradient */
+  .bg-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .bg-primary_hover {
+    background: linear-gradient(135deg, #5568d3 0%, #63408a 100%);
+  }
+
+  /* Glow Effects */
+  .shadow-glow {
+    box-shadow:
+      0 0 20px rgba(102, 126, 234, 0.4),
+      0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .shadow-glow-hover {
+    box-shadow:
+      0 0 30px rgba(102, 126, 234, 0.6),
+      0 6px 12px rgba(0, 0, 0, 0.3);
+  }
   @keyframes fadeInHalf {
     from {
       opacity: 0;
