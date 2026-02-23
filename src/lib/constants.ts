@@ -22,6 +22,12 @@ export const SEVERITY_CONFIG: Record<
   SeverityLevel,
   { label: string; color: string; bg: string; border: string }
 > = {
+  critical: {
+    label: 'CRITICAL',
+    color: '#EF4444',
+    bg: 'rgba(239, 68, 68, 0.15)',
+    border: 'rgba(239, 68, 68, 0.30)',
+  },
   high: {
     label: 'HIGH',
     color: '#F87171',
