@@ -29,10 +29,24 @@ const meta: Meta<typeof Globe> = {
   title: 'Backgrounds/Globe',
   component: Globe,
   parameters: {
-    layout: 'centered',
-    backgrounds: {
-      default: 'dark',
-      values: [{ name: 'dark', value: '#0a0a0a' }],
+    docs: {
+      description: {
+        component: `
+An interactive 3D globe component that displays labeled points with icons at specified geographic coordinates.
+
+## Installation
+
+\`\`\`bash
+npm install @aspect/ui-kit
+\`\`\`
+
+## Import
+
+\`\`\`tsx
+import { Globe } from '@aspect/ui-kit';
+\`\`\`
+        `,
+      },
     },
   },
   tags: ['autodocs'],
@@ -44,17 +58,40 @@ const meta: Meta<typeof Globe> = {
 export default meta;
 type Story = StoryObj<typeof Globe>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'Default globe with preset Internet, CCTV, and Social Media points.',
+      },
+    },
+  },
+};
 
 export const CustomSize: Story = {
   args: {
     size: 400,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'A smaller 400px globe.',
+      },
+    },
   },
 };
 
 export const LargeGlobe: Story = {
   args: {
     size: 800,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'A larger 800px globe for prominent displays.',
+      },
+    },
   },
 };
 
@@ -93,5 +130,12 @@ export const CustomPoints: Story = {
       },
     ],
     size: 600,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Globe with custom points at real-world city coordinates.',
+      },
+    },
   },
 };

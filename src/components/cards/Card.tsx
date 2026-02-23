@@ -1,7 +1,8 @@
 'use client';
 
+import type { VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { motion } from 'framer-motion';
-import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
 const cardVariants = cva(
@@ -41,7 +42,7 @@ const contentVariants = cva('', {
   },
 });
 
-const descriptionVariants = cva('text-sm leading-relaxed mb-8', {
+const descriptionVariants = cva('text-sm leading-relaxed mb-8 text-white/70', {
   variants: {
     layout: {
       feature: '',

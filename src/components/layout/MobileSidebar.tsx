@@ -4,12 +4,12 @@ import type { MobileSidebarProps } from '../../lib/types';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
 import { useEffect } from 'react';
-import { ChatHistorySection } from '../chat/ChatHistorySection';
 import { DEFAULT_NAV_ITEMS } from '../../lib/constants/navigation';
-import { NavMenu } from './NavMenu';
-import { SettingsDropup } from '../inputs/SettingsDropup';
-import { SidebarLogo } from './SidebarLogo';
 import { normalizePath } from '../../lib/utils/pathUtils';
+import { ChatHistorySection } from '../chat/ChatHistorySection';
+import { SettingsDropup } from '../inputs/SettingsDropup';
+import { NavMenu } from './NavMenu';
+import { SidebarLogo } from './SidebarLogo';
 
 export type { MobileSidebarProps };
 
@@ -42,7 +42,7 @@ export function MobileSidebar({
   activeHref = '/',
   onNavigate,
   showSettings = true,
-  logoSrc = '/favicon.png',
+  logoSrc = '/favicon.webp',
   userName = 'User',
   userEmail = 'user@example.com',
   onLogout,

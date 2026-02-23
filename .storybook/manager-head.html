@@ -1,0 +1,27 @@
+<link rel="shortcut icon" href="./favicon.webp" type="image/webp" />
+<script>
+  // Override title without blocking
+  (function () {
+    const customTitle = 'CROW-B3 UI Kit';
+
+    // Set title periodically without blocking
+    setInterval(() => {
+      if (
+        document.title !== customTitle &&
+        !document.title.includes('Loading')
+      ) {
+        document.title = customTitle;
+      }
+    }, 100);
+
+    // Remove SVG favicon after load
+    window.addEventListener('load', () => {
+      document.querySelectorAll('link[rel*="icon"]').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && href.includes('favicon.svg')) {
+          link.remove();
+        }
+      });
+    });
+  })();
+</script>
