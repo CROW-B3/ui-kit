@@ -1,7 +1,8 @@
 'use client';
 
-import { LuArrowUpRight } from 'react-icons/lu';
-import { cva, type VariantProps } from 'class-variance-authority';
+import type { VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
+import { ArrowUpRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const buttonVariants = cva(
@@ -71,7 +72,7 @@ export function Button({
             {arrowIcon}
           </span>
         ) : (
-          <LuArrowUpRight className={cn('w-4 h-4', arrowClassName)} />
+          <ArrowUpRight size={16} className={arrowClassName} />
         ))}
     </>
   );

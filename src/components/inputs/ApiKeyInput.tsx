@@ -1,6 +1,6 @@
+import { AnimatePresence, motion } from 'framer-motion';
+import { Check, Copy, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
-import { LuEye, LuEyeOff, LuCopy, LuCheck } from 'react-icons/lu';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface ApiKeyInputProps {
   apiKey: string;
@@ -22,7 +22,7 @@ export function ApiKeyInput({
       setIsCopied(true);
       onCopy?.(true);
       setTimeout(() => setIsCopied(false), 2000);
-    } catch (err) {
+    } catch {
       onCopy?.(false);
     }
   };
@@ -48,11 +48,7 @@ export function ApiKeyInput({
             aria-label={isRevealed ? 'Hide' : 'Reveal'}
             className="p-1.5 text-gray-500 hover:text-white transition-colors rounded-full hover:bg-white/10"
           >
-            {isRevealed ? (
-              <LuEyeOff className="text-[16px]" />
-            ) : (
-              <LuEye className="text-[16px]" />
-            )}
+            {isRevealed ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
           <button
             onClick={handleCopy}
@@ -67,7 +63,7 @@ export function ApiKeyInput({
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                 >
-                  <LuCheck className="text-[14px] text-green-400" />
+                  <Check size={14} className="text-green-400" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -76,7 +72,7 @@ export function ApiKeyInput({
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                 >
-                  <LuCopy className="text-[14px]" />
+                  <Copy size={14} />
                 </motion.div>
               )}
             </AnimatePresence>

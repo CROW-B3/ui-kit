@@ -1,7 +1,20 @@
 import { AnimatePresence, motion } from 'framer-motion';
+import { Check, Copy } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { LuCheck, LuCopy } from 'react-icons/lu';
-import { codeToHtml } from 'shiki';
+import { createHighlighter } from 'shiki';
+
+// Module-level singleton: theme loads once, languages are cached on demand
+let highlighterPromise: ReturnType<typeof createHighlighter> | null = null;
+
+function getHighlighter() {
+  if (!highlighterPromise) {
+    highlighterPromise = createHighlighter({
+      themes: ['github-dark-default'],
+      langs: [],
+    });
+  }
+  return highlighterPromise;
+}
 
 interface CodeBlockProps {
   code: string;
@@ -22,14 +35,24 @@ export function CodeBlock({
   const [highlightedHtml, setHighlightedHtml] = useState<string>('');
 
   useEffect(() => {
+    let cancelled = false;
     const highlightCode = async () => {
-      const html = await codeToHtml(code, {
+      const highlighter = await getHighlighter();
+      const loadedLangs = highlighter.getLoadedLanguages();
+      if (!loadedLangs.includes(language)) {
+        await highlighter.loadLanguage(language as never);
+      }
+      if (cancelled) return;
+      const html = highlighter.codeToHtml(code, {
         lang: language,
         theme: 'github-dark-default',
       });
       setHighlightedHtml(html);
     };
     highlightCode();
+    return () => {
+      cancelled = true;
+    };
   }, [code, language]);
 
   const handleCopy = async () => {
@@ -60,7 +83,7 @@ export function CodeBlock({
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                 >
-                  <LuCheck className="text-[14px] text-green-400" />
+                  <Check size={14} className="text-green-400" />
                 </motion.div>
               ) : (
                 <motion.div
@@ -69,7 +92,7 @@ export function CodeBlock({
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                 >
-                  <LuCopy className="text-[14px]" />
+                  <Copy size={14} />
                 </motion.div>
               )}
             </AnimatePresence>

@@ -25,6 +25,7 @@ export * from './cards/SyncStatusCard';
 export * from './cards/TipCard';
 export * from './chat/ChatHistorySection';
 export * from './chat/MessageBubble';
+export * from './display/CodeBlock';
 export * from './display/ConnectionStatus';
 export * from './display/IconBadge';
 export * from './display/Logo';

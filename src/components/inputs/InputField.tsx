@@ -1,9 +1,10 @@
 'use client';
 
-import { LuArrowUpRight } from 'react-icons/lu';
-import { useState } from 'react';
+import type { VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { motion } from 'framer-motion';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { ArrowUpRight } from 'lucide-react';
+import { useState } from 'react';
 import { cn } from '../../lib/utils';
 
 const inputVariants = cva(
@@ -55,8 +56,10 @@ const buttonVariants = cva(
   }
 );
 
-export interface InputFieldProps
-  extends Omit<VariantProps<typeof inputVariants>, 'buttonPosition'> {
+export interface InputFieldProps extends Omit<
+  VariantProps<typeof inputVariants>,
+  'buttonPosition'
+> {
   placeholder?: string;
   onSubmit?: (value: string) => void;
   onChange?: (value: string) => void;
@@ -80,7 +83,7 @@ export function InputField({
   value: controlledValue,
   defaultValue = '',
   showButton = true,
-  buttonIcon = <LuArrowUpRight className="w-4 h-4 text-white" />,
+  buttonIcon = <ArrowUpRight size={16} className="text-white" />,
   buttonPosition = 'right',
   variant = 'transparent',
   size = 'md',
