@@ -36,18 +36,24 @@ export function CodeBlock({
 
   useEffect(() => {
     let cancelled = false;
+    setHighlightedHtml('');
     const highlightCode = async () => {
-      const highlighter = await getHighlighter();
-      const loadedLangs = highlighter.getLoadedLanguages();
-      if (!loadedLangs.includes(language)) {
-        await highlighter.loadLanguage(language as never);
+      try {
+        const highlighter = await getHighlighter();
+        if (cancelled) return;
+        const loadedLangs = highlighter.getLoadedLanguages();
+        if (!loadedLangs.includes(language)) {
+          await highlighter.loadLanguage(language as never);
+        }
+        if (cancelled) return;
+        const html = highlighter.codeToHtml(code, {
+          lang: language,
+          theme: 'github-dark-default',
+        });
+        if (!cancelled) setHighlightedHtml(html);
+      } catch {
+        if (!cancelled) setHighlightedHtml('');
       }
-      if (cancelled) return;
-      const html = highlighter.codeToHtml(code, {
-        lang: language,
-        theme: 'github-dark-default',
-      });
-      setHighlightedHtml(html);
     };
     highlightCode();
     return () => {

@@ -1,6 +1,7 @@
 'use client';
 
 import type { VariantProps } from 'class-variance-authority';
+import type { ChangeEvent, KeyboardEvent, ReactNode } from 'react';
 import { cva } from 'class-variance-authority';
 import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
@@ -66,7 +67,7 @@ export interface InputFieldProps extends Omit<
   value?: string;
   defaultValue?: string;
   showButton?: boolean;
-  buttonIcon?: React.ReactNode;
+  buttonIcon?: ReactNode;
   buttonPosition?: 'left' | 'right';
   className?: string;
   inputClassName?: string;
@@ -97,7 +98,7 @@ export function InputField({
   const [internalValue, setInternalValue] = useState(defaultValue);
   const value = controlledValue !== undefined ? controlledValue : internalValue;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     if (controlledValue === undefined) {
       setInternalValue(newValue);
@@ -111,7 +112,7 @@ export function InputField({
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !disabled) {
       handleSubmit();
     }
