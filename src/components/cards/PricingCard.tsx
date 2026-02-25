@@ -1,10 +1,8 @@
 'use client';
 
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { IoCheckmarkCircleOutline } from 'react-icons/io5';
-import { PiHeadCircuit } from 'react-icons/pi';
-import { MdOutlineTouchApp } from 'react-icons/md';
+import { BrainCircuit, CircleCheck, MousePointerClick } from 'lucide-react';
 
 export interface PricingFeature {
   label: string;
@@ -76,7 +74,7 @@ export function PricingCard({
     ...(interactions
       ? [
           {
-            icon: <MdOutlineTouchApp className="h-4 w-4 text-gray-400" />,
+            icon: <MousePointerClick size={16} className="text-gray-400" />,
             text: interactions,
           },
         ]
@@ -84,7 +82,7 @@ export function PricingCard({
     ...(patterns
       ? [
           {
-            icon: <PiHeadCircuit className="h-4 w-4 text-gray-400" />,
+            icon: <BrainCircuit size={16} className="text-gray-400" />,
             text: patterns,
           },
         ]
@@ -158,8 +156,9 @@ export function PricingCard({
         {features.map((feature, index) => (
           <div key={index} className="flex items-center gap-2.5">
             {checkIcon || (
-              <IoCheckmarkCircleOutline
-                className={`h-4 w-4 ${feature.included ? 'opacity-100' : 'opacity-30'}`}
+              <CircleCheck
+                size={16}
+                className={feature.included ? 'opacity-100' : 'opacity-30'}
                 style={{ color: feature.included ? accentColor : '#666' }}
               />
             )}

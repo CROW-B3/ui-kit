@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, KeyboardEvent } from 'react';
-import { LuX } from 'react-icons/lu';
+import type { KeyboardEvent } from 'react';
+import { X } from 'lucide-react';
+import { useState } from 'react';
 
 interface EmailTagInputProps {
   emails: string[];
@@ -11,7 +12,7 @@ interface EmailTagInputProps {
 }
 
 const isValidEmail = (email: string): boolean => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  return /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(email);
 };
 
 export function EmailTagInput({
@@ -21,6 +22,22 @@ export function EmailTagInput({
   onInvalidEmail,
 }: EmailTagInputProps) {
   const [inputValue, setInputValue] = useState('');
+
+  const addEmail = () => {
+    const trimmed = inputValue.trim();
+    if (trimmed && !emails.includes(trimmed)) {
+      if (isValidEmail(trimmed)) {
+        onEmailsChange([...emails, trimmed]);
+        setInputValue('');
+      } else {
+        onInvalidEmail?.(trimmed);
+      }
+    }
+  };
+
+  const removeEmail = (index: number) => {
+    onEmailsChange(emails.filter((_, i) => i !== index));
+  };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -56,23 +73,6 @@ export function EmailTagInput({
     }
   };
 
-  const addEmail = () => {
-    const trimmedEmail = inputValue.trim();
-    if (trimmedEmail && !emails.includes(trimmedEmail)) {
-      if (isValidEmail(trimmedEmail)) {
-        onEmailsChange([...emails, trimmedEmail]);
-        setInputValue('');
-      } else {
-        onInvalidEmail?.(trimmedEmail);
-        setInputValue('');
-      }
-    }
-  };
-
-  const removeEmail = (index: number) => {
-    onEmailsChange(emails.filter((_, i) => i !== index));
-  };
-
   return (
     <div className="space-y-2">
       <label className="text-xs font-medium text-gray-300 ml-1 block">
@@ -94,7 +94,7 @@ export function EmailTagInput({
               onClick={() => removeEmail(index)}
               className="hover:text-white text-violet-300 focus:outline-none flex items-center"
             >
-              <LuX className="w-3 h-3" />
+              <X size={12} />
             </button>
           </span>
         ))}

@@ -1,4 +1,4 @@
-import { LuCopy } from 'react-icons/lu';
+import { Copy } from 'lucide-react';
 
 interface RunAgentCardProps {
   command: string;
@@ -17,7 +17,7 @@ export function RunAgentCard({
     try {
       await navigator.clipboard.writeText(command);
       onCopy?.(true);
-    } catch (err) {
+    } catch {
       onCopy?.(false);
     }
   };
@@ -39,7 +39,7 @@ export function RunAgentCard({
               className="text-gray-500 hover:text-white transition-colors"
               aria-label="Copy command to clipboard"
             >
-              <LuCopy className="text-[14px]" />
+              <Copy size={14} />
             </button>
           </div>
         </div>

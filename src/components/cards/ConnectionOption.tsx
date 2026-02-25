@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { LuChevronRight } from 'react-icons/lu';
+import { ChevronRight } from 'lucide-react';
 
 export type ConnectionOptionStatus =
   | 'not_started'
@@ -70,7 +70,10 @@ export function ConnectionOption({
         >
           {statusInfo.label}
         </span>
-        <LuChevronRight className="text-gray-600 group-hover:text-white transition-colors text-[20px]" />
+        <ChevronRight
+          size={20}
+          className="text-gray-600 group-hover:text-white transition-colors"
+        />
       </div>
     </motion.button>
   );
