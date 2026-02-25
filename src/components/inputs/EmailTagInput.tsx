@@ -1,6 +1,6 @@
 'use client';
 
-import type { KeyboardEvent } from 'react';
+import type { ChangeEvent, KeyboardEvent } from 'react';
 import { X } from 'lucide-react';
 import { useState } from 'react';
 
@@ -52,22 +52,32 @@ export function EmailTagInput({
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
     if (value.includes(',') || value.includes(' ')) {
-      const emailToAdd = value.replace(/[,\s]/g, '').trim();
-      if (emailToAdd && !emails.includes(emailToAdd)) {
-        if (isValidEmail(emailToAdd)) {
-          onEmailsChange([...emails, emailToAdd]);
-          setInputValue('');
+      const tokens = value
+        .split(/[,\s]+/)
+        .map(token => token.trim())
+        .filter(Boolean);
+
+      const existing = new Set(emails);
+      const validToAdd: string[] = [];
+
+      tokens.forEach(token => {
+        if (existing.has(token)) return;
+        if (isValidEmail(token)) {
+          validToAdd.push(token);
+          existing.add(token);
         } else {
-          onInvalidEmail?.(emailToAdd);
-          setInputValue('');
+          onInvalidEmail?.(token);
         }
-      } else {
-        setInputValue('');
+      });
+
+      if (validToAdd.length > 0) {
+        onEmailsChange([...emails, ...validToAdd]);
       }
+      setInputValue('');
     } else {
       setInputValue(value);
     }
@@ -91,6 +101,7 @@ export function EmailTagInput({
             {email}
             <button
               type="button"
+              aria-label={`Remove ${email}`}
               onClick={() => removeEmail(index)}
               className="hover:text-white text-violet-300 focus:outline-none flex items-center"
             >
