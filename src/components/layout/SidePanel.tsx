@@ -2,9 +2,9 @@
 
 import { X } from 'lucide-react';
 import { useCallback, useEffect, useRef } from 'react';
-import { cn } from '../../lib/utils';
-
 import { FOCUSABLE_ELEMENTS } from '../../lib/constants/accessibility';
+
+import { cn } from '../../lib/utils';
 
 export interface SidePanelProps {
   isOpen: boolean;
@@ -44,7 +44,6 @@ export function SidePanel({
         return;
       }
 
-      // Focus trap
       if (e.key === 'Tab' && panelRef.current) {
         const focusableElements =
           panelRef.current.querySelectorAll(FOCUSABLE_ELEMENTS);
@@ -70,7 +69,6 @@ export function SidePanel({
       previousActiveElement.current = document.activeElement as HTMLElement;
       document.addEventListener('keydown', handleKeyDown);
 
-      // Focus first focusable element in panel
       setTimeout(() => {
         if (panelRef.current) {
           const focusableElements =
@@ -79,7 +77,6 @@ export function SidePanel({
         }
       }, 0);
     } else {
-      // Restore focus to previous element
       previousActiveElement.current?.focus();
     }
     return () => {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useId } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';
 
 export interface SelectOption {
@@ -63,7 +63,6 @@ export const Select: React.FC<SelectProps> = ({
   const selectedValue = isControlled ? value : internalValue;
   const selectedIndex = options.findIndex(opt => opt.value === selectedValue);
 
-  // Sync defaultValue changes in uncontrolled mode
   useEffect(() => {
     if (!isControlled && defaultValue !== undefined) {
       setInternalValue(defaultValue);
@@ -93,7 +92,6 @@ export const Select: React.FC<SelectProps> = ({
 
   const selectedOption = options.find(opt => opt.value === selectedValue);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -108,11 +106,9 @@ export const Select: React.FC<SelectProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Reset highlighted index and focus listbox when dropdown opens
   useEffect(() => {
     if (isOpen) {
       setHighlightedIndex(selectedIndex >= 0 ? selectedIndex : 0);
-      // Focus the listbox so keyboard navigation works
       requestAnimationFrame(() => {
         listboxRef.current?.focus();
       });

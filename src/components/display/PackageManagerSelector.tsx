@@ -3,12 +3,7 @@ import { useState } from 'react';
 
 export type PackageManager = 'bun' | 'npm' | 'pnpm' | 'yarn';
 
-interface PackageManagerSelectorProps {
-  defaultManager?: PackageManager;
-  onChange?: (manager: PackageManager) => void;
-}
-
-const BunIcon = () => (
+export const BunIcon = () => (
   <svg
     viewBox="0 0 24 24"
     width="1em"
@@ -21,7 +16,7 @@ const BunIcon = () => (
   </svg>
 );
 
-const NpmIcon = () => (
+export const NpmIcon = () => (
   <svg
     viewBox="0 0 24 24"
     width="1em"
@@ -34,7 +29,7 @@ const NpmIcon = () => (
   </svg>
 );
 
-const PnpmIcon = () => (
+export const PnpmIcon = () => (
   <svg
     viewBox="0 0 24 24"
     width="1em"
@@ -47,7 +42,7 @@ const PnpmIcon = () => (
   </svg>
 );
 
-const YarnIcon = () => (
+export const YarnIcon = () => (
   <svg
     viewBox="0 0 24 24"
     width="1em"
@@ -60,21 +55,30 @@ const YarnIcon = () => (
   </svg>
 );
 
-const managers: {
+export interface ManagerOption {
   value: PackageManager;
   label: string;
   icon: ReactNode;
   color: string;
-}[] = [
+}
+
+export const defaultManagers: ManagerOption[] = [
   { value: 'bun', label: 'Bun', icon: <BunIcon />, color: 'text-[#fbf0df]' },
   { value: 'npm', label: 'npm', icon: <NpmIcon />, color: 'text-[#cb3837]' },
   { value: 'pnpm', label: 'pnpm', icon: <PnpmIcon />, color: 'text-[#f9ad00]' },
   { value: 'yarn', label: 'Yarn', icon: <YarnIcon />, color: 'text-[#2c8ebb]' },
 ];
 
+interface PackageManagerSelectorProps {
+  defaultManager?: PackageManager;
+  onChange?: (manager: PackageManager) => void;
+  managers?: ManagerOption[];
+}
+
 export function PackageManagerSelector({
   defaultManager = 'bun',
   onChange,
+  managers = defaultManagers,
 }: PackageManagerSelectorProps) {
   const [selected, setSelected] = useState<PackageManager>(defaultManager);
 

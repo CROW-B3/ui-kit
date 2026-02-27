@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export interface AnimatedBackgroundProps {
   backgroundColor?: string;
@@ -18,7 +18,7 @@ export function AnimatedBackground({
   primaryGlowColor = '#854ED2',
   secondaryGlowColor = '#ffffffbd',
   tertiaryGlowColor = '#e0c8ffbe',
-  primaryGlowOpacity = 0.5,
+  primaryGlowOpacity: _primaryGlowOpacity = 0.5,
   enableVerticalFade = false,
   fadeIntensity = 0.85,
   variant = 'contained',
@@ -33,12 +33,9 @@ export function AnimatedBackground({
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
 
-      // Calculate scroll percentage (0 to 1)
       const maxScroll = documentHeight - windowHeight;
       const scrollPercentage = maxScroll > 0 ? scrollPosition / maxScroll : 0;
 
-      // Map scroll percentage to fadeIntensity
-      // Start at the provided fadeIntensity and increase to 0.98 as you scroll
       const minFade = Math.min(fadeIntensity, 0.3);
       const maxFade = 0.98;
       const newFadeIntensity = minFade + scrollPercentage * (maxFade - minFade);
@@ -46,7 +43,7 @@ export function AnimatedBackground({
       setScrollFade(newFadeIntensity);
     };
 
-    handleScroll(); // Initial call
+    handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [enableVerticalFade, fadeIntensity]);
@@ -143,7 +140,6 @@ export function AnimatedBackground({
         }}
       />
 
-      {/* Primary large glow with drifting motion */}
       <div
         className="glow-primary"
         style={{
@@ -158,7 +154,6 @@ export function AnimatedBackground({
         }}
       />
 
-      {/* Secondary glow with dramatic drifting and scaling */}
       <div
         className="glow-secondary"
         style={{
@@ -173,7 +168,6 @@ export function AnimatedBackground({
         }}
       />
 
-      {/* Vertical fade overlay - fades the background as it goes down */}
       {enableVerticalFade && (
         <div
           style={{

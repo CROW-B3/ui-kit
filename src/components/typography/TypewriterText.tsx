@@ -13,7 +13,6 @@ export function TypewriterText({ text }: TypewriterTextProps) {
   const [showCursor, setShowCursor] = useState(true);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Reset typewriter when text prop changes
   useEffect(() => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
