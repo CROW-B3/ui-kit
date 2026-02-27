@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Logo } from './Logo';
 
-// Crow logo
 const crowLogo = '/favicon.webp';
 
 const meta: Meta<typeof Logo> = {

@@ -3,7 +3,6 @@ import { Check, Copy } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { createHighlighter } from 'shiki';
 
-// Module-level singleton: theme loads once, languages are cached on demand
 let highlighterPromise: ReturnType<typeof createHighlighter> | null = null;
 
 function getHighlighter() {

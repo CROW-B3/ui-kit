@@ -32,7 +32,6 @@ import { MobileSidebar } from '@aspect/ui-kit';
     Story => (
       <div className="min-h-[600px] relative">
         <style>{`
-          /* Force mobile sidebar to be visible in Storybook on all screen sizes */
           .md\\:hidden {
             display: block !important;
           }

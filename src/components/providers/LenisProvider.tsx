@@ -5,24 +5,9 @@ import Lenis from 'lenis';
 import { useEffect, useRef } from 'react';
 
 export interface LenisProviderProps {
-  /**
-   * Child components to wrap with Lenis smooth scrolling
-   */
   children: ReactNode;
-
-  /**
-   * Custom Lenis options
-   */
   options?: ConstructorParameters<typeof Lenis>[0];
-
-  /**
-   * CSS selector for wrapper element
-   */
   wrapper?: string;
-
-  /**
-   * CSS selector for content element
-   */
   content?: string;
 }
 

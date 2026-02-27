@@ -91,7 +91,6 @@ export function Card({
   contentAlign = 'left',
   border,
 }: CardProps) {
-  // Use explicit border prop if provided, otherwise fall back to legacy isFirst/isLast logic
   const borderVariant =
     border || (isFirst ? 'left-right' : isLast ? 'right' : 'right');
 
@@ -107,23 +106,16 @@ export function Card({
       viewport={{ once: true }}
       transition={{ duration: 0.6, delay: index * 0.2 }}
     >
-      {/* Top border on hover */}
       <div className="absolute top-0 left-0 right-0 h-[1px] bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      {/* Bottom border on hover */}
       <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      {/* Corner squares - appear on hover */}
-      {/* Top-left corner */}
       <div className="absolute top-[1px] left-0 w-3 h-3 bg-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      {/* Top-right corner */}
       <div className="absolute top-[1px] right-0 w-3 h-3 bg-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      {/* Bottom-left corner */}
       <div className="absolute bottom-[1px] left-0 w-3 h-3 bg-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-      {/* Bottom-right corner */}
       <div className="absolute bottom-[1px] right-0 w-3 h-3 bg-white/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       {layout === 'documentation' && icon && (

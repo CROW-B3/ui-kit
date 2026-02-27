@@ -30,11 +30,12 @@ export function SidebarLogo({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Logo Container - When collapsed, swaps with button on hover */}
       <div
         className={cn(
           'h-[60px] w-[60px] flex items-center justify-center flex-shrink-0 relative transition-all duration-200',
-          isCollapsed && isHovered ? 'opacity-0 scale-95 pointer-events-none' : 'opacity-100 scale-100'
+          isCollapsed && isHovered
+            ? 'opacity-0 scale-95 pointer-events-none'
+            : 'opacity-100 scale-100'
         )}
       >
         <img
@@ -44,23 +45,28 @@ export function SidebarLogo({
         />
       </div>
 
-      {/* Collapse Button - Replaces logo when collapsed and hovered */}
       {isCollapsed && onToggleCollapse && (
         <div
           className={cn(
             'absolute left-0 h-[60px] w-[60px] flex items-center justify-center transition-all duration-200',
-            isHovered ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-95 pointer-events-none'
+            isHovered
+              ? 'opacity-100 scale-100 pointer-events-auto'
+              : 'opacity-0 scale-95 pointer-events-none'
           )}
         >
-          <CollapseToggleButton isCollapsed={isCollapsed} onToggle={onToggleCollapse} />
+          <CollapseToggleButton
+            isCollapsed={isCollapsed}
+            onToggle={onToggleCollapse}
+          />
         </div>
       )}
 
-      {/* Title and Subtitle Container - Fades with collapse */}
       <div
         className={cn(
           'flex flex-col flex-1 overflow-hidden transition-all duration-300',
-          isCollapsed ? 'opacity-0 w-0 pointer-events-none' : 'opacity-100 w-auto'
+          isCollapsed
+            ? 'opacity-0 w-0 pointer-events-none'
+            : 'opacity-100 w-auto'
         )}
       >
         <div
@@ -81,10 +87,12 @@ export function SidebarLogo({
         </div>
       </div>
 
-      {/* Collapse Button - Always visible on right when expanded */}
       {!isCollapsed && onToggleCollapse && (
         <div className="h-[60px] flex items-center justify-center flex-shrink-0 ml-4">
-          <CollapseToggleButton isCollapsed={isCollapsed} onToggle={onToggleCollapse} />
+          <CollapseToggleButton
+            isCollapsed={isCollapsed}
+            onToggle={onToggleCollapse}
+          />
         </div>
       )}
     </div>
