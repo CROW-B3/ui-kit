@@ -1,8 +1,8 @@
-// Shared constants and types from lib
 export * from '../lib/constants';
 export * from '../lib/types';
 export * from './backgrounds/AnimatedBackground';
 export * from './backgrounds/DashboardBackground';
+
 export * from './backgrounds/Globe';
 export * from './backgrounds/GradientBackground';
 export * from './buttons/Button';
@@ -25,6 +25,7 @@ export * from './cards/SyncStatusCard';
 export * from './cards/TipCard';
 export * from './chat/ChatHistorySection';
 export * from './chat/MessageBubble';
+export * from './display/CodeBlock';
 export * from './display/ConnectionStatus';
 export * from './display/IconBadge';
 export * from './display/Logo';

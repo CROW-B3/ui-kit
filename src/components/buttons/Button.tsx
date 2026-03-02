@@ -1,11 +1,12 @@
 'use client';
 
-import { LuArrowUpRight } from 'react-icons/lu';
-import { cva, type VariantProps } from 'class-variance-authority';
+import type { VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
+import { ArrowUpRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const buttonVariants = cva(
-  'rounded-full transition-all font-medium flex items-center justify-center gap-2 whitespace-nowrap',
+  'rounded-full transition-all font-medium flex items-center justify-center gap-2 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black',
   {
     variants: {
       variant: {
@@ -71,7 +72,7 @@ export function Button({
             {arrowIcon}
           </span>
         ) : (
-          <LuArrowUpRight className={cn('w-4 h-4', arrowClassName)} />
+          <ArrowUpRight size={16} className={arrowClassName} />
         ))}
     </>
   );

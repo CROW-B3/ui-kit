@@ -1,1 +1,56 @@
+<script>
+  if (typeof GPUShaderStage === 'undefined') {
+    globalThis.GPUShaderStage = { VERTEX: 1, FRAGMENT: 2, COMPUTE: 4 };
+  }
+  if (typeof GPUBufferUsage === 'undefined') {
+    globalThis.GPUBufferUsage = {
+      MAP_READ: 1,
+      MAP_WRITE: 2,
+      COPY_SRC: 4,
+      COPY_DST: 8,
+      INDEX: 16,
+      VERTEX: 32,
+      UNIFORM: 64,
+      STORAGE: 128,
+      INDIRECT: 256,
+      QUERY_RESOLVE: 512,
+    };
+  }
+  if (typeof GPUTextureUsage === 'undefined') {
+    globalThis.GPUTextureUsage = {
+      COPY_SRC: 1,
+      COPY_DST: 2,
+      TEXTURE_BINDING: 4,
+      STORAGE_BINDING: 8,
+      RENDER_ATTACHMENT: 16,
+    };
+  }
+</script>
 <link rel="icon" type="image/webp" href="/favicon.webp" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  html,
+  body {
+    background-color: #0a0a0a !important;
+  }
+  .docs-story {
+    background-color: #0a0a0a !important;
+  }
+  .sbdocs-wrapper {
+    background-color: #0a0a0a !important;
+  }
+  .sbdocs-content {
+    background-color: #0a0a0a !important;
+    max-width: 100vw !important;
+  }
+
+  @media (max-width: 768px) {
+    .docblock-argstable-body,
+    .docs-story {
+      overflow-x: auto;
+    }
+    table {
+      min-width: 500px;
+    }
+  }
+</style>

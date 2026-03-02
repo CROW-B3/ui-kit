@@ -10,11 +10,9 @@ export interface FooterLink {
 }
 
 export interface FooterProps {
-  // Container customization
   className?: string;
   containerClassName?: string;
 
-  // Invite section
   showInviteSection?: boolean;
   inviteContent?: React.ReactNode;
   invitePrefix?: string;
@@ -25,7 +23,6 @@ export interface FooterProps {
   inviteSectionClassName?: string;
   onInviteClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
 
-  // Terms section
   showTermsSection?: boolean;
   termsContent?: React.ReactNode;
   termsPrefix?: string;
@@ -35,23 +32,19 @@ export interface FooterProps {
   termsLinkClassName?: string;
   termsSeparator?: string;
 
-  // Additional custom sections
   beforeContent?: React.ReactNode;
   afterContent?: React.ReactNode;
   children?: React.ReactNode;
 
-  // Layout
   layout?: 'vertical' | 'horizontal';
   gap?: string;
   align?: 'left' | 'center' | 'right';
 }
 
 export function Footer({
-  // Container
   className = '',
   containerClassName = '',
 
-  // Invite section
   showInviteSection = true,
   inviteContent,
   invitePrefix = 'Have an invite?',
@@ -62,7 +55,6 @@ export function Footer({
   inviteSectionClassName = '',
   onInviteClick,
 
-  // Terms section
   showTermsSection = true,
   termsContent,
   termsPrefix = 'By creating an account, you agree to',
@@ -75,12 +67,10 @@ export function Footer({
   termsLinkClassName = '',
   termsSeparator = 'and',
 
-  // Additional content
   beforeContent,
   afterContent,
   children,
 
-  // Layout
   layout = 'vertical',
   gap = 'gap-2',
   align = 'center',

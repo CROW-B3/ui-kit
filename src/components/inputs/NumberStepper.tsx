@@ -1,6 +1,7 @@
+'use client';
+
+import { Minus, Plus } from 'lucide-react';
 import { useState } from 'react';
-import { IoIosAdd } from 'react-icons/io';
-import { FiMinus } from 'react-icons/fi';
 import { cn } from '../../lib/utils';
 
 export interface NumberStepperProps {
@@ -58,19 +59,19 @@ export function NumberStepper({
     sm: {
       button: 'w-6 h-6',
       text: 'text-xs min-w-[1.25rem]',
-      icon: 'text-xs',
+      iconSize: 12,
       gap: 'gap-2',
     },
     md: {
       button: 'w-8 h-8',
       text: 'text-sm min-w-[1.5rem]',
-      icon: 'text-sm',
+      iconSize: 14,
       gap: 'gap-4',
     },
     lg: {
       button: 'w-10 h-10',
       text: 'text-base min-w-[2rem]',
-      icon: 'text-base',
+      iconSize: 16,
       gap: 'gap-6',
     },
   };
@@ -98,7 +99,7 @@ export function NumberStepper({
           )}
           aria-label="Decrease value"
         >
-          <FiMinus className={sizeStyles[size].icon} />
+          <Minus size={sizeStyles[size].iconSize} />
         </button>
         <span
           className={cn(
@@ -118,7 +119,7 @@ export function NumberStepper({
           )}
           aria-label="Increase value"
         >
-          <IoIosAdd className={sizeStyles[size].icon} />
+          <Plus size={sizeStyles[size].iconSize} />
         </button>
       </div>
       {description && (

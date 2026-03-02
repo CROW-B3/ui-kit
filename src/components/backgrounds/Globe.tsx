@@ -1,9 +1,6 @@
 'use client';
 
-import { lazy, Suspense } from 'react';
-import { BiCctv } from 'react-icons/bi';
-import { BsGlobe2 } from 'react-icons/bs';
-import { HiOutlineShare } from 'react-icons/hi';
+import { lazy, Suspense, useEffect, useState } from 'react';
 
 export interface GlobePoint {
   label: string;
@@ -16,25 +13,24 @@ export interface GlobeProps {
   size?: number;
 }
 
-const DEFAULT_POINTS: GlobePoint[] = [
-  {
-    label: 'Internet',
-    icon: <BsGlobe2 className="text-3xl" />,
-    location: [0, -90] as [number, number],
-  },
-  {
-    label: 'CCTV',
-    icon: <BiCctv className="text-3xl" />,
-    location: [0, 30] as [number, number],
-  },
-  {
-    label: 'Social Media',
-    icon: <HiOutlineShare className="text-3xl" />,
-    location: [0, 150] as [number, number],
-  },
-];
-
 const GlobeRenderer = lazy(() => import('./GlobeRenderer'));
+
+function useResponsiveSize(requested: number): number {
+  const [size, setSize] = useState(() =>
+    typeof window !== 'undefined'
+      ? Math.min(requested, window.innerWidth - 32)
+      : requested
+  );
+
+  useEffect(() => {
+    const update = () => setSize(Math.min(requested, window.innerWidth - 32));
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [requested]);
+
+  return size;
+}
 
 function GlobeLoader({ size }: { size: number }) {
   return (
@@ -56,10 +52,12 @@ function GlobeLoader({ size }: { size: number }) {
   );
 }
 
-export function Globe({ points = DEFAULT_POINTS, size = 600 }: GlobeProps) {
+export function Globe({ points = [], size = 600 }: GlobeProps) {
+  const responsiveSize = useResponsiveSize(size);
+
   return (
-    <Suspense fallback={<GlobeLoader size={size} />}>
-      <GlobeRenderer points={points} size={size} />
+    <Suspense fallback={<GlobeLoader size={responsiveSize} />}>
+      <GlobeRenderer points={points} size={responsiveSize} />
     </Suspense>
   );
 }

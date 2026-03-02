@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { LuCheck } from 'react-icons/lu';
+import { Check } from 'lucide-react';
 import { PlanCard } from './PlanCard';
 
 const meta: Meta<typeof PlanCard> = {
@@ -30,7 +30,7 @@ import { PlanCard } from '@aspect/ui-kit';
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <div className="w-[320px]">
+      <div className="w-full max-w-[320px]">
         <Story />
       </div>
     ),
@@ -48,9 +48,9 @@ export const Default: Story = {
     },
     price: { amount: '$9', period: 'mo' },
     features: [
-      { icon: <LuCheck />, text: '5 Projects' },
-      { icon: <LuCheck />, text: '10GB Storage' },
-      { icon: <LuCheck />, text: 'Basic Support' },
+      { icon: <Check />, text: '5 Projects' },
+      { icon: <Check />, text: '10GB Storage' },
+      { icon: <Check />, text: 'Basic Support' },
     ],
     footer: { buttons: [{ text: 'Get Started', variant: 'outline' }] },
     animated: false,
@@ -70,9 +70,9 @@ export const Recommended: Story = {
     price: { amount: '$29', period: 'mo' },
     recommended: true,
     features: [
-      { icon: <LuCheck />, text: 'Unlimited Projects', variant: 'highlighted' },
-      { icon: <LuCheck />, text: '100GB Storage' },
-      { icon: <LuCheck />, text: 'Priority Support' },
+      { icon: <Check />, text: 'Unlimited Projects', variant: 'highlighted' },
+      { icon: <Check />, text: '100GB Storage' },
+      { icon: <Check />, text: 'Priority Support' },
     ],
     footer: { buttons: [{ text: 'Start Free Trial', variant: 'primary' }] },
     animated: false,
@@ -99,8 +99,8 @@ export const WithSpecs: Story = {
       { label: 'Team Members', value: 'Unlimited' },
     ],
     features: [
-      { icon: <LuCheck />, text: 'Everything in Pro' },
-      { icon: <LuCheck />, text: 'SSO Integration' },
+      { icon: <Check />, text: 'Everything in Pro' },
+      { icon: <Check />, text: 'SSO Integration' },
     ],
     footer: { buttons: [{ text: 'Contact Sales', variant: 'secondary' }] },
     animated: false,
@@ -121,8 +121,8 @@ export const WithCheckbox: Story = {
     showCheckbox: true,
     selected: true,
     features: [
-      { icon: <LuCheck />, text: '1 Project' },
-      { icon: <LuCheck />, text: '1GB Storage', variant: 'disabled' },
+      { icon: <Check />, text: '1 Project' },
+      { icon: <Check />, text: '1GB Storage', variant: 'disabled' },
     ],
     animated: false,
   },

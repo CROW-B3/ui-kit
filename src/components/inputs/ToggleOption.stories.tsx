@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { Bell } from 'lucide-react';
 import { useState } from 'react';
-import { LuBell } from 'react-icons/lu';
 import { ToggleOption } from './ToggleOption';
 
 const meta: Meta<typeof ToggleOption> = {
@@ -60,7 +60,7 @@ export const WithIcon: Story = {
   args: {
     label: 'Notifications',
     description: 'Receive alerts',
-    icon: <LuBell size={16} />,
+    icon: <Bell size={16} />,
   },
   parameters: {
     docs: {

@@ -3,7 +3,14 @@
 import type { GlobePoint, GlobeProps } from './Globe';
 import { motion } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
-import * as THREE from 'three';
+import {
+  AmbientLight,
+  DirectionalLight,
+  PerspectiveCamera,
+  Scene,
+  Vector3,
+  WebGLRenderer,
+} from 'three';
 
 import ThreeGlobe from 'three-globe';
 
@@ -75,9 +82,10 @@ function generatePointsData(points: GlobePoint[]) {
 
 export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
+  const rendererRef = useRef<WebGLRenderer | null>(null);
   const animationRef = useRef<number | undefined>(undefined);
   const globeRef = useRef<ThreeGlobe | null>(null);
+  const lastFlushRef = useRef(0);
 
   const [pointPositions, setPointPositions] = useState<PointPosition[]>([]);
   const [visiblePoints, setVisiblePoints] = useState<Set<number>>(
@@ -90,7 +98,7 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
     const timeouts: ReturnType<typeof setTimeout>[] = [];
 
     for (let i = 0; i < displayPoints.length; i++) {
-      // eslint-disable-next-line react-web-api/no-leaked-timeout -- Cleanup is handled below
+      // eslint-disable-next-line react-web-api/no-leaked-timeout
       const timeout = setTimeout(() => {
         setVisiblePoints(prev => new Set(prev).add(i));
       }, i * 800);
@@ -109,32 +117,30 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
     const container = containerRef.current;
     if (!container) return;
 
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(50, 1, 1, 1000);
-    camera.position.z = 350;
+    const scene = new Scene();
+    const camera = new PerspectiveCamera(50, 1, 1, 1000);
+    const isMobile = window.innerWidth < 768;
+    camera.position.z = isMobile ? 440 : 350;
+    const maxPixelRatio = isMobile ? 1 : 2;
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(size, size);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio));
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
+    const ambientLight = new AmbientLight(0xffffff, 2.0);
     scene.add(ambientLight);
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 2.2);
+    const directionalLight = new DirectionalLight(0xffffff, 2.2);
     directionalLight.position.set(1, 1, 1);
     scene.add(directionalLight);
 
     const GLOBE_RADIUS = 100;
 
     const globe = new ThreeGlobe({ animateIn: true })
-      .globeImageUrl(
-        'https://unpkg.com/three-globe@2.45.0/example/img/earth-night.jpg'
-      )
-      .bumpImageUrl(
-        'https://unpkg.com/three-globe@2.45.0/example/img/earth-topology.png'
-      )
+      .globeImageUrl('/textures/earth-night.jpg')
+      .bumpImageUrl('/textures/earth-topology.png')
       .showAtmosphere(true)
       .atmosphereColor('#3a82f7')
       .atmosphereAltitude(0.15)
@@ -155,28 +161,41 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
 
     scene.rotation.x = 0;
 
+    const tempPos = new Vector3();
+    const projectedPos = new Vector3();
+    const yAxis = new Vector3(0, 1, 0);
+
+    let isVisible = true;
+    let disposed = false;
+
     const animate = () => {
+      if (!isVisible || disposed) {
+        animationRef.current = undefined;
+        return;
+      }
+
       globe.rotation.y += 0.003;
 
-      const positions: PointPosition[] = displayPoints.map((point, _index) => {
+      const positions: PointPosition[] = displayPoints.map(point => {
         const [lat, lng] = point.location;
 
         const phi = ((90 - lat) * Math.PI) / 180;
         const theta = ((lng + 180) * Math.PI) / 180;
 
-        const pos = new THREE.Vector3(
+        tempPos.set(
           -GLOBE_RADIUS * Math.sin(phi) * Math.cos(theta),
           GLOBE_RADIUS * Math.cos(phi),
           GLOBE_RADIUS * Math.sin(phi) * Math.sin(theta)
         );
 
-        pos.applyAxisAngle(new THREE.Vector3(0, 1, 0), globe.rotation.y);
+        tempPos.applyAxisAngle(yAxis, globe.rotation.y);
 
-        const projected = pos.clone().project(camera);
-        const screenX = (projected.x * 0.5 + 0.5) * size;
-        const screenY = (-projected.y * 0.5 + 0.5) * size;
+        const normalizedZ = tempPos.z / GLOBE_RADIUS;
 
-        const normalizedZ = pos.z / GLOBE_RADIUS;
+        projectedPos.copy(tempPos).project(camera);
+        const screenX = (projectedPos.x * 0.5 + 0.5) * size;
+        const screenY = (-projectedPos.y * 0.5 + 0.5) * size;
+
         let opacity = 1;
         if (normalizedZ > 0.3) {
           opacity = 1;
@@ -214,28 +233,65 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
         };
       });
 
-      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect -- Animation loop requires setState on each frame
-      setPointPositions(positions);
+      const now = performance.now();
+      if (now - lastFlushRef.current >= 100 && !disposed) {
+        lastFlushRef.current = now;
+        setPointPositions(positions); // eslint-disable-line react-hooks-extra/no-direct-set-state-in-use-effect
+      }
 
       renderer.render(scene, camera);
       animationRef.current = requestAnimationFrame(animate);
     };
 
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        isVisible = entry.isIntersecting;
+        if (isVisible && !animationRef.current) {
+          animationRef.current = requestAnimationFrame(animate);
+        }
+      },
+      { threshold: 0 }
+    );
+    observer.observe(container);
+
     animate();
 
     return () => {
+      disposed = true;
+      isVisible = false;
+      observer.disconnect();
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
+        animationRef.current = undefined;
       }
+      scene.traverse(child => {
+        if ('geometry' in child && child.geometry) {
+          (child.geometry as { dispose: () => void }).dispose();
+        }
+        if ('material' in child && child.material) {
+          const materials = Array.isArray(child.material)
+            ? child.material
+            : [child.material];
+          for (const mat of materials) {
+            if (mat.map) mat.map.dispose();
+            if (mat.bumpMap) mat.bumpMap.dispose();
+            mat.dispose();
+          }
+        }
+      });
       if (rendererRef.current && container) {
         container.removeChild(rendererRef.current.domElement);
         rendererRef.current.dispose();
       }
+      globeRef.current = null;
     };
   }, [size, displayPoints]);
 
   return (
-    <div className="relative" style={{ width: size, height: size }}>
+    <div
+      className="relative overflow-hidden"
+      style={{ width: size, height: size }}
+    >
       <div ref={containerRef} className="absolute inset-0" />
 
       {displayPoints.map((point, index) => {
@@ -266,19 +322,31 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
               scale: { duration: 0.3, ease: 'easeOut' },
             }}
           >
-            <div className="relative">
-              <div className="w-16 h-16 rounded-full bg-black/70 border-2 border-white/50 backdrop-blur-sm flex items-center justify-center text-white shadow-lg">
+            <div
+              className="relative"
+              style={{ fontSize: size < 500 ? '0.5rem' : '1rem' }}
+            >
+              <div
+                className="rounded-full bg-black/70 border-2 border-white/50 backdrop-blur-sm flex items-center justify-center text-white shadow-lg"
+                style={{
+                  width: size < 500 ? 35 : 64,
+                  height: size < 500 ? 35 : 64,
+                }}
+              >
                 {point.icon}
               </div>
               {showText && (
                 <motion.div
-                  className="absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap"
+                  className="absolute top-full mt-1 left-1/2 -translate-x-1/2 whitespace-nowrap"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <span className="text-sm text-white font-medium drop-shadow-lg">
+                  <span
+                    className="text-white font-medium drop-shadow-lg"
+                    style={{ fontSize: size < 500 ? '0.65rem' : '0.875rem' }}
+                  >
                     {point.label}
                   </span>
                 </motion.div>

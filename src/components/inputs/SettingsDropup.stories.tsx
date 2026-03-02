@@ -29,7 +29,7 @@ import { SettingsDropup } from '@aspect/ui-kit';
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <div className="relative w-[280px] h-[200px] bg-black/30 rounded-lg">
+      <div className="relative w-full max-w-[280px] h-[200px] bg-black/30 rounded-lg">
         <Story />
       </div>
     ),

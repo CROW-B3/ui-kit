@@ -29,7 +29,7 @@ import { ListItem } from '@aspect/ui-kit';
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <div className="w-[320px] bg-black/30 rounded-lg">
+      <div className="w-full max-w-[320px] bg-black/30 rounded-lg">
         <Story />
       </div>
     ),

@@ -29,7 +29,7 @@ import { SyncStatusCard } from '@aspect/ui-kit';
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <div className="w-[280px]">
+      <div className="w-full max-w-[280px]">
         <Story />
       </div>
     ),

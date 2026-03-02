@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { LuCloud, LuDatabase, LuGitBranch } from 'react-icons/lu';
+import { Cloud, Database, GitBranch } from 'lucide-react';
 import { ConnectionOption } from './ConnectionOption';
 
 const meta: Meta<typeof ConnectionOption> = {
@@ -30,7 +30,7 @@ import { ConnectionOption } from '@aspect/ui-kit';
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <div className="w-[400px] bg-black/50 rounded-xl">
+      <div className="w-full max-w-[400px] bg-black/50 rounded-xl">
         <Story />
       </div>
     ),
@@ -42,7 +42,7 @@ type Story = StoryObj<typeof meta>;
 
 export const NotStarted: Story = {
   args: {
-    icon: <LuCloud size={18} />,
+    icon: <Cloud size={18} />,
     title: 'Cloud Storage',
     description: 'Connect your cloud storage provider',
     status: 'not_started',
@@ -58,7 +58,7 @@ export const NotStarted: Story = {
 
 export const InProgress: Story = {
   args: {
-    icon: <LuDatabase size={18} />,
+    icon: <Database size={18} />,
     title: 'Database',
     description: 'Setting up database connection',
     status: 'in_progress',
@@ -75,7 +75,7 @@ export const InProgress: Story = {
 
 export const Connected: Story = {
   args: {
-    icon: <LuGitBranch size={18} />,
+    icon: <GitBranch size={18} />,
     title: 'Version Control',
     description: 'Git repository connected',
     status: 'connected',
@@ -94,19 +94,19 @@ export const AllStatuses: Story = {
   render: () => (
     <div className="flex flex-col">
       <ConnectionOption
-        icon={<LuCloud size={18} />}
+        icon={<Cloud size={18} />}
         title="Cloud Storage"
         description="Not configured yet"
         status="not_started"
       />
       <ConnectionOption
-        icon={<LuDatabase size={18} />}
+        icon={<Database size={18} />}
         title="Database"
         description="Connecting..."
         status="in_progress"
       />
       <ConnectionOption
-        icon={<LuGitBranch size={18} />}
+        icon={<GitBranch size={18} />}
         title="GitHub"
         description="Repository linked"
         status="connected"

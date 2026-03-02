@@ -36,7 +36,7 @@ import { SearchInput } from '@aspect/ui-kit';
   },
   decorators: [
     Story => (
-      <div className="w-[480px]">
+      <div className="w-full max-w-[480px]">
         <Story />
       </div>
     ),

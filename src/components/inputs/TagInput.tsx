@@ -1,5 +1,8 @@
-import { useState, KeyboardEvent } from 'react';
-import { LuX } from 'react-icons/lu';
+'use client';
+
+import type { KeyboardEvent } from 'react';
+import { X } from 'lucide-react';
+import { useState } from 'react';
 
 interface TagInputProps {
   label: string;
@@ -45,10 +48,12 @@ export function TagInput({
           >
             {tag}
             <button
+              type="button"
+              aria-label={`Remove tag ${tag}`}
               onClick={() => handleRemoveTag(index)}
               className="hover:text-white text-violet-300 focus:outline-none"
             >
-              <LuX className="text-[12px]" />
+              <X size={12} />
             </button>
           </span>
         ))}

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, KeyboardEvent } from 'react';
-import { LuX } from 'react-icons/lu';
+import type { ChangeEvent, KeyboardEvent } from 'react';
+import { X } from 'lucide-react';
+import { useState } from 'react';
 
 interface EmailTagInputProps {
   emails: string[];
@@ -11,7 +12,7 @@ interface EmailTagInputProps {
 }
 
 const isValidEmail = (email: string): boolean => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  return /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(email);
 };
 
 export function EmailTagInput({
@@ -21,6 +22,22 @@ export function EmailTagInput({
   onInvalidEmail,
 }: EmailTagInputProps) {
   const [inputValue, setInputValue] = useState('');
+
+  const addEmail = () => {
+    const trimmed = inputValue.trim();
+    if (trimmed && !emails.includes(trimmed)) {
+      if (isValidEmail(trimmed)) {
+        onEmailsChange([...emails, trimmed]);
+        setInputValue('');
+      } else {
+        onInvalidEmail?.(trimmed);
+      }
+    }
+  };
+
+  const removeEmail = (index: number) => {
+    onEmailsChange(emails.filter((_, i) => i !== index));
+  };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -35,42 +52,35 @@ export function EmailTagInput({
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
 
     if (value.includes(',') || value.includes(' ')) {
-      const emailToAdd = value.replace(/[,\s]/g, '').trim();
-      if (emailToAdd && !emails.includes(emailToAdd)) {
-        if (isValidEmail(emailToAdd)) {
-          onEmailsChange([...emails, emailToAdd]);
-          setInputValue('');
+      const tokens = value
+        .split(/[,\s]+/)
+        .map(token => token.trim())
+        .filter(Boolean);
+
+      const existing = new Set(emails);
+      const validToAdd: string[] = [];
+
+      tokens.forEach(token => {
+        if (existing.has(token)) return;
+        if (isValidEmail(token)) {
+          validToAdd.push(token);
+          existing.add(token);
         } else {
-          onInvalidEmail?.(emailToAdd);
-          setInputValue('');
+          onInvalidEmail?.(token);
         }
-      } else {
-        setInputValue('');
+      });
+
+      if (validToAdd.length > 0) {
+        onEmailsChange([...emails, ...validToAdd]);
       }
+      setInputValue('');
     } else {
       setInputValue(value);
     }
-  };
-
-  const addEmail = () => {
-    const trimmedEmail = inputValue.trim();
-    if (trimmedEmail && !emails.includes(trimmedEmail)) {
-      if (isValidEmail(trimmedEmail)) {
-        onEmailsChange([...emails, trimmedEmail]);
-        setInputValue('');
-      } else {
-        onInvalidEmail?.(trimmedEmail);
-        setInputValue('');
-      }
-    }
-  };
-
-  const removeEmail = (index: number) => {
-    onEmailsChange(emails.filter((_, i) => i !== index));
   };
 
   return (
@@ -91,10 +101,11 @@ export function EmailTagInput({
             {email}
             <button
               type="button"
+              aria-label={`Remove ${email}`}
               onClick={() => removeEmail(index)}
               className="hover:text-white text-violet-300 focus:outline-none flex items-center"
             >
-              <LuX className="w-3 h-3" />
+              <X size={12} />
             </button>
           </span>
         ))}

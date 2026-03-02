@@ -29,7 +29,7 @@ import { Footer } from '@aspect/ui-kit';
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <div className="w-[600px]">
+      <div className="w-full max-w-[600px]">
         <Story />
       </div>
     ),

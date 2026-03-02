@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { LuLink } from 'react-icons/lu';
+import { LinkIcon } from 'lucide-react';
 
 interface CompanyPageButtonProps {
   platform: string;
@@ -27,7 +27,7 @@ export function CompanyPageButton({
         {icon && <span className="text-sm">{icon}</span>}
         <span className="text-sm">{platform}</span>
       </div>
-      <LuLink className="text-[14px]" />
+      <LinkIcon size={14} />
     </button>
   );
 }

@@ -30,7 +30,7 @@ import { SidebarLogo } from '@aspect/ui-kit';
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <div className="w-[260px] bg-black/30 p-4 rounded-lg">
+      <div className="w-full max-w-[260px] bg-black/30 p-4 rounded-lg">
         <Story />
       </div>
     ),

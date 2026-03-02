@@ -1,5 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
+import React from 'react';
 
 export interface OrderSummaryItem {
   label: string;
@@ -47,7 +47,6 @@ export const OrderSummaryCard: React.FC<OrderSummaryCardProps> = ({
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5, delay }}
     >
-      {/* Header */}
       <div className="flex justify-between items-center mb-7">
         <h2 className="text-base font-medium text-white">{title}</h2>
         {onChangePlan && (
@@ -61,7 +60,6 @@ export const OrderSummaryCard: React.FC<OrderSummaryCardProps> = ({
         )}
       </div>
 
-      {/* Summary Items */}
       <div className="space-y-5 mb-7">
         {items.map(item => (
           <div
@@ -82,7 +80,6 @@ export const OrderSummaryCard: React.FC<OrderSummaryCardProps> = ({
 
       <div className="h-px bg-white/5 w-full mb-7"></div>
 
-      {/* Pricing Details */}
       <div className="space-y-5 mb-7">
         {subtotal && (
           <div className="flex justify-between items-center">
@@ -112,7 +109,6 @@ export const OrderSummaryCard: React.FC<OrderSummaryCardProps> = ({
         </div>
       </div>
 
-      {/* Footer */}
       {footer && (
         <div className="flex items-center justify-center pt-4 border-t border-white/5">
           <div className="text-[10px] text-gray-600 mt-5 font-medium">

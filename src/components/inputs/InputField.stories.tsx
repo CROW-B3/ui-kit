@@ -29,7 +29,7 @@ import { InputField } from '@aspect/ui-kit';
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <div className="w-[400px]">
+      <div className="w-full max-w-[400px]">
         <Story />
       </div>
     ),

@@ -39,7 +39,7 @@ import { Divider } from '@aspect/ui-kit';
   },
   decorators: [
     Story => (
-      <div className="w-[400px]">
+      <div className="w-full max-w-[400px]">
         <Story />
       </div>
     ),
