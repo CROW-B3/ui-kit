@@ -82,7 +82,7 @@ import { Card } from '@aspect/ui-kit';
   },
   decorators: [
     Story => (
-      <div className="w-[400px]">
+      <div className="w-full max-w-[400px]">
         <Story />
       </div>
     ),
@@ -219,7 +219,7 @@ export const CenteredContent: Story = {
 
 export const BorderVariants: Story = {
   render: () => (
-    <div className="grid grid-cols-2 gap-4 w-[600px]">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-[600px]">
       <Card
         title="All Borders"
         description="Border on all sides"

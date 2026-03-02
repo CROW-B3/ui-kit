@@ -29,7 +29,7 @@ import { MetricsCard } from '@aspect/ui-kit';
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <div className="w-[280px]">
+      <div className="w-full max-w-[280px]">
         <Story />
       </div>
     ),
@@ -107,7 +107,7 @@ export const CustomChart: Story = {
 
 export const MultipleCards: Story = {
   render: () => (
-    <div className="grid grid-cols-2 gap-4 w-[580px]">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-[580px]">
       <MetricsCard
         title="Revenue"
         value="$45,231"

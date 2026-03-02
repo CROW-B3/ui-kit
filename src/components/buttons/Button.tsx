@@ -6,7 +6,7 @@ import { ArrowUpRight } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 const buttonVariants = cva(
-  'rounded-full transition-all font-medium flex items-center justify-center gap-2 whitespace-nowrap',
+  'rounded-full transition-all font-medium flex items-center justify-center gap-2 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black',
   {
     variants: {
       variant: {

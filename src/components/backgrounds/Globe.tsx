@@ -1,6 +1,6 @@
 'use client';
 
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 
 export interface GlobePoint {
   label: string;
@@ -13,8 +13,24 @@ export interface GlobeProps {
   size?: number;
 }
 
-// Lazy load Three.js and three-globe
 const GlobeRenderer = lazy(() => import('./GlobeRenderer'));
+
+function useResponsiveSize(requested: number): number {
+  const [size, setSize] = useState(() =>
+    typeof window !== 'undefined'
+      ? Math.min(requested, window.innerWidth - 32)
+      : requested
+  );
+
+  useEffect(() => {
+    const update = () => setSize(Math.min(requested, window.innerWidth - 32));
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, [requested]);
+
+  return size;
+}
 
 function GlobeLoader({ size }: { size: number }) {
   return (
@@ -37,9 +53,11 @@ function GlobeLoader({ size }: { size: number }) {
 }
 
 export function Globe({ points = [], size = 600 }: GlobeProps) {
+  const responsiveSize = useResponsiveSize(size);
+
   return (
-    <Suspense fallback={<GlobeLoader size={size} />}>
-      <GlobeRenderer points={points} size={size} />
+    <Suspense fallback={<GlobeLoader size={responsiveSize} />}>
+      <GlobeRenderer points={points} size={responsiveSize} />
     </Suspense>
   );
 }

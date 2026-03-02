@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { LuHouse, LuSettings, LuUser } from 'react-icons/lu';
+import { House, Settings, User } from 'lucide-react';
 import { NavTooltip } from './NavTooltip';
 
 const meta: Meta<typeof NavTooltip> = {
@@ -38,7 +38,7 @@ export const Default: Story = {
     content: 'Home',
     children: (
       <button className="p-3 rounded-lg bg-white/5 hover:bg-white/10">
-        <LuHouse className="w-5 h-5 text-gray-400" />
+        <House className="w-5 h-5 text-gray-400" />
       </button>
     ),
   },
@@ -56,17 +56,17 @@ export const Positions: Story = {
     <div className="flex gap-8">
       <NavTooltip content="Right" side="right">
         <button className="p-3 rounded-lg bg-white/5">
-          <LuHouse className="w-5 h-5 text-gray-400" />
+          <House className="w-5 h-5 text-gray-400" />
         </button>
       </NavTooltip>
       <NavTooltip content="Bottom" side="bottom">
         <button className="p-3 rounded-lg bg-white/5">
-          <LuSettings className="w-5 h-5 text-gray-400" />
+          <Settings className="w-5 h-5 text-gray-400" />
         </button>
       </NavTooltip>
       <NavTooltip content="Top" side="top">
         <button className="p-3 rounded-lg bg-white/5">
-          <LuUser className="w-5 h-5 text-gray-400" />
+          <User className="w-5 h-5 text-gray-400" />
         </button>
       </NavTooltip>
     </div>
@@ -86,7 +86,7 @@ export const Disabled: Story = {
     enabled: false,
     children: (
       <button className="p-3 rounded-lg bg-white/5">
-        <LuHouse className="w-5 h-5 text-gray-400" />
+        <House className="w-5 h-5 text-gray-400" />
       </button>
     ),
   },

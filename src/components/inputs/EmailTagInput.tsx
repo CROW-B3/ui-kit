@@ -12,7 +12,7 @@ interface EmailTagInputProps {
 }
 
 const isValidEmail = (email: string): boolean => {
-  return /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(email);
+  return /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/.test(email);
 };
 
 export function EmailTagInput({

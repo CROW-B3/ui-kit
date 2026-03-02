@@ -30,7 +30,7 @@ import { SettingsModal } from '@aspect/ui-kit';
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <div className="min-h-[500px] w-[400px]">
+      <div className="min-h-[500px] w-full max-w-[400px]">
         <Story />
       </div>
     ),

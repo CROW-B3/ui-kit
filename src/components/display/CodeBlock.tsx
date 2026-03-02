@@ -1,3 +1,5 @@
+'use client';
+
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Copy } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -50,7 +52,8 @@ export function CodeBlock({
           theme: 'github-dark-default',
         });
         if (!cancelled) setHighlightedHtml(html);
-      } catch {
+      } catch (err) {
+        console.error('[CodeBlock] Syntax highlighting failed:', err);
         if (!cancelled) setHighlightedHtml('');
       }
     };

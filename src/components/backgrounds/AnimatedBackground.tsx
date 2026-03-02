@@ -151,6 +151,8 @@ export function AnimatedBackground({
           borderRadius: '50%',
           background: `radial-gradient(circle, ${primaryGlowColor} 0%, transparent 70%)`,
           filter: 'blur(40px)',
+          willChange: 'transform, opacity',
+          contain: 'layout style paint',
         }}
       />
 
@@ -165,6 +167,8 @@ export function AnimatedBackground({
           borderRadius: '50%',
           background: `radial-gradient(circle, ${secondaryGlowColor} 0%, ${tertiaryGlowColor} 40%, transparent 65%)`,
           filter: 'blur(80px)',
+          willChange: 'transform, opacity',
+          contain: 'layout style paint',
         }}
       />
 

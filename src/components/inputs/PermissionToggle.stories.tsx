@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { Bell, Mail, Shield } from 'lucide-react';
 import { useState } from 'react';
-import { LuBell, LuMail, LuShield } from 'react-icons/lu';
 import { PermissionToggle } from './PermissionToggle';
 
 const meta: Meta<typeof PermissionToggle> = {
@@ -31,7 +31,7 @@ import { PermissionToggle } from '@aspect/ui-kit';
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <div className="w-[320px]">
+      <div className="w-full max-w-[320px]">
         <Story />
       </div>
     ),
@@ -43,7 +43,7 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    icon: <LuBell size={16} />,
+    icon: <Bell size={16} />,
     title: 'Notifications',
     description: 'Receive push notifications',
     enabled: false,
@@ -60,7 +60,7 @@ export const Default: Story = {
 
 export const Enabled: Story = {
   args: {
-    icon: <LuMail size={16} />,
+    icon: <Mail size={16} />,
     title: 'Email Updates',
     description: 'Get weekly email updates',
     enabled: true,
@@ -77,7 +77,7 @@ export const Enabled: Story = {
 
 export const Highlighted: Story = {
   args: {
-    icon: <LuShield size={16} />,
+    icon: <Shield size={16} />,
     title: 'Two-Factor Auth',
     description: 'Enhanced security for your account',
     enabled: true,
@@ -98,7 +98,7 @@ export const Interactive: Story = {
     const [enabled, setEnabled] = useState(false);
     return (
       <PermissionToggle
-        icon={<LuBell size={16} />}
+        icon={<Bell size={16} />}
         title="Notifications"
         description="Click to toggle"
         enabled={enabled}
@@ -123,21 +123,21 @@ export const Multiple: Story = {
     return (
       <div className="flex flex-col gap-2">
         <PermissionToggle
-          icon={<LuBell size={16} />}
+          icon={<Bell size={16} />}
           title="Notifications"
           description="Push notifications"
           enabled={notifications}
           onToggle={setNotifications}
         />
         <PermissionToggle
-          icon={<LuMail size={16} />}
+          icon={<Mail size={16} />}
           title="Emails"
           description="Weekly updates"
           enabled={emails}
           onToggle={setEmails}
         />
         <PermissionToggle
-          icon={<LuShield size={16} />}
+          icon={<Shield size={16} />}
           title="2FA"
           description="Two-factor auth"
           enabled={security}

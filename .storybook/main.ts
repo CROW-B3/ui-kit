@@ -18,7 +18,7 @@ const config: StorybookConfig = {
   features: {
     sidebarOnboardingChecklist: false,
   },
-  viteFinal: async config => {
+  viteFinal: async (config, { configType }) => {
     config.define = {
       ...config.define,
       'process.env': {},
@@ -32,7 +32,65 @@ const config: StorybookConfig = {
     };
     config.optimizeDeps = {
       ...config.optimizeDeps,
-      include: [...(config.optimizeDeps?.include || []), 'react-icons/lu'],
+      include: [
+        ...(config.optimizeDeps?.include || []),
+        'three',
+        'three-globe',
+        'framer-motion',
+        'lenis',
+      ],
+    };
+    config.build = {
+      ...config.build,
+      sourcemap: configType === 'DEVELOPMENT',
+      ...(configType === 'PRODUCTION' && {
+        minify: 'esbuild' as const,
+        esbuild: {
+          drop: ['console', 'debugger'],
+        },
+      }),
+      rollupOptions: {
+        ...config.build?.rollupOptions,
+        onwarn(warning, defaultHandler) {
+          if (
+            warning.code === 'MODULE_LEVEL_DIRECTIVE' &&
+            warning.message.includes('use client')
+          ) {
+            return;
+          }
+          if (
+            warning.message?.includes(
+              "Can't resolve original location of error"
+            )
+          ) {
+            return;
+          }
+          defaultHandler(warning);
+        },
+        output: {
+          ...(config.build?.rollupOptions?.output as object),
+          manualChunks(id: string) {
+            if (
+              id.includes('node_modules/three-globe') ||
+              id.includes('node_modules/three/')
+            ) {
+              return 'vendor-three';
+            }
+            if (id.includes('node_modules/framer-motion')) {
+              return 'vendor-framer-motion';
+            }
+            if (
+              id.includes('node_modules/shiki') ||
+              id.includes('node_modules/@shikijs')
+            ) {
+              return 'vendor-shiki';
+            }
+            if (id.includes('node_modules/lenis')) {
+              return 'vendor-lenis';
+            }
+          },
+        },
+      },
     };
     return config;
   },

@@ -29,7 +29,7 @@ import { PatternCard } from '@aspect/ui-kit';
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <div className="w-[420px]">
+      <div className="w-full max-w-[420px]">
         <Story />
       </div>
     ),

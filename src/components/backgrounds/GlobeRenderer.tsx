@@ -85,7 +85,6 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
   const rendererRef = useRef<WebGLRenderer | null>(null);
   const animationRef = useRef<number | undefined>(undefined);
   const globeRef = useRef<ThreeGlobe | null>(null);
-  const positionsRef = useRef<PointPosition[]>([]);
   const lastFlushRef = useRef(0);
 
   const [pointPositions, setPointPositions] = useState<PointPosition[]>([]);
@@ -121,7 +120,7 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
     const scene = new Scene();
     const camera = new PerspectiveCamera(50, 1, 1, 1000);
     const isMobile = window.innerWidth < 768;
-    camera.position.z = isMobile ? 455 : 350;
+    camera.position.z = isMobile ? 440 : 350;
     const maxPixelRatio = isMobile ? 1 : 2;
 
     const renderer = new WebGLRenderer({ antialias: true, alpha: true });
@@ -163,12 +162,14 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
     scene.rotation.x = 0;
 
     const tempPos = new Vector3();
+    const projectedPos = new Vector3();
     const yAxis = new Vector3(0, 1, 0);
 
     let isVisible = true;
+    let disposed = false;
 
     const animate = () => {
-      if (!isVisible) {
+      if (!isVisible || disposed) {
         animationRef.current = undefined;
         return;
       }
@@ -191,9 +192,9 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
 
         const normalizedZ = tempPos.z / GLOBE_RADIUS;
 
-        const projected = tempPos.clone().project(camera);
-        const screenX = (projected.x * 0.5 + 0.5) * size;
-        const screenY = (-projected.y * 0.5 + 0.5) * size;
+        projectedPos.copy(tempPos).project(camera);
+        const screenX = (projectedPos.x * 0.5 + 0.5) * size;
+        const screenY = (-projectedPos.y * 0.5 + 0.5) * size;
 
         let opacity = 1;
         if (normalizedZ > 0.3) {
@@ -232,10 +233,8 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
         };
       });
 
-      positionsRef.current = positions;
-
       const now = performance.now();
-      if (now - lastFlushRef.current >= 100) {
+      if (now - lastFlushRef.current >= 100 && !disposed) {
         lastFlushRef.current = now;
         setPointPositions(positions); // eslint-disable-line react-hooks-extra/no-direct-set-state-in-use-effect
       }
@@ -258,19 +257,41 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
     animate();
 
     return () => {
+      disposed = true;
+      isVisible = false;
       observer.disconnect();
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
+        animationRef.current = undefined;
       }
+      scene.traverse(child => {
+        if ('geometry' in child && child.geometry) {
+          (child.geometry as { dispose: () => void }).dispose();
+        }
+        if ('material' in child && child.material) {
+          const materials = Array.isArray(child.material)
+            ? child.material
+            : [child.material];
+          for (const mat of materials) {
+            if (mat.map) mat.map.dispose();
+            if (mat.bumpMap) mat.bumpMap.dispose();
+            mat.dispose();
+          }
+        }
+      });
       if (rendererRef.current && container) {
         container.removeChild(rendererRef.current.domElement);
         rendererRef.current.dispose();
       }
+      globeRef.current = null;
     };
   }, [size, displayPoints]);
 
   return (
-    <div className="relative" style={{ width: size, height: size }}>
+    <div
+      className="relative overflow-hidden"
+      style={{ width: size, height: size }}
+    >
       <div ref={containerRef} className="absolute inset-0" />
 
       {displayPoints.map((point, index) => {
@@ -301,19 +322,31 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
               scale: { duration: 0.3, ease: 'easeOut' },
             }}
           >
-            <div className="relative">
-              <div className="w-16 h-16 rounded-full bg-black/70 border-2 border-white/50 backdrop-blur-sm flex items-center justify-center text-white shadow-lg">
+            <div
+              className="relative"
+              style={{ fontSize: size < 500 ? '0.5rem' : '1rem' }}
+            >
+              <div
+                className="rounded-full bg-black/70 border-2 border-white/50 backdrop-blur-sm flex items-center justify-center text-white shadow-lg"
+                style={{
+                  width: size < 500 ? 35 : 64,
+                  height: size < 500 ? 35 : 64,
+                }}
+              >
                 {point.icon}
               </div>
               {showText && (
                 <motion.div
-                  className="absolute top-full mt-2 left-1/2 -translate-x-1/2 whitespace-nowrap"
+                  className="absolute top-full mt-1 left-1/2 -translate-x-1/2 whitespace-nowrap"
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <span className="text-sm text-white font-medium drop-shadow-lg">
+                  <span
+                    className="text-white font-medium drop-shadow-lg"
+                    style={{ fontSize: size < 500 ? '0.65rem' : '0.875rem' }}
+                  >
                     {point.label}
                   </span>
                 </motion.div>
