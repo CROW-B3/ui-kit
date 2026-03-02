@@ -1,10 +1,15 @@
 <link rel="shortcut icon" href="./favicon.webp" type="image/webp" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  html,
+  body {
+    background-color: #0a0a0a !important;
+  }
+</style>
 <script>
-  // Override title without blocking
   (function () {
     const customTitle = 'CROW-B3 UI Kit';
 
-    // Set title periodically without blocking
     setInterval(() => {
       if (
         document.title !== customTitle &&
@@ -14,7 +19,6 @@
       }
     }, 100);
 
-    // Remove SVG favicon after load
     window.addEventListener('load', () => {
       document.querySelectorAll('link[rel*="icon"]').forEach(link => {
         const href = link.getAttribute('href');

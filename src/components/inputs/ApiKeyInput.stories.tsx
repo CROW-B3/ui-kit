@@ -29,7 +29,7 @@ import { ApiKeyInput } from '@aspect/ui-kit';
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <div className="w-[320px]">
+      <div className="w-full max-w-[320px]">
         <Story />
       </div>
     ),

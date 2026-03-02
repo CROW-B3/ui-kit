@@ -1,26 +1,29 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { BiCctv } from 'react-icons/bi';
-import { BsGlobe2 } from 'react-icons/bs';
-import { FaCloud, FaDatabase } from 'react-icons/fa';
-import { HiOutlineShare } from 'react-icons/hi';
-import { MdSecurity } from 'react-icons/md';
+import {
+  Cctv,
+  Cloud,
+  Database,
+  Globe as GlobeIcon,
+  Share2,
+  Shield,
+} from 'lucide-react';
 
 import { Globe } from './Globe';
 
 const defaultPoints = [
   {
     label: 'Internet',
-    icon: <BsGlobe2 className="text-3xl" />,
+    icon: <GlobeIcon className="text-3xl" />,
     location: [0, -90] as [number, number],
   },
   {
     label: 'CCTV',
-    icon: <BiCctv className="text-3xl" />,
+    icon: <Cctv className="text-3xl" />,
     location: [0, 30] as [number, number],
   },
   {
     label: 'Social Media',
-    icon: <HiOutlineShare className="text-3xl" />,
+    icon: <Share2 className="text-3xl" />,
     location: [0, 150] as [number, number],
   },
 ];
@@ -100,32 +103,32 @@ export const CustomPoints: Story = {
     points: [
       {
         label: 'Security',
-        icon: <MdSecurity className="text-3xl" />,
+        icon: <Shield className="text-3xl" />,
         location: [40, -74] as [number, number],
       },
       {
         label: 'Database',
-        icon: <FaDatabase className="text-3xl" />,
+        icon: <Database className="text-3xl" />,
         location: [51, 0] as [number, number],
       },
       {
         label: 'Cloud',
-        icon: <FaCloud className="text-3xl" />,
+        icon: <Cloud className="text-3xl" />,
         location: [35, 139] as [number, number],
       },
       {
         label: 'Internet',
-        icon: <BsGlobe2 className="text-3xl" />,
+        icon: <GlobeIcon className="text-3xl" />,
         location: [-33, 151] as [number, number],
       },
       {
         label: 'CCTV',
-        icon: <BiCctv className="text-3xl" />,
+        icon: <Cctv className="text-3xl" />,
         location: [1, 103] as [number, number],
       },
       {
         label: 'Social',
-        icon: <HiOutlineShare className="text-3xl" />,
+        icon: <Share2 className="text-3xl" />,
         location: [55, 37] as [number, number],
       },
     ],

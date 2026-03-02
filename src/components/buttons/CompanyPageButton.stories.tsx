@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
+import { Github, Linkedin, Twitter } from 'lucide-react';
 import { CompanyPageButton } from './CompanyPageButton';
 
 const meta: Meta<typeof CompanyPageButton> = {
@@ -30,7 +30,7 @@ import { CompanyPageButton } from '@aspect/ui-kit';
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <div className="w-[280px]">
+      <div className="w-full max-w-[280px]">
         <Story />
       </div>
     ),
@@ -52,7 +52,7 @@ export const Default: Story = {
 };
 
 export const WithIcon: Story = {
-  args: { platform: 'LinkedIn', icon: <FaLinkedin /> },
+  args: { platform: 'LinkedIn', icon: <Linkedin /> },
   parameters: {
     docs: {
       description: {
@@ -63,7 +63,7 @@ export const WithIcon: Story = {
 };
 
 export const Connected: Story = {
-  args: { platform: 'GitHub', icon: <FaGithub />, connected: true },
+  args: { platform: 'GitHub', icon: <Github />, connected: true },
   parameters: {
     docs: {
       description: {
@@ -76,9 +76,9 @@ export const Connected: Story = {
 export const AllPlatforms: Story = {
   render: () => (
     <div className="flex flex-col gap-2">
-      <CompanyPageButton platform="LinkedIn" icon={<FaLinkedin />} />
-      <CompanyPageButton platform="Twitter" icon={<FaTwitter />} connected />
-      <CompanyPageButton platform="GitHub" icon={<FaGithub />} />
+      <CompanyPageButton platform="LinkedIn" icon={<Linkedin />} />
+      <CompanyPageButton platform="Twitter" icon={<Twitter />} connected />
+      <CompanyPageButton platform="GitHub" icon={<Github />} />
     </div>
   ),
   parameters: {

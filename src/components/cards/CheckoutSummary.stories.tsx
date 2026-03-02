@@ -29,7 +29,7 @@ import { CheckoutSummary } from '@aspect/ui-kit';
   tags: ['autodocs'],
   decorators: [
     Story => (
-      <div className="w-[800px]">
+      <div className="w-full max-w-[800px]">
         <Story />
       </div>
     ),

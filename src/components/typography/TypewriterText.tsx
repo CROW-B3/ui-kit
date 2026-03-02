@@ -10,7 +10,6 @@ export interface TypewriterTextProps {
 export function TypewriterText({ text }: TypewriterTextProps) {
   const [displayedText, setDisplayedText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [showCursor, setShowCursor] = useState(true);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -37,13 +36,6 @@ export function TypewriterText({ text }: TypewriterTextProps) {
       };
     }
   }, [currentIndex, text]);
-
-  useEffect(() => {
-    const cursorInterval = setInterval(() => {
-      setShowCursor(prev => !prev);
-    }, 530);
-    return () => clearInterval(cursorInterval);
-  }, []);
 
   return (
     <motion.div
@@ -75,8 +67,8 @@ export function TypewriterText({ text }: TypewriterTextProps) {
       </span>
       <span
         aria-hidden="true"
+        className="animate-pulse"
         style={{
-          opacity: showCursor ? 1 : 0,
           color: '#8b7fb8',
           marginLeft: '2px',
         }}

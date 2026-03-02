@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { LuBuilding, LuCrown, LuZap } from 'react-icons/lu';
+import { Building, Crown, Zap } from 'lucide-react';
 import { PricingCard } from './PricingCard';
 
 const meta: Meta<typeof PricingCard> = {
@@ -36,13 +36,13 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   decorators: [
     Story => (
-      <div className="w-[320px]">
+      <div className="w-full max-w-[320px]">
         <Story />
       </div>
     ),
   ],
   args: {
-    icon: <LuZap className="w-5 h-5 text-violet-400" />,
+    icon: <Zap className="w-5 h-5 text-violet-400" />,
     category: 'Starter',
     title: 'Basic',
     description: 'Perfect for getting started',
@@ -66,13 +66,13 @@ export const Default: Story = {
 export const Popular: Story = {
   decorators: [
     Story => (
-      <div className="w-[320px]">
+      <div className="w-full max-w-[320px]">
         <Story />
       </div>
     ),
   ],
   args: {
-    icon: <LuCrown className="w-5 h-5 text-violet-400" />,
+    icon: <Crown className="w-5 h-5 text-violet-400" />,
     category: 'Professional',
     title: 'Pro',
     description: 'Best for growing teams',
@@ -99,13 +99,13 @@ export const Popular: Story = {
 export const Enterprise: Story = {
   decorators: [
     Story => (
-      <div className="w-[320px]">
+      <div className="w-full max-w-[320px]">
         <Story />
       </div>
     ),
   ],
   args: {
-    icon: <LuBuilding className="w-5 h-5 text-emerald-400" />,
+    icon: <Building className="w-5 h-5 text-emerald-400" />,
     category: 'Enterprise',
     title: 'Business',
     description: 'For large organizations',
@@ -132,9 +132,9 @@ export const Enterprise: Story = {
 
 export const PricingGrid: Story = {
   render: () => (
-    <div className="grid grid-cols-3 gap-6 w-[900px]">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-[900px]">
       <PricingCard
-        icon={<LuZap className="w-5 h-5 text-gray-400" />}
+        icon={<Zap className="w-5 h-5 text-gray-400" />}
         category="Starter"
         title="Free"
         description="For individuals"
@@ -147,7 +147,7 @@ export const PricingGrid: Story = {
         animated={false}
       />
       <PricingCard
-        icon={<LuCrown className="w-5 h-5 text-violet-400" />}
+        icon={<Crown className="w-5 h-5 text-violet-400" />}
         category="Professional"
         title="Pro"
         description="For teams"
@@ -162,7 +162,7 @@ export const PricingGrid: Story = {
         animated={false}
       />
       <PricingCard
-        icon={<LuBuilding className="w-5 h-5 text-emerald-400" />}
+        icon={<Building className="w-5 h-5 text-emerald-400" />}
         category="Enterprise"
         title="Business"
         description="For organizations"

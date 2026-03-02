@@ -109,10 +109,15 @@ export function CheckoutSummary({
         className
       )}
     >
-      <div className={cn('max-w-6xl mx-auto', sizeStyles[size].container)}>
+      <div
+        className={cn(
+          'max-w-6xl mx-auto overflow-x-auto',
+          sizeStyles[size].container
+        )}
+      >
         <div
           className={cn(
-            'flex items-center justify-between',
+            'flex items-center justify-between min-w-max',
             sizeStyles[size].gap
           )}
         >
