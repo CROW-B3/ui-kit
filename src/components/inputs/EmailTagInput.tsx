@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, KeyboardEvent } from 'react';
+import type { KeyboardEvent } from 'react';
+import { useState } from 'react';
 import { LuX } from 'react-icons/lu';
 
 interface EmailTagInputProps {
@@ -8,10 +9,12 @@ interface EmailTagInputProps {
   onEmailsChange: (emails: string[]) => void;
   error?: string;
   onInvalidEmail?: (email: string) => void;
+  onInputChange?: (value: string) => void;
+  children?: React.ReactNode;
 }
 
 const isValidEmail = (email: string): boolean => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  return /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(email);
 };
 
 export function EmailTagInput({
@@ -19,8 +22,29 @@ export function EmailTagInput({
   onEmailsChange,
   error,
   onInvalidEmail,
+  onInputChange,
+  children,
 }: EmailTagInputProps) {
   const [inputValue, setInputValue] = useState('');
+
+  const addEmail = () => {
+    const trimmedEmail = inputValue.trim();
+    if (trimmedEmail && !emails.includes(trimmedEmail)) {
+      if (isValidEmail(trimmedEmail)) {
+        onEmailsChange([...emails, trimmedEmail]);
+        setInputValue('');
+        onInputChange?.('');
+      } else {
+        onInvalidEmail?.(trimmedEmail);
+        setInputValue('');
+        onInputChange?.('');
+      }
+    }
+  };
+
+  const removeEmail = (index: number) => {
+    onEmailsChange(emails.filter((_, i) => i !== index));
+  };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -44,37 +68,24 @@ export function EmailTagInput({
         if (isValidEmail(emailToAdd)) {
           onEmailsChange([...emails, emailToAdd]);
           setInputValue('');
+          onInputChange?.('');
         } else {
           onInvalidEmail?.(emailToAdd);
           setInputValue('');
+          onInputChange?.('');
         }
       } else {
         setInputValue('');
+        onInputChange?.('');
       }
     } else {
       setInputValue(value);
+      onInputChange?.(value);
     }
-  };
-
-  const addEmail = () => {
-    const trimmedEmail = inputValue.trim();
-    if (trimmedEmail && !emails.includes(trimmedEmail)) {
-      if (isValidEmail(trimmedEmail)) {
-        onEmailsChange([...emails, trimmedEmail]);
-        setInputValue('');
-      } else {
-        onInvalidEmail?.(trimmedEmail);
-        setInputValue('');
-      }
-    }
-  };
-
-  const removeEmail = (index: number) => {
-    onEmailsChange(emails.filter((_, i) => i !== index));
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 relative">
       <label className="text-xs font-medium text-gray-300 ml-1 block">
         Email addresses
       </label>
@@ -107,6 +118,7 @@ export function EmailTagInput({
           placeholder={emails.length === 0 ? 'name@company.com' : ''}
         />
       </div>
+      {children}
       <p className="text-[10px] text-gray-500 ml-1">
         Press Enter, Space, or Comma to add multiple emails.
       </p>
