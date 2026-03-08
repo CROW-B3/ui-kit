@@ -7,7 +7,7 @@ export interface SegmentedControlOption<T extends string = string> {
 }
 
 export interface SegmentedControlProps<T extends string = string> {
-  options: [SegmentedControlOption<T>, SegmentedControlOption<T>];
+  options: SegmentedControlOption<T>[];
   defaultValue?: T;
   value?: T;
   onChange?: (value: T) => void;
@@ -28,7 +28,7 @@ export function SegmentedControl<T extends string = string>({
   size = 'md',
 }: SegmentedControlProps<T>) {
   const [internalValue, setInternalValue] = useState<T>(
-    defaultValue ?? options[0].value
+    defaultValue ?? options[0]?.value
   );
 
   const selected = controlledValue ?? internalValue;
@@ -46,6 +46,8 @@ export function SegmentedControl<T extends string = string>({
     lg: 'px-7 py-2 text-base',
   };
 
+  if (!options || options.length === 0) return null;
+
   return (
     <div className={cn('flex flex-col items-center gap-2', className)}>
       {label && (
@@ -58,36 +60,24 @@ export function SegmentedControl<T extends string = string>({
         aria-label={label}
         className="flex items-center bg-white/[0.03] border border-white/10 rounded-full p-1 relative"
       >
-        <button
-          type="button"
-          role="radio"
-          aria-checked={selected === options[0].value}
-          onClick={() => handleToggle(options[0].value)}
-          className={cn(
-            'font-medium transition-colors rounded-full relative z-10',
-            sizeStyles[size],
-            selected === options[0].value
-              ? 'text-white bg-white/10 shadow-sm'
-              : 'text-gray-400 hover:text-white'
-          )}
-        >
-          {options[0].label}
-        </button>
-        <button
-          type="button"
-          role="radio"
-          aria-checked={selected === options[1].value}
-          onClick={() => handleToggle(options[1].value)}
-          className={cn(
-            'font-medium transition-colors rounded-full relative z-10',
-            sizeStyles[size],
-            selected === options[1].value
-              ? 'text-white bg-white/10 shadow-sm'
-              : 'text-gray-400 hover:text-white'
-          )}
-        >
-          {options[1].label}
-        </button>
+        {options.map(option => (
+          <button
+            key={option.value}
+            type="button"
+            role="radio"
+            aria-checked={selected === option.value}
+            onClick={() => handleToggle(option.value)}
+            className={cn(
+              'font-medium transition-colors rounded-full relative z-10',
+              sizeStyles[size],
+              selected === option.value
+                ? 'text-white bg-white/10 shadow-sm'
+                : 'text-gray-400 hover:text-white'
+            )}
+          >
+            {option.label}
+          </button>
+        ))}
       </div>
       {description && (
         <span className="text-[10px] text-violet-400/80">{description}</span>
