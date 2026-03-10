@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-export type SeverityLevel = 'high' | 'medium' | 'low';
+export type SeverityLevel = 'critical' | 'high' | 'medium' | 'low';
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
 export interface DateRangeOption {
