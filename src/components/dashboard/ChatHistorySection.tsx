@@ -129,7 +129,9 @@ export function ChatHistorySection({
     <div
       className={cn(
         'px-4 mt-4 transition-all duration-300 ease-in-out overflow-hidden',
-        isVisible ? 'opacity-100 animate-fadeInDown max-h-[500px]' : 'opacity-0 max-h-0 pointer-events-none'
+        isVisible
+          ? 'opacity-100 animate-fadeInDown max-h-[500px]'
+          : 'opacity-0 max-h-0 pointer-events-none'
       )}
     >
       <button
@@ -180,7 +182,7 @@ export function ChatHistorySection({
                     role="button"
                     tabIndex={isEditing ? -1 : 0}
                     onClick={() => !isEditing && onItemClick?.(item.id)}
-                    onKeyDown={(e) => {
+                    onKeyDown={e => {
                       if (!isEditing && (e.key === 'Enter' || e.key === ' ')) {
                         e.preventDefault();
                         onItemClick?.(item.id);

@@ -4,7 +4,7 @@
  */
 
 import type { FilterOption } from './FilterDropdown';
-import type { SeverityLevel, ConfidenceLevel, MetricItem } from './types';
+import type { ConfidenceLevel, SeverityLevel } from './types';
 
 // ===== SEVERITY CONFIGURATION =====
 export const SEVERITY_CONFIG: Record<

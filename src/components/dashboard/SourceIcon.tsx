@@ -27,7 +27,7 @@ const sourceConfig: Record<
  * Used to distinguish between web, CCTV, and social media sources
  * @param {SourceIconProps} props - Component props
  * @param {'web' | 'cctv' | 'social'} props.source - Type of source
- * @param {'sm' | 'md'} [props.size='sm'] - Icon size variant
+ * @param {'sm' | 'md'} [props.size] - Icon size variant
  * @returns {JSX.Element} The source icon component
  */
 export function SourceIcon({ source, size = 'sm' }: SourceIconProps) {

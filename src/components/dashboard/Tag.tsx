@@ -13,7 +13,7 @@ export interface TagProps {
  * Supports default and active visual states
  * @param {TagProps} props - Component props
  * @param {React.ReactNode} props.children - Tag text content
- * @param {'default' | 'active'} [props.variant='default'] - Visual variant
+ * @param {'default' | 'active'} [props.variant] - Visual variant
  * @param {string} [props.className] - Additional CSS classes
  * @returns {JSX.Element} The tag component
  */
