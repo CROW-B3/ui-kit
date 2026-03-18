@@ -75,7 +75,7 @@ const DropdownOption = ({
   handleSelect,
   index,
 }: DropdownOptionProps & {
-  ref?: React.RefObject<HTMLButtonElement | null>;
+  ref?: React.Ref<HTMLButtonElement>;
 }) => {
   return (
     <button
