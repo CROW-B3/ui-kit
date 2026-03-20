@@ -1,0 +1,137 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Introduction" />
+
+# CROW-B3 UI Kit
+
+A collection of modern React components for building stunning interfaces.
+
+## Installation
+
+```bash
+npm install @b3-crow/ui-kit
+# or
+bun add @b3-crow/ui-kit
+```
+
+## Usage
+
+Import the styles in your application:
+
+```tsx
+import '@b3-crow/ui-kit/styles.css';
+```
+
+Then import and use components:
+
+```tsx
+import { Globe } from '@b3-crow/ui-kit';
+
+export default function App() {
+  return <Globe />;
+}
+```
+
+## Components
+
+Browse the sidebar to explore all available components with live examples and documentation.
+
+### Backgrounds
+- **AnimatedBackground** - Animated gradient background effects
+- **DashboardBackground** - Background styling for dashboard views
+- **Globe** - Interactive 3D globe visualization with customizable points
+- **GradientBackground** - Gradient background component
+
+### Buttons
+- **Button** - Base button component with variants
+- **CollapseToggleButton** - Toggle button for collapsible sections
+- **CompanyPageButton** - Styled button for company pages
+
+### Cards
+- **Card** - Base card component
+- **CheckoutSummary** - Checkout summary display card
+- **ConnectionOption** - Connection option selection card
+- **InvitationDetailsCard** - Invitation details display
+- **MetricsCard** - Metrics and statistics display card
+- **OrderSummaryCard** - Order summary display
+- **PatternCard** - Pattern selection card
+- **PendingInviteCard** - Pending invitation card
+- **PlanCard** - Plan/subscription card
+- **PricingCard** - Pricing display card
+- **RunAgentCard** - Agent execution card
+- **SyncStatusCard** - Sync status display card
+- **TipCard** - Tip/hint display card
+
+### Chat
+- **ChatHistorySection** - Chat history container
+- **MessageBubble** - Chat message bubble
+
+### Display
+- **CodeBlock** - Syntax-highlighted code display
+- **ConnectionStatus** - Connection status indicator
+- **IconBadge** - Icon with badge
+- **Logo** - Logo component
+- **PackageManagerSelector** - Package manager selection
+- **SourceIcon** - Source/integration icons
+- **StatusBadge** - Status badge component
+- **StatusIndicator** - Status indicator dot
+- **Tag** - Tag/label component
+
+### Feedback
+- **GeneratingState** - Loading/generating state indicator
+- **SettingsModal** - Settings modal dialog
+
+### Inputs
+- **ApiKeyInput** - API key input field
+- **Checkbox** - Checkbox input
+- **EmailTagInput** - Email tag input field
+- **FilterDropdown** - Filter dropdown selector
+- **Input** - Base input component
+- **InputField** - Labeled input field
+- **NumberStepper** - Number stepper input
+- **PermissionToggle** - Permission toggle switch
+- **SearchInput** - Search input field
+- **Select** - Select dropdown
+- **SettingsDropup** - Settings dropdown (opens upward)
+- **SuggestionChip** - Suggestion chip/tag
+- **TagInput** - Tag input field
+- **ToggleOption** - Toggle option component
+- **ToggleSwitch** - Toggle switch input
+
+### Layout
+- **Divider** - Section divider
+- **Footer** - Page footer
+- **FormSection** - Form section container
+- **GlassPanel** - Glassmorphism panel
+- **Header** - Page header
+- **LinkGroup** - Link group container
+- **ListItem** - List item component
+- **MobileSidebar** - Mobile sidebar navigation
+- **Navbar** - Navigation bar
+- **NavMenu** - Navigation menu
+- **NavTooltip** - Navigation tooltip
+- **PageHeader** - Page header with title
+- **SectionHeader** - Section header
+- **SegmentedControl** - Segmented control tabs
+- **Sidebar** - Sidebar navigation
+- **SidebarLogo** - Sidebar logo component
+- **SidePanel** - Side panel container
+
+### Providers
+- **LenisProvider** - Smooth scroll provider
+
+### Typography
+- **HeroText** - Hero section text
+- **SectionLabel** - Section label text
+- **Subtitle** - Subtitle text
+- **TypewriterText** - Typewriter animation text
+
+## Requirements
+
+- React 19+
+- Some components have optional peer dependencies (three.js for Globe, shiki for CodeBlock)
+
+## Links
+
+- [GitHub Repository](https://github.com/CROW-B3)
+- [npm Package](https://www.npmjs.com/package/@b3-crow/ui-kit)
