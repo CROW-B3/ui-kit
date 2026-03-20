@@ -91,7 +91,6 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
     const timeouts: ReturnType<typeof setTimeout>[] = [];
 
     for (let i = 0; i < displayPoints.length; i++) {
-      // eslint-disable-next-line react-web-api/no-leaked-timeout -- Cleanup is handled below
       const timeout = setTimeout(() => {
         setVisiblePoints(prev => {
           const next = new Set(prev).add(i);
@@ -134,12 +133,11 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
     const ORBIT_RADIUS = 115;
     const ORBIT_SPEED = 0.003;
 
-    // Create custom purple-tinted material for the globe
     const globeMaterial = new THREE.MeshPhongMaterial({
-      color: new THREE.Color(0.85, 0.45, 0.95), // Purple-magenta tint
-      emissive: new THREE.Color(0x3a2559),
-      emissiveIntensity: 0.25,
-      shininess: 5,
+      color: new THREE.Color(1.1, 0.6, 0.85),
+      emissive: new THREE.Color(0x1a0a30),
+      emissiveIntensity: 0.12,
+      shininess: 15,
     });
 
     const globe = new ThreeGlobe({ animateIn: true })
@@ -165,7 +163,6 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
     globeRef.current = globe;
     scene.add(globe);
 
-    // Create 3 orbit configurations with different tilts - spread evenly, not overlapping
     const orbitConfigs: OrbitConfig[] = [
       {
         tiltX: 0.4,
@@ -190,7 +187,6 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
       },
     ];
 
-    // Create orbit ring geometries - start hidden
     const orbitRings: THREE.Line[] = [];
     orbitConfigs.forEach(config => {
       const orbitGeometry = new THREE.BufferGeometry();
@@ -228,14 +224,12 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
     const animate = () => {
       globe.rotation.y += 0.003;
 
-      // Update orbit ring visibility based on visible points
       orbitRings.forEach((ring, index) => {
         const material = ring.material as THREE.LineBasicMaterial;
         const targetOpacity = visiblePointsRef.current.has(index) ? 0.3 : 0;
         material.opacity += (targetOpacity - material.opacity) * 0.05;
       });
 
-      // Update orbit angles
       orbitAngles = orbitAngles.map(
         (angle, i) => angle + orbitConfigs[i].speed
       );
@@ -248,14 +242,12 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
         const config = orbitConfigs[index];
         const angle = orbitAngles[index];
 
-        // Calculate position on orbit circle
         const localPos = new THREE.Vector3(
           Math.cos(angle) * config.radius,
           0,
           Math.sin(angle) * config.radius
         );
 
-        // Apply the same tilt rotation as the orbit ring
         const euler = new THREE.Euler(config.tiltX, 0, config.tiltZ);
         localPos.applyEuler(euler);
 
@@ -273,10 +265,8 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
           opacity = 0;
         }
 
-        // Scale based on Z position - bigger when at front
         let scale = 0.7;
         if (normalizedZ > 0.5) {
-          // At the front - scale up significantly
           const frontProgress = (normalizedZ - 0.5) / 0.5;
           scale = 1 + frontProgress * 0.5;
         } else if (normalizedZ > 0) {
@@ -298,7 +288,6 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
         };
       });
 
-      // eslint-disable-next-line react-hooks-extra/no-direct-set-state-in-use-effect -- Animation loop requires setState on each frame
       setPointPositions(positions);
 
       renderer.render(scene, camera);
@@ -311,7 +300,6 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
-      // Clean up orbit rings
       orbitRings.forEach(ring => {
         scene.remove(ring);
         ring.geometry.dispose();
@@ -368,7 +356,7 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <span className="text-sm text-white font-medium drop-shadow-lg">
+                  <span className="text-sm text-white font-bold font-[Sora,sans-serif] drop-shadow-lg">
                     {point.label}
                   </span>
                 </motion.div>
