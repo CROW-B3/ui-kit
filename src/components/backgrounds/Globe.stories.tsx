@@ -9,7 +9,7 @@ import { Globe } from './Globe';
 
 const defaultPoints = [
   {
-    label: 'Internet',
+    label: 'Web',
     icon: <BsGlobe2 className="text-3xl" />,
     location: [0, -90] as [number, number],
   },
