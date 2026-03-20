@@ -132,7 +132,7 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
     scene.add(directionalLight);
 
     const ORBIT_RADIUS = 115;
-    const ORBIT_SPEED = 0.006;
+    const ORBIT_SPEED = 0.003;
 
     // Create custom purple-tinted material for the globe
     const globeMaterial = new THREE.MeshPhongMaterial({
