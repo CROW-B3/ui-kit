@@ -16,6 +16,14 @@ interface PointPosition {
   isInCenter: boolean;
 }
 
+interface OrbitConfig {
+  tiltX: number;
+  tiltZ: number;
+  speed: number;
+  radius: number;
+  startAngle: number;
+}
+
 function generateArcs(points: GlobePoint[], randomArcCount = 6) {
   const arcs: {
     startLat: number;
@@ -64,25 +72,18 @@ function generateArcs(points: GlobePoint[], randomArcCount = 6) {
   return arcs;
 }
 
-function generatePointsData(points: GlobePoint[]) {
-  return points.map(p => ({
-    lat: p.location[0],
-    lng: p.location[1],
-    size: 0.5,
-    color: '#ffffff',
-  }));
-}
-
 export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const animationRef = useRef<number | undefined>(undefined);
   const globeRef = useRef<ThreeGlobe | null>(null);
+  const orbitRingsRef = useRef<THREE.Line[]>([]);
 
   const [pointPositions, setPointPositions] = useState<PointPosition[]>([]);
   const [visiblePoints, setVisiblePoints] = useState<Set<number>>(
     () => new Set()
   );
+  const visiblePointsRef = useRef<Set<number>>(new Set());
 
   const displayPoints = points;
 
@@ -92,7 +93,11 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
     for (let i = 0; i < displayPoints.length; i++) {
       // eslint-disable-next-line react-web-api/no-leaked-timeout -- Cleanup is handled below
       const timeout = setTimeout(() => {
-        setVisiblePoints(prev => new Set(prev).add(i));
+        setVisiblePoints(prev => {
+          const next = new Set(prev).add(i);
+          visiblePointsRef.current = next;
+          return next;
+        });
       }, i * 800);
 
       timeouts.push(timeout);
@@ -126,7 +131,16 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
     directionalLight.position.set(1, 1, 1);
     scene.add(directionalLight);
 
-    const GLOBE_RADIUS = 100;
+    const ORBIT_RADIUS = 115;
+    const ORBIT_SPEED = 0.006;
+
+    // Create custom purple-tinted material for the globe
+    const globeMaterial = new THREE.MeshPhongMaterial({
+      color: new THREE.Color(0.85, 0.45, 0.95), // Purple-magenta tint
+      emissive: new THREE.Color(0x3a2559),
+      emissiveIntensity: 0.25,
+      shininess: 5,
+    });
 
     const globe = new ThreeGlobe({ animateIn: true })
       .globeImageUrl(
@@ -135,13 +149,11 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
       .bumpImageUrl(
         'https://unpkg.com/three-globe@2.45.0/example/img/earth-topology.png'
       )
+      .globeMaterial(globeMaterial)
       .showAtmosphere(true)
-      .atmosphereColor('#3a82f7')
+      .atmosphereColor('#8B5CF6')
       .atmosphereAltitude(0.15)
-      .pointsData(generatePointsData(displayPoints))
-      .pointAltitude(0.01)
-      .pointColor('color')
-      .pointRadius('size')
+      .pointsData([])
       .arcsData(generateArcs(displayPoints))
       .arcColor('color')
       .arcDashLength(0.4)
@@ -153,30 +165,105 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
     globeRef.current = globe;
     scene.add(globe);
 
+    // Create 3 orbit configurations with different tilts - spread evenly, not overlapping
+    const orbitConfigs: OrbitConfig[] = [
+      {
+        tiltX: 0.4,
+        tiltZ: 0,
+        speed: ORBIT_SPEED,
+        radius: ORBIT_RADIUS,
+        startAngle: 0,
+      },
+      {
+        tiltX: -0.3,
+        tiltZ: 0.5,
+        speed: ORBIT_SPEED,
+        radius: ORBIT_RADIUS,
+        startAngle: Math.PI * 0.66,
+      },
+      {
+        tiltX: -0.3,
+        tiltZ: -0.5,
+        speed: ORBIT_SPEED,
+        radius: ORBIT_RADIUS,
+        startAngle: Math.PI * 1.33,
+      },
+    ];
+
+    // Create orbit ring geometries - start hidden
+    const orbitRings: THREE.Line[] = [];
+    orbitConfigs.forEach(config => {
+      const orbitGeometry = new THREE.BufferGeometry();
+      const orbitPoints: THREE.Vector3[] = [];
+      const segments = 128;
+
+      for (let i = 0; i <= segments; i++) {
+        const angle = (i / segments) * Math.PI * 2;
+        const x = Math.cos(angle) * config.radius;
+        const y = 0;
+        const z = Math.sin(angle) * config.radius;
+        orbitPoints.push(new THREE.Vector3(x, y, z));
+      }
+
+      orbitGeometry.setFromPoints(orbitPoints);
+
+      const orbitMaterial = new THREE.LineBasicMaterial({
+        color: 0x8b5cf6,
+        transparent: true,
+        opacity: 0,
+      });
+
+      const orbitLine = new THREE.Line(orbitGeometry, orbitMaterial);
+      orbitLine.rotation.x = config.tiltX;
+      orbitLine.rotation.z = config.tiltZ;
+      scene.add(orbitLine);
+      orbitRings.push(orbitLine);
+    });
+    orbitRingsRef.current = orbitRings;
+
     scene.rotation.x = 0;
+
+    let orbitAngles = orbitConfigs.map(config => config.startAngle);
 
     const animate = () => {
       globe.rotation.y += 0.003;
 
-      const positions: PointPosition[] = displayPoints.map((point, _index) => {
-        const [lat, lng] = point.location;
+      // Update orbit ring visibility based on visible points
+      orbitRings.forEach((ring, index) => {
+        const material = ring.material as THREE.LineBasicMaterial;
+        const targetOpacity = visiblePointsRef.current.has(index) ? 0.3 : 0;
+        material.opacity += (targetOpacity - material.opacity) * 0.05;
+      });
 
-        const phi = ((90 - lat) * Math.PI) / 180;
-        const theta = ((lng + 180) * Math.PI) / 180;
+      // Update orbit angles
+      orbitAngles = orbitAngles.map(
+        (angle, i) => angle + orbitConfigs[i].speed
+      );
 
-        const pos = new THREE.Vector3(
-          -GLOBE_RADIUS * Math.sin(phi) * Math.cos(theta),
-          GLOBE_RADIUS * Math.cos(phi),
-          GLOBE_RADIUS * Math.sin(phi) * Math.sin(theta)
+      const positions: PointPosition[] = displayPoints.map((_point, index) => {
+        if (index >= orbitConfigs.length) {
+          return { x: 0, y: 0, z: -1, scale: 0, opacity: 0, isInCenter: false };
+        }
+
+        const config = orbitConfigs[index];
+        const angle = orbitAngles[index];
+
+        // Calculate position on orbit circle
+        const localPos = new THREE.Vector3(
+          Math.cos(angle) * config.radius,
+          0,
+          Math.sin(angle) * config.radius
         );
 
-        pos.applyAxisAngle(new THREE.Vector3(0, 1, 0), globe.rotation.y);
+        // Apply the same tilt rotation as the orbit ring
+        const euler = new THREE.Euler(config.tiltX, 0, config.tiltZ);
+        localPos.applyEuler(euler);
 
-        const projected = pos.clone().project(camera);
+        const projected = localPos.clone().project(camera);
         const screenX = (projected.x * 0.5 + 0.5) * size;
         const screenY = (-projected.y * 0.5 + 0.5) * size;
 
-        const normalizedZ = pos.z / GLOBE_RADIUS;
+        const normalizedZ = localPos.z / config.radius;
         let opacity = 1;
         if (normalizedZ > 0.3) {
           opacity = 1;
@@ -186,23 +273,20 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
           opacity = 0;
         }
 
-        let scale =
-          normalizedZ > 0 ? 1 + normalizedZ * 0.3 : 0.7 + normalizedZ * 0.3;
-        scale = Math.max(0.5, scale);
-
-        const centerX = size / 2;
-        const centerY = size / 2;
-        const distanceFromCenter = Math.sqrt(
-          (screenX - centerX) ** 2 + (screenY - centerY) ** 2
-        );
-        const centerThreshold = 80;
-        const isInCenter =
-          distanceFromCenter < centerThreshold && normalizedZ > 0;
-
-        if (isInCenter) {
-          const centerProgress = 1 - distanceFromCenter / centerThreshold;
-          scale *= 1 + centerProgress * 0.3;
+        // Scale based on Z position - bigger when at front
+        let scale = 0.7;
+        if (normalizedZ > 0.5) {
+          // At the front - scale up significantly
+          const frontProgress = (normalizedZ - 0.5) / 0.5;
+          scale = 1 + frontProgress * 0.5;
+        } else if (normalizedZ > 0) {
+          scale = 0.7 + normalizedZ * 0.6;
+        } else {
+          scale = 0.5 + (normalizedZ + 1) * 0.2;
         }
+        scale = Math.max(0.4, scale);
+
+        const isInCenter = normalizedZ > 0.7;
 
         return {
           x: screenX,
@@ -227,6 +311,12 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
+      // Clean up orbit rings
+      orbitRings.forEach(ring => {
+        scene.remove(ring);
+        ring.geometry.dispose();
+        (ring.material as THREE.Material).dispose();
+      });
       if (rendererRef.current && container) {
         container.removeChild(rendererRef.current.domElement);
         rendererRef.current.dispose();
@@ -267,7 +357,7 @@ export default function GlobeRenderer({ points = [], size = 600 }: GlobeProps) {
             }}
           >
             <div className="relative">
-              <div className="w-16 h-16 rounded-full bg-black/70 border-2 border-white/50 backdrop-blur-sm flex items-center justify-center text-white shadow-lg">
+              <div className="w-16 h-16 rounded-full bg-black/10 backdrop-blur-sm flex items-center justify-center text-white">
                 {point.icon}
               </div>
               {showText && (
