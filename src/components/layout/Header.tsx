@@ -47,6 +47,7 @@ interface RightSectionProps {
   onNotificationClick?: () => void;
   onAvatarClick?: () => void;
   userInitials: string;
+  hideNotificationBell?: boolean;
 }
 
 const DropdownOption = React.forwardRef<HTMLButtonElement, DropdownOptionProps>(
@@ -192,6 +193,7 @@ export function Header({
         onNotificationClick={onNotificationClick}
         onAvatarClick={onAvatarClick}
         userInitials={userInitials}
+        hideNotificationBell={!showNotification}
       />
     </header>
   );
@@ -433,22 +435,25 @@ function RightSection({
   onNotificationClick,
   onAvatarClick,
   userInitials,
+  hideNotificationBell,
 }: RightSectionProps) {
   return (
     <div className="flex items-center gap-2">
-      <button
-        type="button"
-        onClick={onNotificationClick}
-        aria-label={
-          showNotification ? 'View notifications (new)' : 'View notifications'
-        }
-        className="w-8 h-8 flex items-center justify-center rounded-lg relative transition-colors hover:bg-white/[0.06]"
-      >
-        <Bell size={16} className="text-gray-500" strokeWidth={2} />
-        {showNotification && (
-          <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-violet-500 border-[1.5px] border-[rgba(3,0,5,0.9)]" />
-        )}
-      </button>
+      {!hideNotificationBell && (
+        <button
+          type="button"
+          onClick={onNotificationClick}
+          aria-label={
+            showNotification ? 'View notifications (new)' : 'View notifications'
+          }
+          className="w-8 h-8 flex items-center justify-center rounded-lg relative transition-colors hover:bg-white/[0.06]"
+        >
+          <Bell size={16} className="text-gray-500" strokeWidth={2} />
+          {showNotification && (
+            <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-violet-500 border-[1.5px] border-[rgba(3,0,5,0.9)]" />
+          )}
+        </button>
+      )}
 
       <button
         type="button"
