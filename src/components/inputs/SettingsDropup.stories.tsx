@@ -54,23 +54,6 @@ export const Default: Story = {
   },
 };
 
-export const WithNotifications: Story = {
-  args: {
-    userName: 'Jane Smith',
-    userEmail: 'jane@example.com',
-    initialNotifications: true,
-    onNotificationsChange: () => {},
-    onLogout: () => {},
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Settings dropup with notifications toggle enabled.',
-      },
-    },
-  },
-};
-
 export const Collapsed: Story = {
   args: {
     userName: 'User',
