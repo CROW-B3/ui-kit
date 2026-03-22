@@ -44,6 +44,7 @@ export interface SidebarProps {
   logoSrc?: string;
   userName?: string;
   userEmail?: string;
+  userAvatar?: string;
   onLogout?: () => void;
   onNotificationsChange?: (enabled: boolean) => void;
   initialNotifications?: boolean;

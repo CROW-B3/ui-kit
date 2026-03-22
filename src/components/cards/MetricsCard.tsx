@@ -23,21 +23,21 @@ interface MiniChartProps {
 
 function MiniChart({ chartData, maxValue, barColor }: MiniChartProps) {
   return (
-    <div className="flex items-end gap-[2px]">
+    <div className="flex items-end gap-1">
       {chartData.map((value, index) => {
         const isLast = index === chartData.length - 1;
-        const height = Math.max((value / maxValue) * 20, 3);
+        const height = Math.max((value / maxValue) * 36, 4);
 
         return (
           <div
             key={`bar-${index}-${value}`}
             style={{
-              width: '12px',
+              width: '16px',
               height: `${height}px`,
-              borderRadius: '2px 2px 0 0',
+              borderRadius: '3px 3px 0 0',
               background: isLast ? barColor.bg : '#374151',
               boxShadow: isLast ? barColor.shadow : 'none',
-              opacity: isLast ? 1 : 0.5,
+              opacity: isLast ? 1 : 0.6,
             }}
           />
         );
@@ -59,10 +59,10 @@ export function MetricsCard({
   const barColor = CHART_COLORS[chartColor];
 
   return (
-    <GlassPanel variant="light" className="relative overflow-hidden">
+    <GlassPanel variant="light" className="relative overflow-hidden h-full">
       <div className="p-4 sm:p-5 min-h-[100px] sm:min-h-[109px] flex flex-col">
         <div className="flex items-start justify-between gap-2 mb-auto">
-          <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-gray-400">
+          <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-gray-400 whitespace-nowrap truncate">
             {title}
           </span>
           <StatusBadge variant={changeType}>{change}</StatusBadge>

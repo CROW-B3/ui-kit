@@ -1,13 +1,13 @@
 'use client';
 
-import { Bell, BellOff, ChevronUp, LogOut, Settings, User } from 'lucide-react';
+import { ChevronUp, LogOut, Settings, User } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';
-import { ToggleSwitch } from '../inputs/ToggleSwitch';
 
 export interface SettingsDropupProps {
   userName?: string;
   userEmail?: string;
+  userAvatar?: string;
   initialNotifications?: boolean;
   onNotificationsChange?: (enabled: boolean) => void;
   onLogout?: () => void;
@@ -17,17 +17,14 @@ export interface SettingsDropupProps {
 export function SettingsDropup({
   userName = 'User',
   userEmail = 'user@example.com',
-  initialNotifications = true,
-  onNotificationsChange,
+  userAvatar,
   onLogout,
   isCollapsed = false,
 }: SettingsDropupProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState(initialNotifications);
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const ref = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const notificationsItemRef = useRef<HTMLDivElement>(null);
   const logoutItemRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -41,7 +38,7 @@ export function SettingsDropup({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const focusableItemCount = 1 + (onLogout ? 1 : 0);
+  const focusableItemCount = onLogout ? 1 : 0;
 
   const handleSettingsKeyDown = (e: React.KeyboardEvent) => {
     if (!isOpen) {
@@ -84,22 +81,20 @@ export function SettingsDropup({
 
   useEffect(() => {
     if (isOpen && focusedIndex >= 0) {
-      if (focusedIndex === 0) {
-        notificationsItemRef.current?.focus();
-      } else if (focusedIndex === 1 && onLogout) {
+      if (focusedIndex === 0 && onLogout) {
         logoutItemRef.current?.focus();
       }
     }
   }, [focusedIndex, isOpen, onLogout]);
 
-  const handleNotificationsToggle = () => {
-    const newValue = !notifications;
-    setNotifications(newValue);
-    onNotificationsChange?.(newValue);
-  };
-
   return (
-    <div ref={ref} className={cn('absolute bottom-6 transition-all duration-300', isCollapsed ? 'w-[56px] left-3' : 'w-[247px] left-4')}>
+    <div
+      ref={ref}
+      className={cn(
+        'absolute bottom-6 transition-all duration-300',
+        isCollapsed ? 'w-[56px] left-3' : 'w-[247px] left-4'
+      )}
+    >
       <div
         role="menu"
         className={cn(
@@ -114,9 +109,17 @@ export function SettingsDropup({
         )}
       >
         <div className="p-3 px-3 border-b border-white/[0.06] flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-full bg-violet-500/20 flex items-center justify-center border border-violet-500/30 shrink-0">
-            <User size={18} className="text-violet-400" strokeWidth={1.5} />
-          </div>
+          {userAvatar ? (
+            <img
+              src={userAvatar}
+              alt={userName}
+              className="w-9 h-9 rounded-full object-cover border border-violet-500/30 shrink-0"
+            />
+          ) : (
+            <div className="w-9 h-9 rounded-full bg-violet-500/20 flex items-center justify-center border border-violet-500/30 shrink-0">
+              <User size={18} className="text-violet-400" strokeWidth={1.5} />
+            </div>
+          )}
           <div className="overflow-hidden">
             <div className="text-white text-[13px] font-medium font-[Sora,sans-serif] truncate">
               {userName}
@@ -127,57 +130,18 @@ export function SettingsDropup({
           </div>
         </div>
 
-        <div className="p-1.5">
-          <div
-            ref={notificationsItemRef}
-            role="menuitem"
-            tabIndex={focusedIndex === 0 && isOpen ? 0 : -1}
-            onClick={handleNotificationsToggle}
-            onKeyDown={e => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                handleNotificationsToggle();
-              } else {
-                handleSettingsKeyDown(e as React.KeyboardEvent);
-              }
-            }}
-            className={cn(
-              'w-full py-2.5 px-2 flex items-center justify-between rounded-lg transition-colors cursor-pointer',
-              focusedIndex === 0 && isOpen
-                ? 'bg-white/[0.06]'
-                : 'hover:bg-white/[0.04]'
-            )}
-          >
-            <div className="flex items-center gap-2.5">
-              {notifications ? (
-                <Bell size={15} className="text-emerald-500" strokeWidth={2} />
-              ) : (
-                <BellOff size={15} className="text-gray-500" strokeWidth={2} />
-              )}
-              <span className="text-gray-300 text-[13px] font-[Sora,sans-serif]">
-                Notifications
-              </span>
-            </div>
-            <ToggleSwitch
-              enabled={notifications}
-              size="sm"
-              aria-label="Toggle notifications"
-            />
-          </div>
-        </div>
-
         {onLogout && (
-          <div className="p-1.5 border-t border-white/[0.06]">
+          <div className="p-1.5">
             <button
               ref={logoutItemRef}
               type="button"
               role="menuitem"
-              tabIndex={focusedIndex === 1 && isOpen ? 0 : -1}
+              tabIndex={focusedIndex === 0 && isOpen ? 0 : -1}
               onClick={onLogout}
               onKeyDown={handleSettingsKeyDown}
               className={cn(
                 'w-full py-2.5 px-2 flex items-center gap-2.5 bg-transparent border-none rounded-lg cursor-pointer transition-colors',
-                focusedIndex === 1 && isOpen
+                focusedIndex === 0 && isOpen
                   ? 'bg-red-500/10'
                   : 'hover:bg-red-500/10'
               )}
@@ -191,7 +155,12 @@ export function SettingsDropup({
         )}
       </div>
 
-      <div className={cn('border-t border-white/[0.08] transition-all duration-300', isCollapsed ? 'pt-2' : 'pt-3')}>
+      <div
+        className={cn(
+          'border-t border-white/[0.08] transition-all duration-300',
+          isCollapsed ? 'pt-2' : 'pt-3'
+        )}
+      >
         <button
           ref={triggerRef}
           type="button"
