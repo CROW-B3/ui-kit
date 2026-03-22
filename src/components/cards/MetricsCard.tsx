@@ -23,21 +23,21 @@ interface MiniChartProps {
 
 function MiniChart({ chartData, maxValue, barColor }: MiniChartProps) {
   return (
-    <div className="flex items-end gap-[2px]">
+    <div className="flex items-end gap-1">
       {chartData.map((value, index) => {
         const isLast = index === chartData.length - 1;
-        const height = Math.max((value / maxValue) * 20, 3);
+        const height = Math.max((value / maxValue) * 36, 4);
 
         return (
           <div
             key={`bar-${index}-${value}`}
             style={{
-              width: '12px',
+              width: '16px',
               height: `${height}px`,
-              borderRadius: '2px 2px 0 0',
+              borderRadius: '3px 3px 0 0',
               background: isLast ? barColor.bg : '#374151',
               boxShadow: isLast ? barColor.shadow : 'none',
-              opacity: isLast ? 1 : 0.5,
+              opacity: isLast ? 1 : 0.6,
             }}
           />
         );
