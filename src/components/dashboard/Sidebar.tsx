@@ -31,6 +31,7 @@ export function Sidebar({
   logoSrc = '/logo.webp',
   userName = 'User',
   userEmail = 'user@example.com',
+  userAvatar,
   onLogout,
   onNotificationsChange,
   initialNotifications = true,
@@ -76,6 +77,7 @@ export function Sidebar({
         <SettingsDropup
           userName={userName}
           userEmail={userEmail}
+          userAvatar={userAvatar}
           initialNotifications={initialNotifications}
           onNotificationsChange={onNotificationsChange}
           onLogout={onLogout}

@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, BellOff, ChevronUp, LogOut, Settings, User } from 'lucide-react';
+import { Bell, BellOff, ChevronUp, LogOut, Settings } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { cn } from '../../lib/utils';
 import { ToggleSwitch } from './ToggleSwitch';
@@ -8,14 +8,24 @@ import { ToggleSwitch } from './ToggleSwitch';
 export interface SettingsDropupProps {
   userName?: string;
   userEmail?: string;
+  userAvatar?: string;
   initialNotifications?: boolean;
   onNotificationsChange?: (enabled: boolean) => void;
   onLogout?: () => void;
 }
 
+const getInitials = (name: string): string =>
+  name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(part => part[0].toUpperCase())
+    .join('');
+
 export function SettingsDropup({
   userName = 'User',
   userEmail = 'user@example.com',
+  userAvatar,
   initialNotifications = true,
   onNotificationsChange,
   onLogout,
@@ -115,9 +125,17 @@ export function SettingsDropup({
         )}
       >
         <div className="p-3 px-3 border-b border-white/[0.06] flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-full bg-violet-500/20 flex items-center justify-center border border-violet-500/30 shrink-0">
-            <User size={18} className="text-violet-400" strokeWidth={1.5} />
-          </div>
+          {userAvatar ? (
+            <img
+              src={userAvatar}
+              alt={userName}
+              className="w-9 h-9 rounded-full object-cover border border-violet-500/30 shrink-0"
+            />
+          ) : (
+            <div className="w-9 h-9 rounded-full bg-violet-500/20 flex items-center justify-center border border-violet-500/30 shrink-0 text-violet-400 text-xs font-semibold font-[Sora,sans-serif]">
+              {getInitials(userName)}
+            </div>
+          )}
           <div className="overflow-hidden">
             <div className="text-white text-[13px] font-medium font-[Sora,sans-serif] truncate">
               {userName}
