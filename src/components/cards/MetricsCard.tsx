@@ -59,10 +59,10 @@ export function MetricsCard({
   const barColor = CHART_COLORS[chartColor];
 
   return (
-    <GlassPanel variant="light" className="relative overflow-hidden">
+    <GlassPanel variant="light" className="relative overflow-hidden h-full">
       <div className="p-4 sm:p-5 min-h-[100px] sm:min-h-[109px] flex flex-col">
         <div className="flex items-start justify-between gap-2 mb-auto">
-          <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-gray-400">
+          <span className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-gray-400 whitespace-nowrap truncate">
             {title}
           </span>
           <StatusBadge variant={changeType}>{change}</StatusBadge>
