@@ -1,13 +1,13 @@
 'use client';
 
 import type { NavItem, SidebarProps } from '../../lib/types';
-import { ChatHistorySection } from '../chat/ChatHistorySection';
 import { DEFAULT_NAV_ITEMS } from '../../lib/constants/navigation';
-import { NavMenu } from './NavMenu';
-import { SettingsDropup } from '../inputs/SettingsDropup';
-import { SidebarLogo } from './SidebarLogo';
-import { normalizePath } from '../../lib/utils/pathUtils';
 import { cn } from '../../lib/utils';
+import { normalizePath } from '../../lib/utils/pathUtils';
+import { ChatHistorySection } from '../chat/ChatHistorySection';
+import { SettingsDropup } from '../inputs/SettingsDropup';
+import { NavMenu } from './NavMenu';
+import { SidebarLogo } from './SidebarLogo';
 
 export type { NavItem, SidebarProps };
 
@@ -21,6 +21,7 @@ export function Sidebar({
   logoSrc = '/logo.webp',
   userName = 'User',
   userEmail = 'user@example.com',
+  userAvatar,
   onLogout,
   onNotificationsChange,
   initialNotifications = true,
@@ -64,7 +65,11 @@ export function Sidebar({
           isCollapsed ? 'px-1.5 justify-center' : 'px-3'
         )}
       >
-        <SidebarLogo logoSrc={logoSrc} isCollapsed={isCollapsed} onToggleCollapse={onToggleCollapse} />
+        <SidebarLogo
+          logoSrc={logoSrc}
+          isCollapsed={isCollapsed}
+          onToggleCollapse={onToggleCollapse}
+        />
       </div>
 
       <NavMenu
@@ -92,6 +97,7 @@ export function Sidebar({
         <SettingsDropup
           userName={userName}
           userEmail={userEmail}
+          userAvatar={userAvatar}
           initialNotifications={initialNotifications}
           onNotificationsChange={onNotificationsChange}
           onLogout={onLogout}

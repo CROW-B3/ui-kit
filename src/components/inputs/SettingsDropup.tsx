@@ -8,6 +8,7 @@ import { ToggleSwitch } from '../inputs/ToggleSwitch';
 export interface SettingsDropupProps {
   userName?: string;
   userEmail?: string;
+  userAvatar?: string;
   initialNotifications?: boolean;
   onNotificationsChange?: (enabled: boolean) => void;
   onLogout?: () => void;
@@ -17,6 +18,7 @@ export interface SettingsDropupProps {
 export function SettingsDropup({
   userName = 'User',
   userEmail = 'user@example.com',
+  userAvatar,
   initialNotifications = true,
   onNotificationsChange,
   onLogout,
@@ -99,7 +101,13 @@ export function SettingsDropup({
   };
 
   return (
-    <div ref={ref} className={cn('absolute bottom-6 transition-all duration-300', isCollapsed ? 'w-[56px] left-3' : 'w-[247px] left-4')}>
+    <div
+      ref={ref}
+      className={cn(
+        'absolute bottom-6 transition-all duration-300',
+        isCollapsed ? 'w-[56px] left-3' : 'w-[247px] left-4'
+      )}
+    >
       <div
         role="menu"
         className={cn(
@@ -114,9 +122,17 @@ export function SettingsDropup({
         )}
       >
         <div className="p-3 px-3 border-b border-white/[0.06] flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-full bg-violet-500/20 flex items-center justify-center border border-violet-500/30 shrink-0">
-            <User size={18} className="text-violet-400" strokeWidth={1.5} />
-          </div>
+          {userAvatar ? (
+            <img
+              src={userAvatar}
+              alt={userName}
+              className="w-9 h-9 rounded-full object-cover border border-violet-500/30 shrink-0"
+            />
+          ) : (
+            <div className="w-9 h-9 rounded-full bg-violet-500/20 flex items-center justify-center border border-violet-500/30 shrink-0">
+              <User size={18} className="text-violet-400" strokeWidth={1.5} />
+            </div>
+          )}
           <div className="overflow-hidden">
             <div className="text-white text-[13px] font-medium font-[Sora,sans-serif] truncate">
               {userName}
@@ -191,7 +207,12 @@ export function SettingsDropup({
         )}
       </div>
 
-      <div className={cn('border-t border-white/[0.08] transition-all duration-300', isCollapsed ? 'pt-2' : 'pt-3')}>
+      <div
+        className={cn(
+          'border-t border-white/[0.08] transition-all duration-300',
+          isCollapsed ? 'pt-2' : 'pt-3'
+        )}
+      >
         <button
           ref={triggerRef}
           type="button"

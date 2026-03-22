@@ -45,6 +45,7 @@ export function MobileSidebar({
   logoSrc = '/favicon.webp',
   userName = 'User',
   userEmail = 'user@example.com',
+  userAvatar,
   onLogout,
   onNotificationsChange,
   initialNotifications = true,
@@ -138,6 +139,7 @@ export function MobileSidebar({
                 <SettingsDropup
                   userName={userName}
                   userEmail={userEmail}
+                  userAvatar={userAvatar}
                   initialNotifications={initialNotifications}
                   onNotificationsChange={onNotificationsChange}
                   onLogout={onLogout}
