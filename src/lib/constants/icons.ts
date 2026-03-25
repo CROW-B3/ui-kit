@@ -1,6 +1,7 @@
 import type { LucideIcon } from 'lucide-react';
 import {
   AlertCircle,
+  BarChart3,
   Bell,
   CheckCircle,
   Clock,
@@ -40,6 +41,7 @@ export const ICON_REGISTRY: Record<string, LucideIcon> = {
   alert: AlertCircle,
   check: CheckCircle,
   clock: Clock,
+  bar_chart: BarChart3,
 };
 
 export const getIcon = (iconName: string): LucideIcon | undefined => {
